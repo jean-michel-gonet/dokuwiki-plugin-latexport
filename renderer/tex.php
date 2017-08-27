@@ -75,7 +75,6 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 * Open a paragraph.
 	 */
 	function p_open() {
-		$this->doc .= "    ";
 	}
 
 	/**
@@ -90,6 +89,50 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function p_close() {
 		$this->doc .= "\r\n\r\n";
+	}
+	/**
+	 * Render a wiki internal link
+	 *
+	 * @param string       $link  page ID to link to. eg. 'wiki:syntax'
+	 * @param string|array $title name for the link, array for media file
+	 */
+	function internallink($link, $title = null) {
+		$this->doc .= $title;
+	}
+	/**
+	 * Open an unordered list
+	 */
+	function listu_open() {
+		$this->command('begin', 'itemize');
+	}
+	/**
+	 * Open a list item
+	 *
+	 * @param int $level the nesting level
+	 * @param bool $node true when a node; false when a leaf
+	 */
+	function listitem_open($level,$node=false) {
+		$this->doc .= str_repeat('   ', $level).'\\item ';
+	}
+	/**
+	 * Start the content of a list item
+	 */
+	function listcontent_open() {
+		// Nothing to do.
+	}
+
+	/**
+	 * Stop the content of a list item
+	 */
+	function listcontent_close() {
+		$this->doc .= "\r\n";
+	}
+
+	/**
+	 * Close an unordered list
+	 */
+	function listu_close() {
+		$this->command('end', 'itemize');
 	}
 
 	/**
