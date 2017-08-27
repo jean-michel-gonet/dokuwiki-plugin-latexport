@@ -72,6 +72,27 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	}
 
 	/**
+	 * Open a paragraph.
+	 */
+	function p_open() {
+		$this->doc .= "    ";
+	}
+
+	/**
+	 * Renders plain text.
+	 */
+	function cdata($text) {
+		$this->doc .= $text;
+	}
+
+	/**
+	 * Close a paragraph.
+	 */
+	function p_close() {
+		$this->doc .= "\r\n\r\n";
+	}
+
+	/**
 	 * Closes the document
 	 */
 	function document_end(){
