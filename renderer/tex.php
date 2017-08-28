@@ -91,6 +91,45 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		$this->doc .= "\r\n\r\n";
 	}
 	/**
+	 * Start emphasis (italics) formatting
+	 */
+	function emphasis_open() {
+		$this->doc .= "\\emph{";
+	}
+
+	/**
+	 * Stop emphasis (italics) formatting
+	 */
+	function emphasis_close() {
+		$this->doc .= "}";
+	}
+	/**
+	 * Start strong (bold) formatting
+	 */
+	function strong_open() {
+		$this->doc .= "\\textbf{";	
+	}
+
+	/**
+	 * Stop strong (bold) formatting
+	 */
+	function strong_close() {
+		$this->doc .= "}";
+	}
+	/**
+	 * Start underline formatting
+	 */ 
+	function underline_open() {
+		$this->doc .= "\\underline{";
+	}
+
+	/**
+	 * Stop underline formatting
+	 */
+	function underline_close() {
+		$this->doc .= "}";
+	}
+	/**
 	 * Render a wiki internal link
 	 *
 	 * @param string       $link  page ID to link to. eg. 'wiki:syntax'
