@@ -5,19 +5,33 @@
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author Jean-Michel Gonet <jmgonet@yahoo.com>
  */
+
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
+
+require_once DOKU_PLUGIN . 'latexport/archive_helper_zip.php';
 
 /**
  * The latex renderer
  */
 class renderer_plugin_latexport_tex extends Doku_Renderer {
 
+	/** 
+	 * To create a compressed archive with all TeX resources needed
+	 * to download together.
+	 */
+	private $archive; 
+
+
+	function __construct() {
+		$this->archive = new ArchiveHelperZip(); 
+	}
+
 	/**
 	 * Returns the format produced by this renderer.
 	 */
 	function getFormat(){
-		return "tex";
+		return $this->archive->getFormat();
 	}
 
 	/**
@@ -34,14 +48,18 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		global $ID;
 
 		// Create HTTP headers
-		$output_filename = str_replace(':','-',$ID).'.tex';
+		$output_filename = str_replace(':','-',$ID).'.'.$this->archive->getFormat();
 		$headers = array(
-				'Content-Type' => 'application/x-tex',
+				'Content-Type' => $this->archive->getContentType(),
 				'Content-Disposition' => 'attachment; filename="'.$output_filename.'";',
 				);
 
 		// store the content type headers in metadata
 		p_set_metadata($ID,array('format' => array('latexport_tex' => $headers) ));
+
+		// Starts the archive:
+		$this->archive->startArchive();
+		$this->archive->startFile(str_replace(':','-',$ID).'.tex');
 
 		// Starts the document:
 		$this->command('documentclass', 'book');
@@ -81,53 +99,53 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 * Renders plain text.
 	 */
 	function cdata($text) {
-		$this->doc .= $text;
+		$this->content($text);
 	}
 
 	/**
 	 * Close a paragraph.
 	 */
 	function p_close() {
-		$this->doc .= "\r\n\r\n";
+		$this->content("\r\n\r\n");
 	}
 	/**
 	 * Start emphasis (italics) formatting
 	 */
 	function emphasis_open() {
-		$this->doc .= "\\emph{";
+		$this->content("\\emph{");
 	}
 
 	/**
 	 * Stop emphasis (italics) formatting
 	 */
 	function emphasis_close() {
-		$this->doc .= "}";
+		$this->content("}");
 	}
 	/**
 	 * Start strong (bold) formatting
 	 */
 	function strong_open() {
-		$this->doc .= "\\textbf{";	
+		$this->content("\\textbf{");	
 	}
 
 	/**
 	 * Stop strong (bold) formatting
 	 */
 	function strong_close() {
-		$this->doc .= "}";
+		$this->content("}");
 	}
 	/**
 	 * Start underline formatting
 	 */ 
 	function underline_open() {
-		$this->doc .= "\\underline{";
+		$this->content("\\underline{");
 	}
 
 	/**
 	 * Stop underline formatting
 	 */
 	function underline_close() {
-		$this->doc .= "}";
+		$this->content("}");
 	}
 	/**
 	 * Render a wiki internal link
@@ -136,7 +154,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 * @param string|array $title name for the link, array for media file
 	 */
 	function internallink($link, $title = null) {
-		$this->doc .= $title;
+		$this->content($title);
 	}
 	/**
 	 * Open an unordered list
@@ -151,7 +169,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 * @param bool $node true when a node; false when a leaf
 	 */
 	function listitem_open($level,$node=false) {
-		$this->doc .= str_repeat('   ', $level).'\\item ';
+		$this->content(str_repeat('   ', $level).'\\item ');
 	}
 	/**
 	 * Start the content of a list item
@@ -164,7 +182,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 * Stop the content of a list item
 	 */
 	function listcontent_close() {
-		$this->doc .= "\r\n";
+		$this->content("\r\n");
 	}
 
 	/**
@@ -179,6 +197,8 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function document_end(){
 		$this->command('end', 'document');
+		$this->archive->closeFile();
+		$this->doc = $this->archive->closeArchive();
 	}
 
 	/**
@@ -187,6 +207,14 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 * @param argument To be included in curly brackets.
 	 */
 	function command($name, $argument) {
-		$this->doc .= '\\'.$name.'{'.$argument."}\r\n";
+		$this->archive->appendContent('\\'.$name.'{'.$argument."}\r\n");
+	}
+
+	/**
+	 * Adds simple content to the document.
+	 * @param c The content.
+	 */
+	function content($c) {
+		$this->archive->appendContent($c);
 	}
 }
