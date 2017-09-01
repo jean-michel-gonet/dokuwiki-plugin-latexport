@@ -3,7 +3,7 @@ A latex export renderer plugin to export latex documents from Dokuwiki. In early
 
 Call the export with:
 
-http://microcontroleur.agl-developpement.ch/start?do=export_latexport_tex
+http://xxx.yyy.com/start?do=export_latexport_tex
 
 ## Install Tex environment
 
