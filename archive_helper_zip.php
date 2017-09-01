@@ -14,13 +14,6 @@ class ArchiveHelperZip {
 	private $currentContent;
 
 	/**
-	 * Returns the natural extension of this kind of archive.
-	 */
-	function getFormat() {
-		return "zip";
-	}
-
-	/**
 	 * Returns the MIME type of this kind of archive.
 	 */
 	function getContentType() {

@@ -28,10 +28,10 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	}
 
 	/**
-	 * Returns the format produced by this renderer.
+	 * Returns the mode name produced by this renderer.
 	 */
 	function getFormat(){
-		return $this->archive->getFormat();
+		return "latexport";
 	}
 
 	/**
@@ -48,7 +48,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		global $ID;
 
 		// Create HTTP headers
-		$output_filename = str_replace(':','-',$ID).'.'.$this->archive->getFormat();
+		$output_filename = str_replace(':','-',$ID).'.zip';
 		$headers = array(
 				'Content-Type' => $this->archive->getContentType(),
 				'Content-Disposition' => 'attachment; filename="'.$output_filename.'";',
@@ -190,6 +190,15 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function listu_close() {
 		$this->command('end', 'itemize');
+	}
+
+	/**
+	 * Receives mathematic formula from Mathjax plugin.
+	 * As Mathjax already uses $ or $$ as separator, there is no
+	 * need to reprocess.
+	 */
+	function mathjax_content($formula) {
+		$this->content("$formula");
 	}
 
 	/**
