@@ -52,6 +52,12 @@ class ArchiveHelperZip {
 		$this->currentFilename = "";
 		$this->currentContent = "";
 	}
+	/**
+	 * Inserts a complete entry.
+ 	 */
+	function insertContent($filename, $content) {
+		$this->zip->addFromString($filename, $content);
+	}
 
 	/**
 	 * Closes the ZIP archive and returns its whole content as a string.

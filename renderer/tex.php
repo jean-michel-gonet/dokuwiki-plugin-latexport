@@ -15,7 +15,7 @@ require_once DOKU_PLUGIN . 'latexport/helpers/archive_helper_zip.php';
  * The latex renderer
  */
 class renderer_plugin_latexport_tex extends Doku_Renderer {
-	const GRAPHICSPATH = 'images';
+	const GRAPHICSPATH = 'images/';
 
 	/** 
 	 * To create a compressed archive with all TeX resources needed
@@ -64,8 +64,9 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 
 		// Starts the document:
 		$this->command('documentclass', 'book');
+		$this->command('usepackage', 'graphicx');
+		$this->command('graphicspath', ' {'.self::GRAPHICSPATH.'} ');
 		$this->command('begin', 'document');
-		$this->command('graphicspath', ' {'.self::GRAPHICSPATH.'/} ');
 	}
 
 	/**
@@ -175,8 +176,8 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		list($src, $hash) = explode('#', $src, 2);
 		resolve_mediaid(getNS($ID), $src, $exists, $this->date_at, true);
 		$file   = mediaFN($src);
-		$this->command('begin', 'figure', 'h');
-		$this->command('includegraphics', basename($file));
+		$this->command('begin', 'figure', 'ht');
+		$this->command('includegraphics', $this->insertImage($file));
 		$this->command('caption', $title);
 		$this->command('end', 'figure');
 	}
@@ -248,6 +249,33 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		}
 		$this->archive->appendContent("\r\n");
 	}
+	/**
+	 * Inserts the specified file.
+	 * @param The physical path to the file.
+	 * @return The TeX-ified name of the file.
+	 */
+	function insertImage($filename) {
+		$baseFilename = $this->texifyFilename(basename($filename));
+		$this->archive->insertContent(self::GRAPHICSPATH.$baseFilename, file_get_contents($filename));
+		return $baseFilename;
+	}
+
+	/**
+	 * Returns a TeX compliant version of the specified file name.
+	 * @param filename The filename.
+	 * @return A TeX compliant version, with no spaces, and no dot besides the extension.
+	 */
+	function texifyFilename($filename) {
+		$ext = '';
+		$extPosition = strrpos($filename, ".");
+		if ($extPosition) {
+			$ext = substr($filename, $extPosition + 1);
+			$filename = substr($filename, 0, -strlen($ext) - 1);
+		}
+		$texifiedFilename = str_replace(".", "_", $filename);
+		$texifiedFilename = str_replace(" ", "_", $texifiedFilename);
+		return "$texifiedFilename.$ext";
+	}
 
 	/**
 	 * Adds simple content to the document.
@@ -256,4 +284,6 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	function content($c) {
 		$this->archive->appendContent($c);
 	}
+
+	
 }
