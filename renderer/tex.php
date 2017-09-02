@@ -15,6 +15,7 @@ require_once DOKU_PLUGIN . 'latexport/helpers/archive_helper_zip.php';
  * The latex renderer
  */
 class renderer_plugin_latexport_tex extends Doku_Renderer {
+	const GRAPHICSPATH = 'images';
 
 	/** 
 	 * To create a compressed archive with all TeX resources needed
@@ -64,6 +65,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		// Starts the document:
 		$this->command('documentclass', 'book');
 		$this->command('begin', 'document');
+		$this->command('graphicspath', ' {'.self::GRAPHICSPATH.'/} ');
 	}
 
 	/**
@@ -157,6 +159,29 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		$this->content($title);
 	}
 	/**
+	 * Render an internal media file
+	 *
+	 * @param string $src     media ID
+	 * @param string $title   descriptive text
+	 * @param string $align   left|center|right
+	 * @param int    $width   width of media in pixel
+	 * @param int    $height  height of media in pixel
+	 * @param string $cache   cache|recache|nocache
+	 * @param string $linking linkonly|detail|nolink
+	 */
+	function internalmedia($src, $title = null, $align = null, $width = null,
+			$height = null, $cache = null, $linking = null) {
+		global $ID;
+		list($src, $hash) = explode('#', $src, 2);
+		resolve_mediaid(getNS($ID), $src, $exists, $this->date_at, true);
+		$file   = mediaFN($src);
+		$this->command('begin', 'figure', 'h');
+		$this->command('includegraphics', basename($file));
+		$this->command('caption', $title);
+		$this->command('end', 'figure');
+	}
+
+	/**
 	 * Open an unordered list
 	 */
 	function listu_open() {
@@ -212,11 +237,16 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 
 	/**
 	 * Adds a latex command to the document.
-	 * @param name Command name.
-	 * @param argument To be included in curly brackets.
+	 * @param do The command
+	 * @param name To be included inside the curly brackets.
+	 * @param argument If specified, to be included in square brackets.
 	 */
-	function command($name, $argument) {
-		$this->archive->appendContent('\\'.$name.'{'.$argument."}\r\n");
+	function command($do, $name, $argument = '') {
+		$this->archive->appendContent('\\'.$do.'{'.$name.'}');
+		if ($argument) {
+			$this->archive->appendContent('['.$argument.']');
+		}
+		$this->archive->appendContent("\r\n");
 	}
 
 	/**
