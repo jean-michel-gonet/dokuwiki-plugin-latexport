@@ -177,7 +177,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		resolve_mediaid(getNS($ID), $src, $exists, $this->date_at, true);
 		$file   = mediaFN($src);
 		$this->command('begin', 'figure', 'ht');
-		$this->command('includegraphics', $this->insertImage($file));
+		$this->command('includegraphics', $this->insertImage($file), 'width=\textwidth');
 		$this->command('caption', $title);
 		$this->command('end', 'figure');
 	}
@@ -238,17 +238,33 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 
 	/**
 	 * Adds a latex command to the document.
-	 * @param do The command
-	 * @param name To be included inside the curly brackets.
-	 * @param argument If specified, to be included in square brackets.
+	 * @param command  The command
+	 * @param scope    The name of the scope, or the mandatory argument, 
+	                   to be included inside the curly brackets.
+	 * @param argument If specified, to be included in square brackets. Depending
+	                   on the command, square brackets are placed before or after
+	                   the curly brackets.
 	 */
-	function command($do, $name, $argument = '') {
-		$this->archive->appendContent('\\'.$do.'{'.$name.'}');
+	function command($command, $scope, $argument = '') {
 		if ($argument) {
-			$this->archive->appendContent('['.$argument.']');
+			switch($command) {
+				// Some commands have the optional arguments after the curly brackets:
+				case 'begin':
+				case 'end':
+					$text = '\\'.$command.'{'.$scope.'}['.$argument.']';
+					break;
+
+				// Most commands have the optional arguments before the curly brackets:
+				default:
+					$text = '\\'.$command.'['.$argument.']{'.$scope.'}';
+					break;
+			}
+		} else {
+			$text = '\\'.$command.'{'.$scope.'}';
 		}
-		$this->archive->appendContent("\r\n");
+		$this->archive->appendContent("$text\r\n");
 	}
+
 	/**
 	 * Inserts the specified file.
 	 * @param The physical path to the file.
