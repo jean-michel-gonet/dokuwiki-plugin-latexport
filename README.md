@@ -38,6 +38,7 @@ To know the name of the font:
 3. Right click on it, and select _Show in Finder_
 4. Right click on the file and click on _Get Info_
 5. Copy the path to the font file, open a console, and type:
+
 	otfinfo -i '/Path/To/The/File/Name of the font.ttf'
 
 The last command shows a series of identifiers:
