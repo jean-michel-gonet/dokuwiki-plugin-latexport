@@ -41,6 +41,7 @@ To know the name of the font:
 	otfinfo -i '/Path/To/The/File/Name of the font.ttf'
 
 The last command shows a series of identifiers:
+
 	Family:              Lucida Bright
 	Subfamily:           Demibold
 	Full name:           Lucida Bright Demibold
