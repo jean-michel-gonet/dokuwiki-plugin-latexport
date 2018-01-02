@@ -240,10 +240,10 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 * Adds a latex command to the document.
 	 * @param command  The command
 	 * @param scope    The name of the scope, or the mandatory argument, 
-	                   to be included inside the curly brackets.
+	 *                 to be included inside the curly brackets.
 	 * @param argument If specified, to be included in square brackets. Depending
-	                   on the command, square brackets are placed before or after
-	                   the curly brackets.
+	 *                 on the command, square brackets are placed before or after
+	 *                 the curly brackets.
 	 */
 	function command($command, $scope, $argument = '') {
 		if ($argument) {
