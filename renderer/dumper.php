@@ -10,22 +10,42 @@
 if(!defined('DOKU_INC')) die();
 
 /**
- * Actual tex renderer, 
+ * Basic tex renderer, takes care of all formatting that does not
+ * require state machines, and stores content to the archive.
+ * Can add more layers of dumpers to decorate the output if needed.
  */
 class Dumper {
 	const GRAPHICSPATH = 'images/';
 
 	/** 
-	 * To create a compressed archive with all TeX resources needed
-	 * to download together.
+	 * Receives the content of the document.
 	 */
 	private $archive; 
 
 	/**
+	 * Flag indicating that an unordered item has open, and it
+	 * still has no content.
+	 */
+	private $bareUnorderedItem;
+
+	/**
 	 * Class constructor.
+	 * @param archive Will receive the content of the document.
 	 */
 	function __construct($archive) {
 		$this->archive = $archive;
+	}
+
+	/**
+	 * Starts the latex document.
+	 */
+	function document_start() {
+		$this->appendCommand('documentclass', 'book');
+		$this->appendCommand('usepackage', 'graphicx');
+		$this->appendCommand('graphicspath', ' {'.self::GRAPHICSPATH.'} ');
+		$this->appendCommand('begin', 'document');
+
+		return $this;
 	}
 
 	/**
@@ -216,13 +236,10 @@ class Dumper {
 	}
 
 	/**
-	 * Closes the document
+	 * Ends the document
 	 */
 	function document_end(){
 		$this->appendCommand('end', 'document');
-		$this->archive->closeFile();
-		$this->doc = $this->archive->closeArchive();
-
 		return $this;
 	}
 

@@ -26,6 +26,11 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	private $archive; 
 
 	/**
+	 * Actual tex renderer.
+	 */
+	private $dumper;
+
+	/**
 	 * Flag indicating that an unordered item has open, and it
 	 * still has no content.
 	 */
@@ -54,7 +59,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	}
 
 	/**
-	 * Initialize the rendering
+	 * Initializes the rendering.
 	 */
 	function document_start() {
 		global $ID;
@@ -74,93 +79,80 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		$this->archive->startFile(str_replace(':','-',$ID).'.tex');
 
 		// Starts the document:
-		$this->appendCommand('documentclass', 'book');
-		$this->appendCommand('usepackage', 'graphicx');
-		$this->appendCommand('graphicspath', ' {'.self::GRAPHICSPATH.'} ');
-		$this->appendCommand('begin', 'document');
+		$this->dumper = new Dumper($this->archive);
+		$this->dumper = $this->dumper->document_start();
 	}
 
 	/**
 	 * Headers are transformed in part, chapter, section, subsection and subsubsection.
 	 */
 	function header($text, $level, $pos) {
-		switch($level) {
-			case 1:
-				$this->appendCommand('part', $text);
-				break;
-			case 2:
-				$this->appendCommand('chapter', $text);
-				break;
-			case 3:
-				$this->appendCommand('section', $text);
-				break;
-			case 4:
-				$this->appendCommand('subsection', $text);
-				break;
-			default:
-				$this->appendCommand('subsubsection', $text);
-				break;
-		}
+		$dumper = $this->dumper->header($text, $level, $pos);
 	}
 
 	/**
 	 * Open a paragraph.
 	 */
 	function p_open() {
+		$this->dumper = $this->dumper->p_open();
 	}
 
 	/**
 	 * Renders plain text.
 	 */
 	function cdata($text) {
-		$this->appendContent($text);
+		$this->dumper = $this->dumper->cdata($text);
 	}
 
 	/**
 	 * Close a paragraph.
 	 */
 	function p_close() {
-		$this->appendContent("\r\n\r\n");
+		$this->dumper = $this->dumper->p_close();
 	}
+
 	/**
 	 * Start emphasis (italics) formatting
 	 */
 	function emphasis_open() {
-		$this->appendContent("\\emph{");
+		$this->dumper = $this->dumper->emphasis_open();
 	}
 
 	/**
 	 * Stop emphasis (italics) formatting
 	 */
 	function emphasis_close() {
-		$this->appendContent("}");
+		$this->dumper = $this->dumper->emphasis_close();
 	}
+
 	/**
 	 * Start strong (bold) formatting
 	 */
 	function strong_open() {
-		$this->appendContent("\\textbf{");	
+		$this->dumper = $this->dumper->strong_open();
 	}
 
 	/**
 	 * Stop strong (bold) formatting
 	 */
 	function strong_close() {
-		$this->appendContent("}");
+		$this->dumper = $this->dumper->strong_close();
 	}
+
 	/**
 	 * Start underline formatting
 	 */ 
 	function underline_open() {
-		$this->appendContent("\\underline{");
+		$this->dumper = $this->dumper->underline_open();
 	}
 
 	/**
 	 * Stop underline formatting
 	 */
 	function underline_close() {
-		$this->appendContent("}");
+		$this->dumper = $this->dumper->underline_close();
 	}
+
 	/**
 	 * Render a wiki internal link.
 	 * Internal links at the very beginning of an unordered item include
@@ -169,10 +161,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 * @param string|array $title name for the link, array for media file
 	 */
 	function internallink($link, $title = null) {
-		if ($this->bareUnorderedItem) {
-			$this->appendContent("Include --");
-		}
-		$this->appendContent($title);
+		$this->dumper = $this->dumper->internallink($link, $title);
 	}
 
 	/**
@@ -188,21 +177,16 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function internalmedia($src, $title = null, $align = null, $width = null,
 			$height = null, $cache = null, $linking = null) {
-		global $ID;
-		list($src, $hash) = explode('#', $src, 2);
-		resolve_mediaid(getNS($ID), $src, $exists, $this->date_at, true);
-		$file   = mediaFN($src);
-		$this->appendCommand('begin', 'figure', 'ht');
-		$this->appendCommand('includegraphics', $this->insertImage($file), 'width=\textwidth');
-		$this->appendCommand('caption', $title);
-		$this->appendCommand('end', 'figure');
+
+		$this->dumper = $this->dumper->internalmedia($src, $title, $align, $width,
+			$height, $cache, $linking);
 	}
 
 	/**
 	 * Open an unordered list
 	 */
 	function listu_open() {
-		$this->appendCommand('begin', 'itemize');
+		$this->dumper = $this->dumper->listu_open();
 	}
 	/**
 	 * Open a list item
@@ -211,28 +195,28 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 * @param bool $node true when a node; false when a leaf
 	 */
 	function listitem_open($level,$node=false) {
-		$this->appendContent(str_repeat('   ', $level).'\\item ');
-		$this->bareUnorderedItem = true;
+		$this->dumper = $this->dumper->listitem_open($level, $node);
 	}
+
 	/**
 	 * Start the content of a list item
 	 */
 	function listcontent_open() {
-		// Nothing to do.
+		$this->dumper = $this->dumper->listcontent_open();
 	}
 
 	/**
 	 * Stop the content of a list item
 	 */
 	function listcontent_close() {
-		$this->appendContent("\r\n");
+		$this->dumper = $this->dumper->listcontent_close();
 	}
 
 	/**
 	 * Close an unordered list
 	 */
 	function listu_close() {
-		$this->appendCommand('end', 'itemize');
+		$this->dumper = $this->dumper->listu_close();
 	}
 
 	/**
@@ -241,86 +225,16 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 * need to reprocess.
 	 */
 	function mathjax_content($formula) {
-		$this->appendContent("$formula");
+		$this->dumper = $this->dumper->mathjax_content($formula);
 	}
 
 	/**
 	 * Closes the document
 	 */
 	function document_end(){
-		$this->appendCommand('end', 'document');
+		$this->dumper = $this->dumper->document_end();
+
 		$this->archive->closeFile();
 		$this->doc = $this->archive->closeArchive();
 	}
-
-	/**
-	 * Inserts the specified file.
-	 * @param The physical path to the file.
-	 * @return The TeX-ified name of the file.
-	 */
-	function insertImage($filename) {
-		$baseFilename = $this->texifyFilename(basename($filename));
-		$this->archive->insertContent(self::GRAPHICSPATH.$baseFilename, file_get_contents($filename));
-		return $baseFilename;
-	}
-
-	/**
-	 * Returns a TeX compliant version of the specified file name.
-	 * @param filename The filename.
-	 * @return A TeX compliant version, with no spaces, and no dot besides the extension.
-	 */
-	function texifyFilename($filename) {
-		$ext = '';
-		$extPosition = strrpos($filename, ".");
-		if ($extPosition) {
-			$ext = substr($filename, $extPosition + 1);
-			$filename = substr($filename, 0, -strlen($ext) - 1);
-		}
-		$texifiedFilename = str_replace(".", "_", $filename);
-		$texifiedFilename = str_replace(" ", "_", $texifiedFilename);
-		return "$texifiedFilename.$ext";
-	}
-
-	/**
-	 * Adds a latex command to the document.
-	 * @param command  The command
-	 * @param scope    The name of the scope, or the mandatory argument, 
-	 *                 to be included inside the curly brackets.
-	 * @param argument If specified, to be included in square brackets. Depending
-	 *                 on the command, square brackets are placed before or after
-	 *                 the curly brackets.
-	 */
-	function appendCommand($command, $scope, $argument = '') {
-		if ($argument) {
-			switch($command) {
-				// Some commands have the optional arguments after the curly brackets:
-				case 'begin':
-				case 'end':
-					$text = '\\'.$command.'{'.$scope.'}['.$argument.']';
-					break;
-
-				// Most commands have the optional arguments before the curly brackets:
-				default:
-					$text = '\\'.$command.'['.$argument.']{'.$scope.'}';
-					break;
-			}
-		} else {
-			$text = '\\'.$command.'{'.$scope.'}';
-		}
-		$this->archive->appendContent("$text\r\n");
-	}
-
-	/**
-	 * Adds simple content to the document.
-	 * @param c The content.
-	 */
-	function appendContent($c) {
-		if ($this->bareUnorderedItem) {
-			if (!ctype_space($c)) {
-				$this->bareUnorderedItem = false;
-			}
-		}
-		$this->archive->appendContent($c);
-	}
-
 }
