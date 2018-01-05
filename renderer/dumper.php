@@ -9,14 +9,10 @@
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
-require_once DOKU_PLUGIN . 'latexport/helpers/archive_helper_zip.php';
-require_once DOKU_PLUGIN . 'latexport/renderer/dumper.php';
-
 /**
- * A façade between doku wiki and the actual tex renderer.
- * Actual renderer is dumper.php or one of its extensions.
+ * Actual tex renderer, 
  */
-class renderer_plugin_latexport_tex extends Doku_Renderer {
+class Dumper {
 	const GRAPHICSPATH = 'images/';
 
 	/** 
@@ -26,58 +22,10 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	private $archive; 
 
 	/**
-	 * Flag indicating that an unordered item has open, and it
-	 * still has no content.
-	 */
-	private $bareUnorderedItem;
-
-	/**
 	 * Class constructor.
 	 */
-	function __construct() {
-		$this->archive = new ArchiveHelperZip(); 
-		$this->bareUnorderedItem = false;
-	}
-
-	/**
-	 * Returns the mode name produced by this renderer.
-	 */
-	function getFormat(){
-		return "latexport";
-	}
-
-	/**
-	 * Do not make multiple instances of this class
-	 */
-	function isSingleton(){
-		return true;
-	}
-
-	/**
-	 * Initialize the rendering
-	 */
-	function document_start() {
-		global $ID;
-
-		// Create HTTP headers
-		$output_filename = str_replace(':','-',$ID).'.zip';
-		$headers = array(
-				'Content-Type' => $this->archive->getContentType(),
-				'Content-Disposition' => 'attachment; filename="'.$output_filename.'";',
-				);
-
-		// store the content type headers in metadata
-		p_set_metadata($ID,array('format' => array('latexport_tex' => $headers) ));
-
-		// Starts the archive:
-		$this->archive->startArchive();
-		$this->archive->startFile(str_replace(':','-',$ID).'.tex');
-
-		// Starts the document:
-		$this->appendCommand('documentclass', 'book');
-		$this->appendCommand('usepackage', 'graphicx');
-		$this->appendCommand('graphicspath', ' {'.self::GRAPHICSPATH.'} ');
-		$this->appendCommand('begin', 'document');
+	function __construct($archive) {
+		$this->archive = $archive;
 	}
 
 	/**
@@ -101,12 +49,14 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 				$this->appendCommand('subsubsection', $text);
 				break;
 		}
+		return $this;
 	}
 
 	/**
 	 * Open a paragraph.
 	 */
 	function p_open() {
+		return $this;
 	}
 
 	/**
@@ -114,6 +64,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function cdata($text) {
 		$this->appendContent($text);
+		return $this;
 	}
 
 	/**
@@ -121,12 +72,14 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function p_close() {
 		$this->appendContent("\r\n\r\n");
+		return $this;
 	}
 	/**
 	 * Start emphasis (italics) formatting
 	 */
 	function emphasis_open() {
 		$this->appendContent("\\emph{");
+		return $this;
 	}
 
 	/**
@@ -134,12 +87,15 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function emphasis_close() {
 		$this->appendContent("}");
+		return $this;
 	}
+
 	/**
 	 * Start strong (bold) formatting
 	 */
 	function strong_open() {
 		$this->appendContent("\\textbf{");	
+		return $this;
 	}
 
 	/**
@@ -147,12 +103,14 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function strong_close() {
 		$this->appendContent("}");
+		return $this;
 	}
 	/**
 	 * Start underline formatting
 	 */ 
 	function underline_open() {
 		$this->appendContent("\\underline{");
+		return $this;
 	}
 
 	/**
@@ -160,7 +118,9 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function underline_close() {
 		$this->appendContent("}");
+		return $this;
 	}
+
 	/**
 	 * Render a wiki internal link.
 	 * Internal links at the very beginning of an unordered item include
@@ -173,6 +133,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 			$this->appendContent("Include --");
 		}
 		$this->appendContent($title);
+		return $this;
 	}
 
 	/**
@@ -196,6 +157,8 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		$this->appendCommand('includegraphics', $this->insertImage($file), 'width=\textwidth');
 		$this->appendCommand('caption', $title);
 		$this->appendCommand('end', 'figure');
+
+		return $this;
 	}
 
 	/**
@@ -203,6 +166,8 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function listu_open() {
 		$this->appendCommand('begin', 'itemize');
+
+		return $this;
 	}
 	/**
 	 * Open a list item
@@ -213,12 +178,15 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	function listitem_open($level,$node=false) {
 		$this->appendContent(str_repeat('   ', $level).'\\item ');
 		$this->bareUnorderedItem = true;
+
+		return $this;
 	}
 	/**
 	 * Start the content of a list item
 	 */
 	function listcontent_open() {
 		// Nothing to do.
+		return $this;
 	}
 
 	/**
@@ -226,6 +194,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function listcontent_close() {
 		$this->appendContent("\r\n");
+		return $this;
 	}
 
 	/**
@@ -233,6 +202,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function listu_close() {
 		$this->appendCommand('end', 'itemize');
+		return $this;
 	}
 
 	/**
@@ -242,6 +212,7 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 	 */
 	function mathjax_content($formula) {
 		$this->appendContent("$formula");
+		return $this;
 	}
 
 	/**
@@ -251,6 +222,8 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		$this->appendCommand('end', 'document');
 		$this->archive->closeFile();
 		$this->doc = $this->archive->closeArchive();
+
+		return $this;
 	}
 
 	/**
@@ -322,5 +295,4 @@ class renderer_plugin_latexport_tex extends Doku_Renderer {
 		}
 		$this->archive->appendContent($c);
 	}
-
 }
