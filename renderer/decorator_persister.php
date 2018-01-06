@@ -1,20 +1,24 @@
 <?php
-/**
- * Latexport Plugin: Exports to latex
- *
- * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author Jean-Michel Gonet <jmgonet@yahoo.com>
- */
 
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
+require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
+require_once DOKU_PLUGIN . 'latexport/renderer/decorator_includer.php';
+
 /**
- * Basic tex renderer, takes care of all formatting that does not
+ * Final tex decorator, takes care of all formatting that does not
  * require state machines, and stores content to the archive.
- * Can add more layers of dumpers to decorate the output if needed.
+ * Can add more layers of decorators over it, but this decorator has always to
+ * be at the bottom layer.
+ * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @author Jean-Michel Gonet <jmgonet@yahoo.com>
  */
-class Dumper {
+class DecoratorPersister {
+	
+	/**
+	 * Were we're going to save image files.
+	 */
 	const GRAPHICSPATH = 'images/';
 
 	/** 
