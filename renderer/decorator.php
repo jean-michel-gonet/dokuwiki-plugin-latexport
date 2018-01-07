@@ -33,88 +33,77 @@ class decorator extends Doku_Renderer {
 	 * Document start.
 	 */
 	function document_start() {
-		$this->decorator = $this->decorator->document_start();
-		return $this;
+		$this->decorator->document_start();
 	}
 
 	/**
 	 * Headers are transformed in part, chapter, section, subsection and subsubsection.
 	 */
 	function header($text, $level, $pos) {
-		$decorator = $this->decorator->header($text, $level, $pos);
-		return $this;
+		$this->decorator->header($text, $level, $pos);
 	}
 
 	/**
 	 * Open a paragraph.
 	 */
 	function p_open() {
-		$this->decorator = $this->decorator->p_open();
-		return $this;
+		$this->decorator->p_open();
 	}
 
 	/**
 	 * Renders plain text.
 	 */
 	function cdata($text) {
-		$this->decorator = $this->decorator->cdata($text);
-		return $this;
+		$this->decorator->cdata($text);
 	}
 
 	/**
 	 * Close a paragraph.
 	 */
 	function p_close() {
-		$this->decorator = $this->decorator->p_close();
-		return $this;
+		$this->decorator->p_close();
 	}
 
 	/**
 	 * Start emphasis (italics) formatting
 	 */
 	function emphasis_open() {
-		$this->decorator = $this->decorator->emphasis_open();
-		return $this;
+		$this->decorator->emphasis_open();
 	}
 
 	/**
 	 * Stop emphasis (italics) formatting
 	 */
 	function emphasis_close() {
-		$this->decorator = $this->decorator->emphasis_close();
-		return $this;
+		$this->decorator->emphasis_close();
 	}
 
 	/**
 	 * Start strong (bold) formatting
 	 */
 	function strong_open() {
-		$this->decorator = $this->decorator->strong_open();
-		return $this;
+		$this->decorator->strong_open();
 	}
 
 	/**
 	 * Stop strong (bold) formatting
 	 */
 	function strong_close() {
-		$this->decorator = $this->decorator->strong_close();
-		return $this;
+		$this->decorator->strong_close();
 	}
 
 	/**
 	 * Start underline formatting
 	 */ 
 	function underline_open() {
-		$this->decorator = $this->decorator->underline_open();
-		return $this;
+		$this->decorator->underline_open();
 	}
 
 	/**
 	 * Stop underline formatting
 	 */
 	function underline_close() {
-		$this->decorator = $this->decorator->underline_close();
-		return $this;
+		$this->decorator->underline_close();
 	}
 
 	/**
@@ -125,8 +114,7 @@ class decorator extends Doku_Renderer {
 	 * @param string|array $title name for the link, array for media file
 	 */
 	function internallink($link, $title = null) {
-		$this->decorator = $this->decorator->internallink($link, $title);
-		return $this;
+		$this->decorator->internallink($link, $title);
 	}
 
 	/**
@@ -143,17 +131,16 @@ class decorator extends Doku_Renderer {
 	function internalmedia($src, $title = null, $align = null, $width = null,
 			$height = null, $cache = null, $linking = null) {
 
-		$this->decorator = $this->decorator->internalmedia($src, $title, $align, $width, $height, $cache, $linking);
-		return $this;
+		$this->decorator->internalmedia($src, $title, $align, $width, $height, $cache, $linking);
 	}
 
 	/**
 	 * Open an unordered list
 	 */
 	function listu_open() {
-		$this->decorator = $this->decorator->listu_open();
-		return $this;
+		$this->decorator->listu_open();
 	}
+
 	/**
 	 * Open a list item
 	 *
@@ -161,32 +148,35 @@ class decorator extends Doku_Renderer {
 	 * @param bool $node true when a node; false when a leaf
 	 */
 	function listitem_open($level,$node=false) {
-		$this->decorator = $this->decorator->listitem_open($level, $node);
-		return $this;
+		$this->decorator->listitem_open($level, $node);
 	}
 
 	/**
 	 * Start the content of a list item
 	 */
 	function listcontent_open() {
-		$this->decorator = $this->decorator->listcontent_open();
-		return $this;
+		$this->decorator->listcontent_open();
 	}
 
 	/**
 	 * Stop the content of a list item
 	 */
 	function listcontent_close() {
-		$this->decorator = $this->decorator->listcontent_close();
-		return $this;
+		$this->decorator->listcontent_close();
 	}
+
+    /**
+     * Close a list item
+     */
+    function listitem_close() {
+		$this->decorator->listitem_close();
+    }
 
 	/**
 	 * Close an unordered list
 	 */
 	function listu_close() {
-		$this->decorator = $this->decorator->listu_close();
-		return $this;
+		$this->decorator->listu_close();
 	}
 
 	/**
@@ -195,15 +185,13 @@ class decorator extends Doku_Renderer {
 	 * need to reprocess.
 	 */
 	function mathjax_content($formula) {
-		$this->decorator = $this->decorator->mathjax_content($formula);
-		return $this;
+		$this->decorator->mathjax_content($formula);
 	}
 
 	/**
 	 * Closes the document
 	 */
 	function document_end(){
-		$this->decorator = $this->decorator->document_end();
-		return $this;
+		$this->decorator->document_end();
 	}
 }

@@ -27,12 +27,6 @@ class DecoratorPersister {
 	private $archive; 
 
 	/**
-	 * Flag indicating that an unordered item has open, and it
-	 * still has no content.
-	 */
-	private $bareUnorderedItem;
-
-	/**
 	 * Class constructor.
 	 * @param archive Will receive the content of the document.
 	 */
@@ -48,8 +42,6 @@ class DecoratorPersister {
 		$this->appendCommand('usepackage', 'graphicx');
 		$this->appendCommand('graphicspath', ' {'.self::GRAPHICSPATH.'} ');
 		$this->appendCommand('begin', 'document');
-
-		return $this;
 	}
 
 	/**
@@ -73,14 +65,13 @@ class DecoratorPersister {
 				$this->appendCommand('subsubsection', $text);
 				break;
 		}
-		return $this;
 	}
 
 	/**
 	 * Open a paragraph.
 	 */
 	function p_open() {
-		return $this;
+		// Nothing to do.
 	}
 
 	/**
@@ -88,7 +79,6 @@ class DecoratorPersister {
 	 */
 	function cdata($text) {
 		$this->appendContent($text);
-		return $this;
 	}
 
 	/**
@@ -96,14 +86,12 @@ class DecoratorPersister {
 	 */
 	function p_close() {
 		$this->appendContent("\r\n\r\n");
-		return $this;
 	}
 	/**
 	 * Start emphasis (italics) formatting
 	 */
 	function emphasis_open() {
 		$this->appendContent("\\emph{");
-		return $this;
 	}
 
 	/**
@@ -111,7 +99,6 @@ class DecoratorPersister {
 	 */
 	function emphasis_close() {
 		$this->appendContent("}");
-		return $this;
 	}
 
 	/**
@@ -119,7 +106,6 @@ class DecoratorPersister {
 	 */
 	function strong_open() {
 		$this->appendContent("\\textbf{");	
-		return $this;
 	}
 
 	/**
@@ -127,14 +113,12 @@ class DecoratorPersister {
 	 */
 	function strong_close() {
 		$this->appendContent("}");
-		return $this;
 	}
 	/**
 	 * Start underline formatting
 	 */ 
 	function underline_open() {
 		$this->appendContent("\\underline{");
-		return $this;
 	}
 
 	/**
@@ -142,7 +126,6 @@ class DecoratorPersister {
 	 */
 	function underline_close() {
 		$this->appendContent("}");
-		return $this;
 	}
 
 	/**
@@ -153,11 +136,11 @@ class DecoratorPersister {
 	 * @param string|array $title name for the link, array for media file
 	 */
 	function internallink($link, $title = null) {
-		if ($this->bareUnorderedItem) {
-			$this->appendContent("Include --");
-		}
 		$this->appendContent($title);
-		return $this;
+	}
+
+	function input($link) {
+		$this->appendCommand("input", $link);
 	}
 
 	/**
@@ -181,8 +164,6 @@ class DecoratorPersister {
 		$this->appendCommand('includegraphics', $this->insertImage($file), 'width=\textwidth');
 		$this->appendCommand('caption', $title);
 		$this->appendCommand('end', 'figure');
-
-		return $this;
 	}
 
 	/**
@@ -190,9 +171,8 @@ class DecoratorPersister {
 	 */
 	function listu_open() {
 		$this->appendCommand('begin', 'itemize');
-
-		return $this;
 	}
+
 	/**
 	 * Open a list item
 	 *
@@ -201,16 +181,13 @@ class DecoratorPersister {
 	 */
 	function listitem_open($level,$node=false) {
 		$this->appendContent(str_repeat('   ', $level).'\\item ');
-		$this->bareUnorderedItem = true;
-
-		return $this;
 	}
+
 	/**
 	 * Start the content of a list item
 	 */
 	function listcontent_open() {
 		// Nothing to do.
-		return $this;
 	}
 
 	/**
@@ -218,15 +195,20 @@ class DecoratorPersister {
 	 */
 	function listcontent_close() {
 		$this->appendContent("\r\n");
-		return $this;
 	}
+	
+    /**
+     * Close a list item
+     */
+    function listitem_close() {
+		// Nothing to do.
+    }
 
 	/**
 	 * Close an unordered list
 	 */
 	function listu_close() {
 		$this->appendCommand('end', 'itemize');
-		return $this;
 	}
 
 	/**
@@ -236,7 +218,6 @@ class DecoratorPersister {
 	 */
 	function mathjax_content($formula) {
 		$this->appendContent("$formula");
-		return $this;
 	}
 
 	/**
@@ -244,7 +225,6 @@ class DecoratorPersister {
 	 */
 	function document_end(){
 		$this->appendCommand('end', 'document');
-		return $this;
 	}
 
 	/**
@@ -309,11 +289,6 @@ class DecoratorPersister {
 	 * @param c The content.
 	 */
 	function appendContent($c) {
-		if ($this->bareUnorderedItem) {
-			if (!ctype_space($c)) {
-				$this->bareUnorderedItem = false;
-			}
-		}
 		$this->archive->appendContent($c);
 	}
 }

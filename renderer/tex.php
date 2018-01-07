@@ -24,7 +24,7 @@ class renderer_plugin_latexport_tex extends Decorator {
 	 * to download together.
 	 */
 	private $archive; 
-
+	
 	/**
 	 * Class constructor.
 	 */
@@ -68,14 +68,41 @@ class renderer_plugin_latexport_tex extends Decorator {
 		$this->archive->startFile(str_replace(':','-',$ID).'.tex');
 
 		// Starts the document:
-		$this->decorator = $this->decorator->document_start();
+		$this->decorator->document_start();
+	}
+	
+	/**
+	 * Open an unordered list.
+	 * Internal links that are alone in an unordered list item are rendered
+	 * as sub-document inclusions. To handle this functionality, we decorate 
+	 * the tex file with a special layer.
+	 */
+	function listu_open() {
+		$this->decorator = new DecoratorIncluder($this->decorator);
+		$this->decorator->listu_open();
+	}
+	
+	/**
+	 * Closes the unordered list.
+	 * Internal links that are alone in an unordered list item are rendered
+	 * as sub-document inclusions. To handle this functionality, we decorate 
+	 * the tex file with a special layer.
+	 */
+	function listu_close() {
+		$internalLinks = $this->decorator->getInternalLinks();
+		$this->decorator->listu_close();
+		$this->decorator = $this->decorator->decorator;
+		
+		foreach($internalLinks as $internalLink) {
+			$this->decorator->input($internalLink->getLink());
+		}
 	}
 
 	/**
 	 * Closes the document
 	 */
 	function document_end(){
-		$this->decorator = $this->decorator->document_end();
+		$this->decorator->document_end();
 
 		$this->archive->closeFile();
 		$this->doc = $this->archive->closeArchive();
