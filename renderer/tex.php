@@ -23,14 +23,27 @@ class renderer_plugin_latexport_tex extends Decorator {
 	 * To create a compressed archive with all TeX resources needed
 	 * to download together.
 	 */
-	private $archive; 
-	
+	private static $archive;
+
+
+	private static $inclusionLevel;
+
+	/**
+	 * List of includes yet to process.
+	 */
+	private $includes;
+		
 	/**
 	 * Class constructor.
 	 */
 	function __construct() {
-		$this->archive = new ArchiveHelperZip(); 
-		parent::__construct(new DecoratorPersister($this->archive));
+		if (!self::$archive) {
+			self::$archive = new ArchiveHelperZip();
+			self::$inclusionLevel = 0;
+		}
+	
+		$this->includes = new SplQueue();
+		parent::__construct(new DecoratorPersister(self::$archive));
 	}
 
 	/**
@@ -53,21 +66,25 @@ class renderer_plugin_latexport_tex extends Decorator {
 	function document_start() {
 		global $ID;
 
-		// Create HTTP headers
-		$output_filename = str_replace(':','-',$ID).'.zip';
-		$headers = array(
-				'Content-Type' => $this->archive->getContentType(),
-				'Content-Disposition' => 'attachment; filename="'.$output_filename.'";',
-				);
+		error_log("Document start $ID, ".count($this->includes). " documents to process.");
+		if (self::$inclusionLevel == 0) {
+			// Create HTTP headers
+			$output_filename = $this->texifyPageId($ID, 'zip');
+			$headers = array(
+					'Content-Type' => renderer_plugin_latexport_tex::$archive->getContentType(),
+					'Content-Disposition' => 'attachment; filename="'.$output_filename.'";',
+					);
 
-		// store the content type headers in metadata
-		p_set_metadata($ID,array('format' => array('latexport_tex' => $headers) ));
+			// store the content type headers in metadata
+			p_set_metadata($ID,array('format' => array('latexport_tex' => $headers) ));
 
-		// Starts the archive:
-		$this->archive->startArchive();
-		$this->archive->startFile(str_replace(':','-',$ID).'.tex');
-
+			// Starts the archive:
+			renderer_plugin_latexport_tex::$archive->startArchive();			
+		}
+		self::$inclusionLevel++;
+		
 		// Starts the document:
+		renderer_plugin_latexport_tex::$archive->startFile($this->texifyPageId($ID));
 		$this->decorator->document_start();
 	}
 	
@@ -94,17 +111,43 @@ class renderer_plugin_latexport_tex extends Decorator {
 		$this->decorator = $this->decorator->decorator;
 		
 		foreach($internalLinks as $internalLink) {
-			$this->decorator->input($internalLink->getLink());
+			$this->includes->push($internalLink);
+			$this->decorator->input($this->texifyPageId($internalLink->getLink()));
 		}
 	}
 
 	/**
-	 * Closes the document
+	 * Closes the document and processes the gathered includes.
 	 */
 	function document_end(){
 		$this->decorator->document_end();
 
-		$this->archive->closeFile();
-		$this->doc = $this->archive->closeArchive();
+		renderer_plugin_latexport_tex::$archive->closeFile();
+		
+		$this->processIncludes();
+		self::$inclusionLevel--;
+		if (self::$inclusionLevel == 0) {
+			$this->doc = renderer_plugin_latexport_tex::$archive->closeArchive();
+		}
+	}
+	
+	function processIncludes() {
+		error_log("Processing includes");
+		while (!$this->includes->isEmpty()) {
+			$include = $this->includes->pop();
+			$file = wikiFN($include->getLink());
+			error_log($include->getLink()."==>".$file);
+			p_cached_output($file, 'latexport_tex');
+		}
+	}
+	
+	/**
+	 * Returns a TeX compliant version of the page ID.
+	 * @param ID the page ID, or page name.
+	 * @param ext The extension. Default value is '.tex'.
+	 * @return A TeX compliant version of the page ID, with the specified extension.
+	 */
+	private function texifyPageId($ID, $ext = 'tex') {
+		return str_replace(':','-',$ID).'.'.$ext;
 	}
 }
