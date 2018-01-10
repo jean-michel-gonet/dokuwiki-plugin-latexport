@@ -134,11 +134,32 @@ class decorator extends Doku_Renderer {
 		$this->decorator->internalmedia($src, $title, $align, $width, $height, $cache, $linking);
 	}
 
+    /**
+     * Open an ordered list
+     */
+    function listo_open() {
+		$this->decorator->listo_open();
+    }
+
+    /**
+     * Close an ordered list
+     */
+    function listo_close() {
+		$this->decorator->listo_close();
+    }
+
 	/**
 	 * Open an unordered list
 	 */
 	function listu_open() {
 		$this->decorator->listu_open();
+	}
+
+	/**
+	 * Close an unordered list
+	 */
+	function listu_close() {
+		$this->decorator->listu_close();
 	}
 
 	/**
@@ -171,13 +192,6 @@ class decorator extends Doku_Renderer {
     function listitem_close() {
 		$this->decorator->listitem_close();
     }
-
-	/**
-	 * Close an unordered list
-	 */
-	function listu_close() {
-		$this->decorator->listu_close();
-	}
 
 	/**
 	 * Receives mathematic formula from Mathjax plugin.

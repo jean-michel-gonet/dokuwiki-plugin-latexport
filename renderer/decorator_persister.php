@@ -166,11 +166,32 @@ class DecoratorPersister {
 		$this->appendCommand('end', 'figure');
 	}
 
+    /**
+     * Open an ordered list
+     */
+    function listo_open() {
+		$this->appendCommand('begin', 'enumerate');
+    }
+
+    /**
+     * Close an ordered list
+     */
+    function listo_close() {
+		$this->appendCommand('end', 'enumerate');
+    }
+
 	/**
 	 * Open an unordered list
 	 */
 	function listu_open() {
 		$this->appendCommand('begin', 'itemize');
+	}
+
+	/**
+	 * Close an unordered list
+	 */
+	function listu_close() {
+		$this->appendCommand('end', 'itemize');
 	}
 
 	/**
@@ -203,13 +224,6 @@ class DecoratorPersister {
     function listitem_close() {
 		// Nothing to do.
     }
-
-	/**
-	 * Close an unordered list
-	 */
-	function listu_close() {
-		$this->appendCommand('end', 'itemize');
-	}
 
 	/**
 	 * Receives mathematic formula from Mathjax plugin.

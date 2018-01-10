@@ -78,10 +78,12 @@ class DecoratorIncluder extends Decorator {
 				$this->state = DecoratorIncluder::IN_LIST;
 				break;
 
+			case DecoratorIncluder::IN_ITEM:
 			case DecoratorIncluder::IN_CONTENT:
 			case DecoratorIncluder::IN_CONTENT_MIXED:
 				$this->decorator->listu_open();
-				return $this->decorator;
+				$this->state = DecoratorIncluder::IN_CONTENT_MIXED;
+				break;
 				
 			default:
 				trigger_error("listu_open unexpected $this->state");
@@ -119,6 +121,7 @@ class DecoratorIncluder extends Decorator {
 
 			case DecoratorIncluder::IN_CONTENT_MIXED:
 			case DecoratorIncluder::IN_CONTENT:
+			case DecoratorIncluder::IN_ITEM:
 				$this->decorator->listcontent_close();
 				break;
 			

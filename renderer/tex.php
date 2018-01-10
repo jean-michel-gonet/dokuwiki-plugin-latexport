@@ -32,12 +32,19 @@ class renderer_plugin_latexport_tex extends Decorator {
 	 * List of includes yet to process.
 	 */
 	private $includes;
+	
+	/**
+	 * Current page ID.
+	*/
+	private $currentPageId;
 		
 	/**
 	 * Class constructor.
 	 */
 	function __construct() {
+		error_log("renderer_plugin_latexport_tex construct");
 		if (!self::$archive) {
+			error_log("renderer_plugin_latexport_tex new archive");
 			self::$archive = new ArchiveHelperZip();
 			self::$inclusionLevel = 0;
 		}
@@ -66,26 +73,32 @@ class renderer_plugin_latexport_tex extends Decorator {
 	function document_start() {
 		global $ID;
 
-		error_log("Document start $ID, ".count($this->includes). " documents to process.");
+		if (!$this->currentPageId) {
+			$this->currentPageId = $ID;
+		}
+
+		error_log("Document start $this->currentPageId, ".count($this->includes). " documents to process.");
 		if (self::$inclusionLevel == 0) {
 			// Create HTTP headers
-			$output_filename = $this->texifyPageId($ID, 'zip');
+			$output_filename = $this->texifyPageId($this->currentPageId, 'zip');
 			$headers = array(
 					'Content-Type' => renderer_plugin_latexport_tex::$archive->getContentType(),
 					'Content-Disposition' => 'attachment; filename="'.$output_filename.'";',
 					);
 
 			// store the content type headers in metadata
-			p_set_metadata($ID,array('format' => array('latexport_tex' => $headers) ));
+			p_set_metadata($this->currentPageId,array('format' => array('latexport_tex' => $headers) ));
 
 			// Starts the archive:
 			renderer_plugin_latexport_tex::$archive->startArchive();			
 		}
-		self::$inclusionLevel++;
 		
 		// Starts the document:
-		renderer_plugin_latexport_tex::$archive->startFile($this->texifyPageId($ID));
-		$this->decorator->document_start();
+		renderer_plugin_latexport_tex::$archive->startFile($this->texifyPageId($this->currentPageId));
+		if (self::$inclusionLevel == 0) {
+			$this->decorator->document_start();			
+		}
+		self::$inclusionLevel++;
 	}
 	
 	/**
@@ -120,7 +133,9 @@ class renderer_plugin_latexport_tex extends Decorator {
 	 * Closes the document and processes the gathered includes.
 	 */
 	function document_end(){
-		$this->decorator->document_end();
+		if (self::$inclusionLevel == 0) {
+			$this->decorator->document_end();
+		}
 
 		renderer_plugin_latexport_tex::$archive->closeFile();
 		
@@ -137,17 +152,18 @@ class renderer_plugin_latexport_tex extends Decorator {
 			$include = $this->includes->pop();
 			$file = wikiFN($include->getLink());
 			error_log($include->getLink()."==>".$file);
+			$this->currentPageId = $include->getLink();
 			p_cached_output($file, 'latexport_tex');
 		}
 	}
 	
 	/**
 	 * Returns a TeX compliant version of the page ID.
-	 * @param ID the page ID, or page name.
+	 * @param pageId the page ID, or page name.
 	 * @param ext The extension. Default value is '.tex'.
 	 * @return A TeX compliant version of the page ID, with the specified extension.
 	 */
-	private function texifyPageId($ID, $ext = 'tex') {
-		return str_replace(':','-',$ID).'.'.$ext;
+	private function texifyPageId($pageId, $ext = 'tex') {
+		return str_replace(':','-',$pageId).'.'.$ext;
 	}
 }
