@@ -25,6 +25,46 @@ Then compile the TeX document with:
 
 ## Install PHP 7
 
+By default Mac OS X contains php 5. If you need version 7 you can install with brew:
+- Stop Apache: sudo apachectl stop
+- Then install PHP with http support:
+
+```bash
+brew tap homebrew/dupes
+brew tap homebrew/versions
+brew tap homebrew/homebrew-php
+brew unlink php56
+brew install php70 --with-httpd
+brew install php70-xdebug
+brew install mcrypt php70-mcrypt
+```
+- Then reboot your computer.
+
+OS X 10.8 and newer come with php-fpm pre-installed. You may need to force the system to use the brew version. Ensure that  ``/usr/local/sbin`` is before ``/usr/sbin`` in your PATH:
+
+  PATH="/usr/local/sbin:$PATH"
+
+Check that PHP is correctly installed in command line:
+
+```bash
+$ php --version
+PHP 7.0.0 (cli) (built: Dec  2 2015 13:05:57) ( NTS )
+Copyright (c) 1997-2015 The PHP Group
+Zend Engine v3.0.0, Copyright (c) 1998-2015 Zend Technologies
+```
+You still need to connect Apache with the new PHP. If you were using the built-in Apache, this can be confusing because ``--with-httpd`` just installed a second, brew version, whose configuration file is located in ``/usr/local/etc/httpd/httpd.conf``:
+
+- Configure it to use port 80: 
+```Listen 80``
+- Usually php7 is already activated by brew:
+```LoadModule php7_module        /usr/local/Cellar/php70/7.0.27_19/libexec/apache2/libphp7.so```
+- Activate the rewrite module: 
+```LoadModule rewrite_module libexec/apache2/mod_rewrite.so```
+- Unactivate the server pool management by commenting out:
+```#Include /private/etc/apache2/extra/httpd-mpm.conf```
+- Activate the virtual servers by uncommenting:
+```Include /private/etc/apache2/extra/httpd-vhosts.conf```
+
 add the taps, unlink the old PHP if required and add php7
 
 ```bash
@@ -37,23 +77,11 @@ brew install php70-xdebug
 brew install mcrypt php70-mcrypt
 ```
 
-OS X 10.8 and newer come with php-fpm pre-installed, to ensure you are using the brew version you need to make sure /usr/local/sbin is before /usr/sbin in your PATH:
-
-  PATH="/usr/local/sbin:$PATH"
-
-Check that PHP is correctly installed in command line:
-
-```bash
-$ php --version
-PHP 7.0.0 (cli) (built: Dec  2 2015 13:05:57) ( NTS )
-Copyright (c) 1997-2015 The PHP Group
-Zend Engine v3.0.0, Copyright (c) 1998-2015 Zend Technologies
-```
 
 To link Apache with the new PHP:
 - Locate the php-apache library file. Probably somewhere along ``/usr/local/opt/php70/libexec/apache2/libphp7.so``.
 - Open the apache configuration file in ``/etc/apache2/httpd.conf``
-- Change the loading of php with: ``
+- Change the loading of php with: ``jkjkk``
 All ready to go!
 
 References
