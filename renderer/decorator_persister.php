@@ -4,7 +4,6 @@
 if(!defined('DOKU_INC')) die();
 
 require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator_includer.php';
 
 /**
  * Final tex decorator, takes care of all formatting that does not
@@ -24,7 +23,9 @@ class DecoratorPersister {
 	/** 
 	 * Receives the content of the document.
 	 */
-	private $archive; 
+	private $archive;
+	
+	private $matterNumber;
 
 	/**
 	 * Class constructor.
@@ -32,37 +33,54 @@ class DecoratorPersister {
 	 */
 	function __construct($archive) {
 		$this->archive = $archive;
+		$this->matterNumber = 0;
 	}
 
 	/**
 	 * Starts the latex document.
 	 */
-	function document_start() {
-		$this->appendCommand('documentclass', 'book');
-		$this->appendCommand('usepackage', 'graphicx');
-		$this->appendCommand('graphicspath', ' {'.self::GRAPHICSPATH.'} ');
-		$this->appendCommand('begin', 'document');
+	function document_start($recursionLevel) {
+		if ($recursionLevel == 0) {
+			$this->appendCommand('documentclass', 'book');
+			$this->appendCommand('usepackage', 'graphicx');
+			$this->appendCommand('graphicspath', ' {'.self::GRAPHICSPATH.'} ');
+			$this->appendCommand('begin', 'document');
+		}
 	}
 
 	/**
 	 * Headers are transformed in part, chapter, section, subsection and subsubsection.
 	 */
 	function header($text, $level, $pos) {
+		error_log("DecoratorPersister::Rendering header $level - '$text'");
 		switch($level) {
 			case 1:
+				switch($this->matterNumber) {
+					case 0:
+						$this->appendContent("\\frontmatter\r\n");
+						$this->matterNumber = 1;
+						break;
+					case 1:
+						$this->appendContent("\\appendix\r\n");
+						$this->matterNumber = 2;
+						break;
+					default:
+						$this->appendCommand('chapter', $text);
+						break;
+				}
+				break;
+
+			case 2:
 				$this->appendCommand('part', $text);
 				break;
-			case 2:
+			case 3:
 				$this->appendCommand('chapter', $text);
 				break;
-			case 3:
+			case 4:
 				$this->appendCommand('section', $text);
 				break;
-			case 4:
-				$this->appendCommand('subsection', $text);
-				break;
 			default:
-				$this->appendCommand('subsubsection', $text);
+				$this->appendCommand('subsection', $text);
 				break;
 		}
 	}
@@ -237,8 +255,11 @@ class DecoratorPersister {
 	/**
 	 * Ends the document
 	 */
-	function document_end(){
-		$this->appendCommand('end', 'document');
+	function document_end($recursionLevel = 0){
+		error_log("DecoratorPersister::document_end recursionLevel = $recursionLevel");
+		if ($recursionLevel == 0) {
+			$this->appendCommand('end', 'document');
+		}
 	}
 
 	/**

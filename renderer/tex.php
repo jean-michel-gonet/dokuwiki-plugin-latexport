@@ -11,6 +11,8 @@ if(!defined('DOKU_INC')) die();
 
 require_once DOKU_PLUGIN . 'latexport/helpers/archive_helper_zip.php';
 require_once DOKU_PLUGIN . 'latexport/renderer/decorator_persister.php';
+require_once DOKU_PLUGIN . 'latexport/renderer/decorator_includer.php';
+require_once DOKU_PLUGIN . 'latexport/renderer/decorator_headings.php';
 
 /**
  * A façade between doku wiki and the actual tex renderer.
@@ -23,10 +25,19 @@ class renderer_plugin_latexport_tex extends Decorator {
 	 * To create a compressed archive with all TeX resources needed
 	 * to download together.
 	 */
-	private static $archive;
+	private $archive;
 
+	/**
+	 * Keeps track of the recursion level.
+	 * Root page has a recursion level 0. Children pages have a level of 1,
+	 * grand-children have a level of 2, etc.
+	 */
+	private $recursionLevel;
 
-	private static $inclusionLevel;
+	/**
+	 * Keeps track of heading level.
+	 */
+	private $headingLevel;
 
 	/**
 	 * List of includes yet to process.
@@ -35,7 +46,7 @@ class renderer_plugin_latexport_tex extends Decorator {
 	
 	/**
 	 * Current page ID.
-	*/
+	 */
 	private $currentPageId;
 		
 	/**
@@ -43,14 +54,16 @@ class renderer_plugin_latexport_tex extends Decorator {
 	 */
 	function __construct() {
 		error_log("renderer_plugin_latexport_tex construct");
-		if (!self::$archive) {
-			error_log("renderer_plugin_latexport_tex new archive");
-			self::$archive = new ArchiveHelperZip();
-			self::$inclusionLevel = 0;
-		}
-	
+
+		$this->archive = new ArchiveHelperZip();
 		$this->includes = new SplQueue();
-		parent::__construct(new DecoratorPersister(self::$archive));
+		$this->recursionLevel = 0;	
+		$this->headingLevel = 0;
+
+		parent::__construct(
+			new DecoratorHeadings(
+				new DecoratorIncluder($this->includes,
+					new DecoratorPersister($this->archive))));
 	}
 
 	/**
@@ -78,11 +91,11 @@ class renderer_plugin_latexport_tex extends Decorator {
 		}
 
 		error_log("Document start $this->currentPageId, ".count($this->includes). " documents to process.");
-		if (self::$inclusionLevel == 0) {
+		if ($this->recursionLevel == 0) {
 			// Create HTTP headers
 			$output_filename = $this->texifyPageId($this->currentPageId, 'zip');
 			$headers = array(
-					'Content-Type' => renderer_plugin_latexport_tex::$archive->getContentType(),
+					'Content-Type' => $this->archive->getContentType(),
 					'Content-Disposition' => 'attachment; filename="'.$output_filename.'";',
 					);
 
@@ -90,59 +103,36 @@ class renderer_plugin_latexport_tex extends Decorator {
 			p_set_metadata($this->currentPageId,array('format' => array('latexport_tex' => $headers) ));
 
 			// Starts the archive:
-			renderer_plugin_latexport_tex::$archive->startArchive();			
+			$this->archive->startArchive();			
 		}
 		
 		// Starts the document:
-		renderer_plugin_latexport_tex::$archive->startFile($this->texifyPageId($this->currentPageId));
-		if (self::$inclusionLevel == 0) {
-			$this->decorator->document_start();			
-		}
-		self::$inclusionLevel++;
-	}
-	
-	/**
-	 * Open an unordered list.
-	 * Internal links that are alone in an unordered list item are rendered
-	 * as sub-document inclusions. To handle this functionality, we decorate 
-	 * the tex file with a special layer.
-	 */
-	function listu_open() {
-		$this->decorator = new DecoratorIncluder($this->decorator);
-		$this->decorator->listu_open();
-	}
-	
-	/**
-	 * Closes the unordered list.
-	 * Internal links that are alone in an unordered list item are rendered
-	 * as sub-document inclusions. To handle this functionality, we decorate 
-	 * the tex file with a special layer.
-	 */
-	function listu_close() {
-		$internalLinks = $this->decorator->getInternalLinks();
-		$this->decorator->listu_close();
-		$this->decorator = $this->decorator->decorator;
-		
-		foreach($internalLinks as $internalLink) {
-			$this->includes->push($internalLink);
-			$this->decorator->input($this->texifyPageId($internalLink->getLink()));
-		}
+		$this->archive->startFile($this->texifyPageId($this->currentPageId));
+		$this->decorator->document_start($this->recursionLevel);			
+		$this->recursionLevel++;
 	}
 
+	/**
+	 * Propagates the heading level corrected with base heading level retrieved
+	 * from the include link.
+	 */
+	function header($text, $level, $pos) {
+		$this->decorator->header($text, $level + $this->headingLevel, $pos);
+	}
+	
 	/**
 	 * Closes the document and processes the gathered includes.
 	 */
 	function document_end(){
-		if (self::$inclusionLevel == 0) {
-			$this->decorator->document_end();
-		}
+		$this->decorator->document_end($this->recursionLevel - 1);
 
-		renderer_plugin_latexport_tex::$archive->closeFile();
-		
+		$this->archive->closeFile();
+
 		$this->processIncludes();
-		self::$inclusionLevel--;
-		if (self::$inclusionLevel == 0) {
-			$this->doc = renderer_plugin_latexport_tex::$archive->closeArchive();
+		
+		$this->recursionLevel--;
+		if ($this->recursionLevel == 0) {
+			$this->doc = $this->archive->closeArchive();
 		}
 	}
 	
@@ -151,19 +141,10 @@ class renderer_plugin_latexport_tex extends Decorator {
 		while (!$this->includes->isEmpty()) {
 			$include = $this->includes->pop();
 			$file = wikiFN($include->getLink());
-			error_log($include->getLink()."==>".$file);
+			error_log($include->toString()."==>".$file);
 			$this->currentPageId = $include->getLink();
+			$this->headingLevel = $include->getHeadingLevel();
 			p_cached_output($file, 'latexport_tex');
 		}
-	}
-	
-	/**
-	 * Returns a TeX compliant version of the page ID.
-	 * @param pageId the page ID, or page name.
-	 * @param ext The extension. Default value is '.tex'.
-	 * @return A TeX compliant version of the page ID, with the specified extension.
-	 */
-	private function texifyPageId($pageId, $ext = 'tex') {
-		return str_replace(':','-',$pageId).'.'.$ext;
-	}
+	}	
 }

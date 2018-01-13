@@ -17,7 +17,7 @@ require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
  */
 class DecoratorIncluder extends Decorator {
 
-	const START                   = 999;
+	const NOT_IN_LIST              =  999;
 	/** State machine: in a list. */
 	const IN_LIST                  = 1000;
 	/** State machine: in an item of a list. */
@@ -32,12 +32,16 @@ class DecoratorIncluder extends Decorator {
 	const IN_CONTENT_NESTED_LIST   = 1005;
 
 	/** State of the state machine. */
-	private $state = START;
+	private $state;
+	/** Level of the most recent heading. */
+	private $headingLevel = 0;
 
 	/** Contains the page found in the last processed internal link. */
 	private $internalLinkToInclude;
-	/** Contains the list of pages to include. */
-	private $internalLinks = [];
+	/** The list of internal links in the current list. */
+	private $internalLinksToInclude;
+	/** A queue of links to include. */
+	private $includes;
 
 	/** If mixed content is found, then we'll need to open the list. */
 	private $needToOpenList;
@@ -52,18 +56,24 @@ class DecoratorIncluder extends Decorator {
 	
 	/**
 	 * Class constructor.
+	 * @param includes A queue of links to include.
 	 * @param decorator To send further the decorated events.
 	 */
-	function __construct($decorator) {
+	function __construct($includes, $decorator) {
 		parent::__construct($decorator);
-		$this->state = DecoratorIncluder::START;
+		$this->includes = $includes;
+		$this->state = DecoratorIncluder::NOT_IN_LIST;
+		$this->headingLevel = 0;
 	}
-
+	
 	/**
-	 * Returns the list of internal links to include.
+	 * Unordered list item starting with a link, includes the destination page, 
+	 * using the current level of heading as the base level.
 	 */
-	function getInternalLinks() {
-		return $this->internalLinks;
+	function header($text, $level, $pos) {
+		$this->headingLevel = $level;
+		error_log("DecoratorIncluder::Header $text - $this->headingLevel");
+		$this->decorator->header($text, $level, $pos);
 	}
 
 	/**
@@ -71,11 +81,13 @@ class DecoratorIncluder extends Decorator {
 	 * If 
 	 */
 	function listu_open() {
+		error_log("DecoratorIncluder::listu_open $this->state");
 		switch($this->state) {
-			case DecoratorIncluder::START:
+			case DecoratorIncluder::NOT_IN_LIST:
 				$this->needToOpenList = true;
 				$this->mixedContentFoundInSomeItems = false;
 				$this->state = DecoratorIncluder::IN_LIST;
+				$this->internalLinksToInclude = [];
 				break;
 
 			case DecoratorIncluder::IN_ITEM:
@@ -97,6 +109,7 @@ class DecoratorIncluder extends Decorator {
 	 * @param bool $node true when a node; false when a leaf
 	 */
 	function listitem_open($level,$node=false) {
+		error_log("DecoratorIncluder::listitem_open $this->state");
 		$this->state = DecoratorIncluder::IN_ITEM;
 		$this->needToOpenItem = true;
 		$this->mixedContentFoundInThisItem = false;
@@ -106,6 +119,7 @@ class DecoratorIncluder extends Decorator {
 	 * Start the content of a list item
 	 */
 	function listcontent_open() {
+		error_log("DecoratorIncluder::listcontent_open $this->state");
 		$this->state = DecoratorIncluder::IN_CONTENT;
 		$this->needToOpenContent = true;
 	}
@@ -114,9 +128,10 @@ class DecoratorIncluder extends Decorator {
 	 * Stop the content of a list item
 	 */
 	function listcontent_close() {
+		error_log("DecoratorIncluder::listcontent_close $this->state");
 		switch($this->state) {
 			case DecoratorIncluder::IN_CONTENT_INTERNAL_LINK:
-				$this->internalLinks[] = $this->internalLinkToInclude;
+			$this->internalLinksToInclude[] = $this->internalLinkToInclude;
 				break;
 
 			case DecoratorIncluder::IN_CONTENT_MIXED:
@@ -135,6 +150,7 @@ class DecoratorIncluder extends Decorator {
      * Close a list item
      */
     function listitem_close() {
+		error_log("DecoratorIncluder::listitem_close $this->state : mixedContent $this->mixedContentFoundInThisItem");
 		if ($this->mixedContentFoundInThisItem) {
 			$this->decorator->listitem_close();
 		}
@@ -145,9 +161,21 @@ class DecoratorIncluder extends Decorator {
 	 * Close an unordered list
 	 */
 	function listu_close() {
+		error_log("DecoratorIncluder::listu_close $this->state : mixedContent $this->mixedContentFoundInSomeItems");
+		// Only needs to render the list closing if there are items in it:
 		if ($this->mixedContentFoundInSomeItems) {
 			$this->decorator->listu_close();
 		}
+		
+		// Creates an input for each internal link to include, and stores the
+		// destination pages in the queue:
+		foreach($this->internalLinksToInclude as $internalLink) {
+			$this->includes->push($internalLink);
+			$this->decorator->input($this->texifyPageId($internalLink->getLink()));
+		}
+		
+		// Not in list any more:
+		$this->state = DecoratorIncluder::NOT_IN_LIST;
 	}
 
 	/**
@@ -162,13 +190,13 @@ class DecoratorIncluder extends Decorator {
 		switch($this->state) {
 
 			case DecoratorIncluder::IN_CONTENT:
-				$this->internalLinkToInclude = new InternalLink($link, $title);
+				error_log("Including $link - $this->headingLevel");
+				$this->internalLinkToInclude = new InternalLink($link, $this->headingLevel, $title);
 				$this->state = DecoratorIncluder::IN_CONTENT_INTERNAL_LINK;
 				break;
 
 			case DecoratorIncluder::IN_CONTENT_INTERNAL_LINK:
 				$this->internalLinkToInclude = null;
-				$this->decorator->internallink($this->internalLinkToInclude->getLink(), $this->internalLinkToInclude->getTitle());
 				$this->decorator->internallink($link, $title);
 				$this->state = DecoratorIncluder::IN_CONTENT_MIXED;
 				break;
@@ -258,22 +286,24 @@ class DecoratorIncluder extends Decorator {
 	}
 
 	private function thereIsMixedContentInThisItem() {
-		if ($this->needToOpenList) {
-			parent::listu_open();
-			$this->needToOpenList = false;
-		}
+		if ($this->state != DecoratorIncluder::NOT_IN_LIST) {
+			if ($this->needToOpenList) {
+				parent::listu_open();
+				$this->needToOpenList = false;
+			}
 
-		if ($this->needToOpenItem) {
-			parent::listitem_open(1);
-			$this->needToOpenItem = false;
-		}
+			if ($this->needToOpenItem) {
+				parent::listitem_open(1);
+				$this->needToOpenItem = false;
+			}
 
-		if ($this->needToOpenContent) {
-			parent::listcontent_open();
-			$this->needToOpenContent = false;
+			if ($this->needToOpenContent) {
+				parent::listcontent_open();
+				$this->needToOpenContent = false;
+			}
+			$this->mixedContentFoundInThisItem = true;
+			$this->mixedContentFoundInSomeItems = true;
+			$this->state = DecoratorIncluder::IN_CONTENT_MIXED;
 		}
-		$this->mixedContentFoundInThisItem = true;
-		$this->mixedContentFoundInSomeItems = true;
-		$this->state = DecoratorIncluder::IN_CONTENT_MIXED;
 	}	
 }

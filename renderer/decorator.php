@@ -32,8 +32,8 @@ class decorator extends Doku_Renderer {
 	/**
 	 * Document start.
 	 */
-	function document_start() {
-		$this->decorator->document_start();
+	function document_start($recursionLevel = 0) {
+		$this->decorator->document_start($recursionLevel);
 	}
 
 	/**
@@ -115,6 +115,10 @@ class decorator extends Doku_Renderer {
 	 */
 	function internallink($link, $title = null) {
 		$this->decorator->internallink($link, $title);
+	}
+
+	function input($link) {
+		$this->decorator->input($link);
 	}
 
 	/**
@@ -205,7 +209,18 @@ class decorator extends Doku_Renderer {
 	/**
 	 * Closes the document
 	 */
-	function document_end(){
-		$this->decorator->document_end();
+	function document_end($recursionLevel = 0){
+		$this->decorator->document_end($recursionLevel);
 	}
+	
+	/**
+	 * Returns a TeX compliant version of the page ID.
+	 * @param pageId the page ID, or page name.
+	 * @param ext The extension. Default value is '.tex'.
+	 * @return A TeX compliant version of the page ID, with the specified extension.
+	 */
+	protected function texifyPageId($pageId, $ext = 'tex') {
+		return str_replace(':','-',$pageId).'.'.$ext;
+	}
+	
 }

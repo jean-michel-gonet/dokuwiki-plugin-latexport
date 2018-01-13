@@ -19,13 +19,18 @@ class InternalLink {
 	/** The link title. */
 	private $title;
 	
+	/** The heading level in which the link was found. */
+	private $headingLevel;
+	
 	/**
 	 * Class constructor.
 	 * @param link The link, as provided by internallink method.
+	 * @param headingLevel The heading level in which the link was found.
 	 * @param title The title, as provided by internallink method.
 	 */
-	function __construct($link, $title = null) {
+	function __construct($link, $headingLevel, $title = null) {
 		$this->link = $link;
+		$this->headingLevel = $headingLevel;
 		$this->title = $title;
 	}
 
@@ -38,8 +43,12 @@ class InternalLink {
 	function getTitle() {
 		return $this->title;
 	}
+
+	function getHeadingLevel() {
+		return $this->headingLevel;
+	}
 	
 	function toString() {
-		return $this->title." --- ".$this->link;
+		return "$this->title ($this->headingLevel) --- $this->link";
 	}
 }
