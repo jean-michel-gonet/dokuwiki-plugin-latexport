@@ -55,41 +55,47 @@ Zend Engine v3.0.0, Copyright (c) 1998-2015 Zend Technologies
 You still need to connect Apache with the new PHP. If you were using the built-in Apache, this can be confusing because ``--with-httpd`` just installed a second, brew version, whose configuration file is located in ``/usr/local/etc/httpd/httpd.conf``:
 
 - Configure it to use port 80: 
-```Listen 80``
+
+```Listen 80```
+
 - Usually php7 is already activated by brew:
+
 ```LoadModule php7_module        /usr/local/Cellar/php70/7.0.27_19/libexec/apache2/libphp7.so```
+
 - Activate the rewrite module: 
+
 ```LoadModule rewrite_module libexec/apache2/mod_rewrite.so```
+
 - Unactivate the server pool management by commenting out:
+
 ```#Include /private/etc/apache2/extra/httpd-mpm.conf```
+
 - Activate the virtual servers by uncommenting:
+
 ```Include /private/etc/apache2/extra/httpd-vhosts.conf```
 
-add the taps, unlink the old PHP if required and add php7
+Now you can add the configuration for your web site in ``extra/http-vhosts.conf``, adding the ``FilesMatch`` tag like in:
 
-```bash
-brew tap homebrew/dupes
-brew tap homebrew/versions
-brew tap homebrew/homebrew-php
-brew unlink php56
-brew install php70 --with-httpd
-brew install php70-xdebug
-brew install mcrypt php70-mcrypt
 ```
+<VirtualHost *:80>
+    # Official address for user web site:
+    ServerName local.whatever.com
 
+    # Email of administrator:
+    ServerAdmin me@myself.com
 
-To link Apache with the new PHP:
-- Locate the php-apache library file. Probably somewhere along ``/usr/local/opt/php70/libexec/apache2/libphp7.so``.
-- Open the apache configuration file in ``/etc/apache2/httpd.conf``
-- Change the loading of php with: ``jkjkk``
-All ready to go!
-
-References
+    # Activate php
+    <FilesMatch .php$>
+        SetHandler application/x-httpd-php
+    </FilesMatch>
+    . . .
+</VirtualHost>
+```
 
 - Original instructions: https://gist.github.com/davebarnwell/1d413ffbc9660469e9aa685d8387b87f
 - homebrew instructions http://justinhileman.info/article/reinstalling-php-on-mac-os-x/
 - from Justin Hileman https://www.twitter.com/bobthecow
-
+- https://stackoverflow.com/questions/39456022/php7-installed-by-homebrew-doesnt-work-with-apache-on-macos
 
 ## Use installed fonts in Mac OS X
 (To follow this procedure you need `fontspec` package and `otfinfo` utility. If you don't know how to get them, install Tex Live from the official web site: https://tug.org/texlive/ )
