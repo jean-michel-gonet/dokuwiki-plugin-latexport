@@ -23,6 +23,38 @@ Be sure that the following snippet is present in the document header:
 Then compile the TeX document with:
 	lualatex [name-of-page].tex
 
+## Install PHP 7
+
+add the taps, unlink the old PHP if required and add php7
+
+```bash
+brew tap homebrew/dupes
+brew tap homebrew/versions
+brew tap homebrew/homebrew-php
+brew unlink php56
+brew install php70
+brew install php70-xdebug
+brew install mcrypt php70-mcrypt
+```
+
+And the result?
+
+```bash
+$ php --version
+PHP 7.0.0 (cli) (built: Dec  2 2015 13:05:57) ( NTS )
+Copyright (c) 1997-2015 The PHP Group
+Zend Engine v3.0.0, Copyright (c) 1998-2015 Zend Technologies
+```
+
+All ready to go!
+
+References
+
+- Original instructions: https://gist.github.com/davebarnwell/1d413ffbc9660469e9aa685d8387b87f
+- homebrew instructions http://justinhileman.info/article/reinstalling-php-on-mac-os-x/
+- from Justin Hileman https://www.twitter.com/bobthecow
+
+
 ## Use installed fonts in Mac OS X
 (To follow this procedure you need `fontspec` package and `otfinfo` utility. If you don't know how to get them, install Tex Live from the official web site: https://tug.org/texlive/ )
 
