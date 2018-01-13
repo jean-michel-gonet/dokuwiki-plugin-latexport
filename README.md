@@ -32,12 +32,16 @@ brew tap homebrew/dupes
 brew tap homebrew/versions
 brew tap homebrew/homebrew-php
 brew unlink php56
-brew install php70
+brew install php70 --with-httpd
 brew install php70-xdebug
 brew install mcrypt php70-mcrypt
 ```
 
-And the result?
+OS X 10.8 and newer come with php-fpm pre-installed, to ensure you are using the brew version you need to make sure /usr/local/sbin is before /usr/sbin in your PATH:
+
+  PATH="/usr/local/sbin:$PATH"
+
+Check that PHP is correctly installed in command line:
 
 ```bash
 $ php --version
@@ -46,6 +50,10 @@ Copyright (c) 1997-2015 The PHP Group
 Zend Engine v3.0.0, Copyright (c) 1998-2015 Zend Technologies
 ```
 
+To link Apache with the new PHP:
+- Locate the php-apache library file. Probably somewhere along ``/usr/local/opt/php70/libexec/apache2/libphp7.so``.
+- Open the apache configuration file in ``/etc/apache2/httpd.conf``
+- Change the loading of php with: ``
 All ready to go!
 
 References
