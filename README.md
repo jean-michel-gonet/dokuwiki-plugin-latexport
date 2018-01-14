@@ -115,17 +115,64 @@ To overcome this problem, I uploaded the TTF file to a online font converter (fo
 To me this worked.
 
 ## Unit testing
-As plugin has a quite complex behavior, it is extensively tested with a PHPUnit test suite included with PHAR.
+As plugin has a quite complex behavior, it is extensively tested with a PHPUnit test suite included with PHAR
+
+- Install PHPUnit from the PHAR:
+
+```bash
+wget https://phar.phpunit.de/phpunit-5.phar
+chmod +x phpunit-5.7.26.phar
+sudo mv phpunit-5.7.26.phar /usr/local/bin/phpunit
+```
+- Verify the installation:
+
+```bash
+phpunit --version
+PHPUnit 5.7.26 by Sebastian Bergmann and contributors.
+```
+
+- Install PHPAb from the PHAR:
+```bash
+wget https://github.com/theseer/Autoload/releases/download/1.24.1/phpab-1.24.1.phar
+chmod +x phpunit-5.7.26.phar
+sudo mv phpunit-5.7.26.phar /usr/local/bin/phpab
+```
+- Verify the installation:
+
+```bash
+phpab --version
+phpab 1.24.1 - Copyright (C) 2009 - 2018 by Arne Blankerts and Contributors
+```
+## Adding the timezone configuration
+
+You may be required to add the timezone configuration.
+
+```bash
+php --ini
+Configuration File (php.ini) Path: /usr/local/etc/php/5.6
+Loaded Configuration File:         /usr/local/etc/php/5.6/php.ini
+Scan for additional .ini files in: /usr/local/etc/php/5.6/conf.d
+```
+
+Edit the ``php.ini`` configuration file and add one of the supported time zones (see http://php.net/manual/en/timezones.php) by uncommenting the ``date.timezone`` entry:
+
+```
+[Date]
+; Defines the default timezone used by the date functions
+; http://php.net/date.timezone
+date.timezone = Europe/Paris
+```
 
 ## Install PHP 7
+
+As dokuwiki is still compatible with PHP5, I use both PHP7 and PHP5 to ensure that plugin is also compatible with both versions.
 
 By default Mac OS X contains php 5. If you need version 7 you can install with brew:
 - Stop Apache: sudo apachectl stop
 - Then install PHP with http support:
 
 ```bash
-brew tap homebrew/dupes
-brew tap homebrew/versions
+brew tap homebrew/core
 brew tap homebrew/homebrew-php
 brew unlink php56
 brew install php70 --with-httpd
