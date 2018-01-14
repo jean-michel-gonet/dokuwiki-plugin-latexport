@@ -23,80 +23,6 @@ Be sure that the following snippet is present in the document header:
 Then compile the TeX document with:
 	lualatex [name-of-page].tex
 
-## Install PHP 7
-
-By default Mac OS X contains php 5. If you need version 7 you can install with brew:
-- Stop Apache: sudo apachectl stop
-- Then install PHP with http support:
-
-```bash
-brew tap homebrew/dupes
-brew tap homebrew/versions
-brew tap homebrew/homebrew-php
-brew unlink php56
-brew install php70 --with-httpd
-brew install php70-xdebug
-brew install mcrypt php70-mcrypt
-```
-- Then reboot your computer.
-
-OS X 10.8 and newer come with php-fpm pre-installed. You may need to force the system to use the brew version. Ensure that  ``/usr/local/sbin`` is before ``/usr/sbin`` in your PATH:
-
-  PATH="/usr/local/sbin:$PATH"
-
-Check that PHP is correctly installed in command line:
-
-```bash
-$ php --version
-PHP 7.0.0 (cli) (built: Dec  2 2015 13:05:57) ( NTS )
-Copyright (c) 1997-2015 The PHP Group
-Zend Engine v3.0.0, Copyright (c) 1998-2015 Zend Technologies
-```
-You still need to connect Apache with the new PHP. If you were using the built-in Apache, this can be confusing because ``--with-httpd`` just installed a second, brew version, whose configuration file is located in ``/usr/local/etc/httpd/httpd.conf``:
-
-- Configure it to use port 80: 
-
-```Listen 80```
-
-- Usually php7 is already activated by brew:
-
-```LoadModule php7_module        /usr/local/Cellar/php70/7.0.27_19/libexec/apache2/libphp7.so```
-
-- Activate the rewrite module: 
-
-```LoadModule rewrite_module libexec/apache2/mod_rewrite.so```
-
-- Unactivate the server pool management by commenting out:
-
-```#Include /private/etc/apache2/extra/httpd-mpm.conf```
-
-- Activate the virtual servers by uncommenting:
-
-```Include /private/etc/apache2/extra/httpd-vhosts.conf```
-
-Now you can add the configuration for your web site in ``extra/http-vhosts.conf``, adding the ``FilesMatch`` tag like in:
-
-```
-<VirtualHost *:80>
-    # Official address for user web site:
-    ServerName local.whatever.com
-
-    # Email of administrator:
-    ServerAdmin me@myself.com
-
-    # Activate php
-    <FilesMatch .php$>
-        SetHandler application/x-httpd-php
-    </FilesMatch>
-    . . .
-</VirtualHost>
-```
-
-- Original instructions: https://gist.github.com/davebarnwell/1d413ffbc9660469e9aa685d8387b87f
-- homebrew instructions http://justinhileman.info/article/reinstalling-php-on-mac-os-x/
-- from Justin Hileman https://www.twitter.com/bobthecow
-- https://stackoverflow.com/questions/39456022/php7-installed-by-homebrew-doesnt-work-with-apache-on-macos
-
 ## Use installed fonts in Mac OS X
 (To follow this procedure you need `fontspec` package and `otfinfo` utility. If you don't know how to get them, install Tex Live from the official web site: https://tug.org/texlive/ )
 
@@ -187,3 +113,80 @@ To overcome this problem, I uploaded the TTF file to a online font converter (fo
 4. Check them with `otfinfo`. 
 
 To me this worked.
+
+## Unit testing
+As plugin has a quite complex behavior, it is extensively tested with a PHPUnit test suite included with PHAR.
+
+## Install PHP 7
+
+By default Mac OS X contains php 5. If you need version 7 you can install with brew:
+- Stop Apache: sudo apachectl stop
+- Then install PHP with http support:
+
+```bash
+brew tap homebrew/dupes
+brew tap homebrew/versions
+brew tap homebrew/homebrew-php
+brew unlink php56
+brew install php70 --with-httpd
+brew install php70-xdebug
+brew install mcrypt php70-mcrypt
+```
+- Then reboot your computer.
+
+OS X 10.8 and newer come with php-fpm pre-installed. You may need to force the system to use the brew version. Ensure that  ``/usr/local/sbin`` is before ``/usr/sbin`` in your PATH:
+
+  PATH="/usr/local/sbin:$PATH"
+
+Check that PHP is correctly installed in command line:
+
+```bash
+$ php --version
+PHP 7.0.0 (cli) (built: Dec  2 2015 13:05:57) ( NTS )
+Copyright (c) 1997-2015 The PHP Group
+Zend Engine v3.0.0, Copyright (c) 1998-2015 Zend Technologies
+```
+You still need to connect Apache with the new PHP. If you were using the built-in Apache, this can be confusing because ``--with-httpd`` just installed a second, brew version, whose configuration file is located in ``/usr/local/etc/httpd/httpd.conf``:
+
+- Configure it to use port 80: 
+
+```Listen 80```
+
+- Usually php7 is already activated by brew:
+
+```LoadModule php7_module        /usr/local/Cellar/php70/7.0.27_19/libexec/apache2/libphp7.so```
+
+- Activate the rewrite module: 
+
+```LoadModule rewrite_module libexec/apache2/mod_rewrite.so```
+
+- Unactivate the server pool management by commenting out:
+
+```#Include /private/etc/apache2/extra/httpd-mpm.conf```
+
+- Activate the virtual servers by uncommenting:
+
+```Include /private/etc/apache2/extra/httpd-vhosts.conf```
+
+Now you can add the configuration for your web site in ``extra/http-vhosts.conf``, adding the ``FilesMatch`` tag like in:
+
+```
+<VirtualHost *:80>
+    # Official address for user web site:
+    ServerName local.whatever.com
+
+    # Email of administrator:
+    ServerAdmin me@myself.com
+
+    # Activate php
+    <FilesMatch .php$>
+        SetHandler application/x-httpd-php
+    </FilesMatch>
+    . . .
+</VirtualHost>
+```
+
+- Original instructions: https://gist.github.com/davebarnwell/1d413ffbc9660469e9aa685d8387b87f
+- homebrew instructions http://justinhileman.info/article/reinstalling-php-on-mac-os-x/
+- from Justin Hileman https://www.twitter.com/bobthecow
+- https://stackoverflow.com/questions/39456022/php7-installed-by-homebrew-doesnt-work-with-apache-on-macos
