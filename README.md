@@ -1,4 +1,4 @@
-# dokuwiki-plugin-latexport
+# Using the dokuwiki-plugin-latexport
 A latex export renderer plugin to export latex documents from Dokuwiki. In early stages. Very early stages.
 
 Call the export with:
@@ -114,58 +114,25 @@ To overcome this problem, I uploaded the TTF file to a online font converter (fo
 
 To me this worked.
 
-## Unit testing
-As plugin has a quite complex behavior, it is extensively tested with a PHPUnit test suite included with PHAR
+# Extending the dokuwiki-plugin-latexport
+To develop extension to the plugin you need:
 
-- Install PHPUnit from the PHAR:
+- A development environment with PHP5 or later.
+- A development version of dokuwiki and a configured web site.
+- PhpUnit installed as a PHAR in the path.
+- Checkout the dokuwiki-plugin-latexport in the corresponding plugin folder of dokuwiki.
 
-```bash
-wget https://phar.phpunit.de/phpunit-5.phar
-chmod +x phpunit-5.7.26.phar
-sudo mv phpunit-5.7.26.phar /usr/local/bin/phpunit
-```
-- Verify the installation:
-
-```bash
-phpunit --version
-PHPUnit 5.7.26 by Sebastian Bergmann and contributors.
-```
-
-- Install PHPAb from the PHAR:
-```bash
-wget https://github.com/theseer/Autoload/releases/download/1.24.1/phpab-1.24.1.phar
-chmod +x phpunit-5.7.26.phar
-sudo mv phpunit-5.7.26.phar /usr/local/bin/phpab
-```
-- Verify the installation:
-
-```bash
-phpab --version
-phpab 1.24.1 - Copyright (C) 2009 - 2018 by Arne Blankerts and Contributors
-```
-## Adding the timezone configuration
-
-You may be required to add the timezone configuration.
-
-```bash
-php --ini
-Configuration File (php.ini) Path: /usr/local/etc/php/5.6
-Loaded Configuration File:         /usr/local/etc/php/5.6/php.ini
-Scan for additional .ini files in: /usr/local/etc/php/5.6/conf.d
-```
-
-Edit the ``php.ini`` configuration file and add one of the supported time zones (see http://php.net/manual/en/timezones.php) by uncommenting the ``date.timezone`` entry:
-
-```
-[Date]
-; Defines the default timezone used by the date functions
-; http://php.net/date.timezone
-date.timezone = Europe/Paris
-```
-
-## Install PHP 7
-
+## A development environment with PHP5 or later
 As dokuwiki is still compatible with PHP5, I use both PHP7 and PHP5 to ensure that plugin is also compatible with both versions.
+
+How to achieve this depends on your own development machine and operative system.
+
+### Installing PHP and Apache with HomeBrew on Mac OS X
+
+- Original instructions: https://gist.github.com/davebarnwell/1d413ffbc9660469e9aa685d8387b87f
+- homebrew instructions http://justinhileman.info/article/reinstalling-php-on-mac-os-x/
+- from Justin Hileman https://www.twitter.com/bobthecow
+- https://stackoverflow.com/questions/39456022/php7-installed-by-homebrew-doesnt-work-with-apache-on-macos
 
 By default Mac OS X contains php 5. If you need version 7 you can install with brew:
 - Stop Apache: sudo apachectl stop
@@ -233,7 +200,69 @@ Now you can add the configuration for your web site in ``extra/http-vhosts.conf`
 </VirtualHost>
 ```
 
-- Original instructions: https://gist.github.com/davebarnwell/1d413ffbc9660469e9aa685d8387b87f
-- homebrew instructions http://justinhileman.info/article/reinstalling-php-on-mac-os-x/
-- from Justin Hileman https://www.twitter.com/bobthecow
-- https://stackoverflow.com/questions/39456022/php7-installed-by-homebrew-doesnt-work-with-apache-on-macos
+## A development version of dokuwiki and a configured web site
+
+To retrieve the development version of dokuwiki you need to have git installed. Then follow instructions in https://www.dokuwiki.org/devel:git
+
+- Go to your development folder, checkout the development version and switch to the stable branch.
+
+```
+git checkout https://github.com/splitbrain/dokuwiki.git
+git checkout stable
+```
+This should have created a dokuwiki folder with all sources, including a ``_test`` folder with unit tests.
+
+I'm assuming you've got PHP and Apache configured (see above) and you activated the virtual hosts in Apache. Now you need to associate a virtual host to the dokuwiki folder:
+
+
+## Unit testing
+As plugin has a quite complex behavior, it is extensively tested with a PHPUnit test suite included with PHAR
+
+- Install PHPUnit from the PHAR:
+
+```bash
+wget https://phar.phpunit.de/phpunit-5.phar
+chmod +x phpunit-5.7.26.phar
+sudo mv phpunit-5.7.26.phar /usr/local/bin/phpunit
+```
+- Verify the installation:
+
+```bash
+phpunit --version
+PHPUnit 5.7.26 by Sebastian Bergmann and contributors.
+```
+
+- Install PHPAb from the PHAR:
+```bash
+wget https://github.com/theseer/Autoload/releases/download/1.24.1/phpab-1.24.1.phar
+chmod +x phpunit-5.7.26.phar
+sudo mv phpunit-5.7.26.phar /usr/local/bin/phpab
+```
+- Verify the installation:
+
+```bash
+phpab --version
+phpab 1.24.1 - Copyright (C) 2009 - 2018 by Arne Blankerts and Contributors
+```
+## Adding the timezone configuration
+
+You may be required to add the timezone configuration.
+
+```bash
+php --ini
+Configuration File (php.ini) Path: /usr/local/etc/php/5.6
+Loaded Configuration File:         /usr/local/etc/php/5.6/php.ini
+Scan for additional .ini files in: /usr/local/etc/php/5.6/conf.d
+```
+
+Edit the ``php.ini`` configuration file and add one of the supported time zones (see http://php.net/manual/en/timezones.php) by uncommenting the ``date.timezone`` entry:
+
+```
+[Date]
+; Defines the default timezone used by the date functions
+; http://php.net/date.timezone
+date.timezone = Europe/Paris
+```
+
+## Install PHP 7
+
