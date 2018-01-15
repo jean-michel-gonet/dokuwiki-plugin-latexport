@@ -214,6 +214,90 @@ This should have created a dokuwiki folder with all sources, including a ``_test
 
 I'm assuming you've got PHP and Apache configured (see above) and you activated the virtual hosts in Apache. Now you need to associate a virtual host to the dokuwiki folder:
 
+```
+<VirtualHost *:80>
+    # Official address for user web site:
+    ServerName local.microcontroleur.agl-developpement.ch
+
+    # Email of administrator:
+    ServerAdmin info@agl-developpement.ch
+
+    # Activate php
+    <FilesMatch .php$>
+        SetHandler application/x-httpd-php
+    </FilesMatch>
+
+    # Grants access to everybody:
+    DocumentRoot /path/to/your/development/site/dokuwiki
+    <Directory   /path/to/your/development/site/dokuwiki>
+        DirectoryIndex index.php index.html
+
+        # For Apache 2.2
+        Order allow,deny
+        Allow from all
+
+        # For Apache 2.4
+        Require all granted
+
+        # To enable .htaccess
+        AllowOverride all
+    </Directory>
+</VirtualHost>
+```
+Also copy a .htaccess to the root dokuwiki folder (see https://www.dokuwiki.org/rewrite):
+
+```
+## Enable this to restrict editing to logged in users only
+
+## You should disable Indexes and MultiViews either here or in the
+## global config. Symlinks maybe needed for URL rewriting.
+#Options -Indexes -MultiViews +FollowSymLinks
+
+## make sure nobody gets the htaccess, README, COPYING or VERSION files
+<Files ~ "^([\._]ht|README$|VERSION$|COPYING$)">
+    <IfModule mod_authz_host>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_host>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</Files>
+
+## Don't allow access to git directories
+<IfModule alias_module>
+    RedirectMatch 404 /\.git
+</IfModule>
+
+## Uncomment these rules if you want to have nice URLs using
+## $conf['userewrite'] = 1 - not needed for rewrite mode 2
+RewriteEngine on
+
+RewriteRule ^_media/(.*)              lib/exe/fetch.php?media=$1  [QSA,L]
+RewriteRule ^_detail/(.*)             lib/exe/detail.php?media=$1  [QSA,L]
+RewriteRule ^_export/([^/]+)/(.*)     doku.php?do=export_$1&id=$2  [QSA,L]
+RewriteRule ^$                        doku.php  [L]
+RewriteCond %{REQUEST_FILENAME}       !-f
+RewriteCond %{REQUEST_FILENAME}       !-d
+RewriteRule (.*)                      doku.php?id=$1  [QSA,L]
+RewriteRule ^index.php$               doku.php
+
+## Not all installations will require the following line.  If you do,
+## change "/dokuwiki" to the path to your dokuwiki directory relative
+## to your document root.
+#RewriteBase /dokuwiki
+#
+## If you enable DokuWikis XML-RPC interface, you should consider to
+## restrict access to it over HTTPS only! Uncomment the following two
+## rules if your server setup allows HTTPS.
+#RewriteCond %{HTTPS} !=on
+#RewriteRule ^lib/exe/xmlrpc.php$      https://%{SERVER_NAME}%{REQUEST_URI} [L,R=301]
+```
+
+- Check a info.php, to see if PHP is installed correctly.
+- Create an entry to your local DNS to have a nice URL.
+- Follow the installation procedure: http://local.your.dokuwiki/install.php
+- Copy some content if you have.
 
 ## Unit testing
 As plugin has a quite complex behavior, it is extensively tested with a PHPUnit test suite included with PHAR
