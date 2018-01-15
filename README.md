@@ -298,6 +298,13 @@ RewriteRule ^index.php$               doku.php
 - Create an entry to your local DNS to have a nice URL.
 - Follow the installation procedure: http://local.your.dokuwiki/install.php
 - Copy some content if you have.
+- Clone the latex plugin in
+
+``` bash
+cd /path/to/dokuwiki/lib/plugins
+git clone https://github.com/jean-michel-gonet/dokuwiki-plugin-latexport.git latexport
+Cloning into 'latexport'...
+```
 
 ## Unit testing
 As plugin has a quite complex behavior, it is extensively tested with a PHPUnit test suite included with PHAR
