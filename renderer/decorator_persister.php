@@ -52,7 +52,6 @@ class DecoratorPersister {
 	 * Headers are transformed in part, chapter, section, subsection and subsubsection.
 	 */
 	function header($text, $level, $pos) {
-		error_log("DecoratorPersister::Rendering header $level - '$text'");
 		switch($level) {
 			case 1:
 				switch($this->matterNumber) {
@@ -256,7 +255,6 @@ class DecoratorPersister {
 	 * Ends the document
 	 */
 	function document_end($recursionLevel = 0){
-		error_log("DecoratorPersister::document_end recursionLevel = $recursionLevel");
 		if ($recursionLevel == 0) {
 			$this->appendCommand('end', 'document');
 		}

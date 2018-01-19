@@ -53,8 +53,6 @@ class renderer_plugin_latexport_tex extends Decorator {
 	 * Class constructor.
 	 */
 	function __construct() {
-		error_log("renderer_plugin_latexport_tex construct");
-
 		$this->archive = new ArchiveHelperZip();
 		$this->includes = new SplQueue();
 		$this->recursionLevel = 0;	
@@ -90,7 +88,6 @@ class renderer_plugin_latexport_tex extends Decorator {
 			$this->currentPageId = $ID;
 		}
 
-		error_log("Document start $this->currentPageId, ".count($this->includes). " documents to process.");
 		if ($this->recursionLevel == 0) {
 			// Create HTTP headers
 			$output_filename = $this->texifyPageId($this->currentPageId, 'zip');
@@ -137,11 +134,9 @@ class renderer_plugin_latexport_tex extends Decorator {
 	}
 	
 	function processIncludes() {
-		error_log("Processing includes");
 		while (!$this->includes->isEmpty()) {
 			$include = $this->includes->pop();
 			$file = wikiFN($include->getLink());
-			error_log($include->toString()."==>".$file);
 			$this->currentPageId = $include->getLink();
 			$this->headingLevel = $include->getHeadingLevel();
 			p_cached_output($file, 'latexport_tex');
