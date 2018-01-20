@@ -105,7 +105,7 @@ class renderer_plugin_latexport_tex extends Decorator {
 		
 		// Starts the document:
 		$this->archive->startFile($this->texifyPageId($this->currentPageId));
-		$this->decorator->document_start($this->recursionLevel);			
+		$this->decorator->document_start($this->currentPageId, $this->recursionLevel);			
 		$this->recursionLevel++;
 	}
 

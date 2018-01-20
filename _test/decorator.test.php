@@ -21,7 +21,7 @@ class decorator_test extends DokuWikiTest {
     }
  
     public function testDocumentStartPropagatesRecursionLevel() {
-		$this->decorator->document_start(3);
+		$this->decorator->document_start("xx", 3);
 		$this->assertEquals(3, $this->decoratorMock->recursionLevel, "Recursion level");
     }
 }

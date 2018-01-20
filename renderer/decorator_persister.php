@@ -26,6 +26,8 @@ class DecoratorPersister {
 	private $archive;
 	
 	private $matterNumber;
+	
+	private $pageId;
 
 	/**
 	 * Class constructor.
@@ -37,9 +39,12 @@ class DecoratorPersister {
 	}
 
 	/**
-	 * Starts the latex document.
+	 * Starts rendering a new page.
+	 * @param string $pageId The identifier of the opening page.
+	 * @param int $recursionLevel The level of recursion. When a page includes a page, that's one level of recursion.
 	 */
-	function document_start($recursionLevel) {
+	function document_start($pageId, $recursionLevel) {
+		$this->pageId = $pageId;
 		if ($recursionLevel == 0) {
 			$this->appendCommand('documentclass', 'book');
 			$this->appendCommand('usepackage', 'graphicx');
@@ -154,6 +159,17 @@ class DecoratorPersister {
 	 */
 	function internallink($link, $title = null) {
 		$this->appendContent($title);
+		$this->appendContent(" ");
+		$this->appendContent('\\ref{'.str_replace("#", ":", $link).'}');
+	}
+
+	/**
+	 * Receives the anchors from the 'anchor' plugin.
+	 * @param string $link The anchor name.
+	 * @param string $title The associated text.
+	 */
+	function anchor($link, $title = null) {
+		$this->appendContent(' \\label{'.$this->pageId.':'.$link.'}'.$title);
 	}
 
 	function input($link) {

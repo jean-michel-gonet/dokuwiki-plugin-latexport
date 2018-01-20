@@ -28,12 +28,13 @@ class decorator extends Doku_Renderer {
 		$this->decorator = $decorator;
 	}
 
-
 	/**
-	 * Document start.
+	 * Starts rendering a new page.
+	 * @param string $pageId The identifier of the opening page.
+	 * @param int $recursionLevel The level of recursion. When a page includes a page, that's one level of recursion.
 	 */
-	function document_start($recursionLevel = 0) {
-		$this->decorator->document_start($recursionLevel);
+	function document_start($pageId, $recursionLevel) {
+		$this->decorator->document_start($pageId, $recursionLevel);
 	}
 
 	/**
@@ -115,6 +116,15 @@ class decorator extends Doku_Renderer {
 	 */
 	function internallink($link, $title = null) {
 		$this->decorator->internallink($link, $title);
+	}
+
+	/**
+	 * Receives the anchors from the 'anchor' plugin.
+	 * @param string $link The anchor name.
+	 * @param string $title The associated text.
+	 */
+	function anchor($link, $title = null) {
+		$this->decorator->anchor($link, $title);
 	}
 
 	function input($link) {
