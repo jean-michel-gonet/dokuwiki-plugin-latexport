@@ -16,7 +16,11 @@ class DecoratorMock extends Decorator {
 	}
 
 	function nextCommand() {
-		return $this->listOfCommands->dequeue();
+		if ($this->noCommands()) {
+			return false;
+		} else {
+			return $this->listOfCommands->dequeue();			
+		}
 	}
 	
 	function noCommands() {
@@ -83,11 +87,11 @@ class DecoratorMock extends Decorator {
 	}
 
     function listo_open() {
-		// Nothing to do?
+		$this->listOfCommands->enqueue(new CommandListOOpen());
     }
 
     function listo_close() {
-		// Nothing to do?
+		$this->listOfCommands->enqueue(new CommandListOClose());
     }
 
 	function listu_open() {

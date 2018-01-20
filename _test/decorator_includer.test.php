@@ -30,7 +30,7 @@ class DecoratorIncluderTest extends DokuWikiTest {
 		$this->decoratorIncluder = new DecoratorIncluder($this->includes, $this->decoratorMock);
     }
 	
-    public function testInternalLinksAloneInAnUnorderedListItemAreIncludes() {
+    public function testStandaloneInternalLinksInUnorderedListsAreIncludes() {
 		$this->decoratorIncluder->listu_open();
 		$this->decoratorIncluder->listitem_open(1);
 		$this->decoratorIncluder->listcontent_open();
@@ -146,7 +146,7 @@ class DecoratorIncluderTest extends DokuWikiTest {
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListUClose());
 	}
 
-	public function testStandaloneInternalLinkAndCanBeMixedWithText() {
+	public function testStandaloneInternalMixedWithTextAreNotIncludes() {
 		$this->decoratorIncluder->listu_open();
 		
 		$this->decoratorIncluder->listitem_open(1);
@@ -165,11 +165,6 @@ class DecoratorIncluderTest extends DokuWikiTest {
 
 		$this->decoratorIncluder->listu_close();
 		
-		$this->assertEquals($this->includes->count(), 1, "Should not have one include");
-		$link = $this->includes->pop();
-		$this->assertEquals($link->getLink(), DecoratorIncluderTest::LINK2, "Link is not as expected");
-		$this->assertEquals($link->getTitle(), DecoratorIncluderTest::TITLE2, "Title is not as expected");
-
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListUOpen());
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListItemOpen(1));
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListContentOpen());
@@ -181,6 +176,10 @@ class DecoratorIncluderTest extends DokuWikiTest {
 		
 		$this->assertTrue($this->decoratorMock->noCommands(), "Should not have more commands");
 		
+		$this->assertEquals($this->includes->count(), 1, "Should have one include");
+		$link = $this->includes->pop();
+		$this->assertEquals($link->getLink(), DecoratorIncluderTest::LINK2, "Link is not as expected");
+		$this->assertEquals($link->getTitle(), DecoratorIncluderTest::TITLE2, "Title is not as expected");
 	}
 	
 	public function testCanComputeTheHeadingLevelOfLinks() {
@@ -203,6 +202,45 @@ class DecoratorIncluderTest extends DokuWikiTest {
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandHeader("Any", 3, 0));
 		
 		$this->assertTrue($this->decoratorMock->noCommands(), "Should not have more commands");		
+	}
+	
+	public function testDoesNotInterfereWithEnumeratedLists() {
+		$this->decoratorIncluder->listo_open();
+
+		$this->decoratorIncluder->listitem_open(1);
+		$this->decoratorIncluder->listcontent_open();
+		$this->decoratorIncluder->internallink(DecoratorIncluderTest::LINK, DecoratorIncluderTest::TITLE);
+		$this->decoratorIncluder->listcontent_close();
+		$this->decoratorIncluder->listitem_close();
+
+		$this->decoratorIncluder->listitem_open(1);
+		$this->decoratorIncluder->listcontent_open();
+		$this->decoratorIncluder->cdata('Enumerated List item');
+		$this->decoratorIncluder->listcontent_close();
+		$this->decoratorIncluder->listitem_close();
+
+		$this->decoratorIncluder->listo_close();
+		
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListOOpen());
+
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListItemOpen(1));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListContentOpen());
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandInternalLink(DecoratorIncluderTest::LINK, DecoratorIncluderTest::TITLE));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListContentClose());
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListItemClose());
+
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListItemOpen(1));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListContentOpen());
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandCData('Enumerated List item'));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListContentClose());
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListItemClose());
+
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListOClose());
+		
+		$this->assertTrue($this->decoratorMock->noCommands(), "Should not have more commands");		
+		$this->assertEquals($this->includes->count(), 0, "Should not have any include");
+		
+
 	}
 	
 }

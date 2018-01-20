@@ -34,6 +34,12 @@ class CommandHeader extends TexCommand {
 	}
 }
 
+class CommandListOOpen extends TexCommand {
+	function __construct() {
+		parent::__construct("listo_open");
+	}
+}
+
 class CommandListUOpen extends TexCommand {
 	function __construct() {
 		parent::__construct("listu_open");
@@ -100,6 +106,11 @@ class CommandListItemClose extends TexCommand {
 class CommandListUClose extends TexCommand {
 	function __construct() {
 		parent::__construct("listu_close");
+	}
+}
+class CommandListOClose extends TexCommand {
+	function __construct() {
+		parent::__construct("listo_close");
 	}
 }
 
