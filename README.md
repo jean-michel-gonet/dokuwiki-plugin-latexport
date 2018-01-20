@@ -23,6 +23,13 @@ Be sure that the following snippet is present in the document header:
 Then compile the TeX document with:
 	lualatex [name-of-page].tex
 
+## Friendly plugins:
+
+If you wish, install the following plugins:
+
+- mathjax: This supports displaying latex-like formulae online. It is fully compatible with latexport, which will render the formulae in the PDF file.
+- anchor: This allows including anchors to specific places of a page. It is compatible with latexport, which will render the anchor as a crossreference with page number. You probably want to have the 'normal' option, referred in the install instructions.
+
 ## Use installed fonts in Mac OS X
 (To follow this procedure you need `fontspec` package and `otfinfo` utility. If you don't know how to get them, install Tex Live from the official web site: https://tug.org/texlive/ )
 
