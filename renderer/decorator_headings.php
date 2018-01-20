@@ -62,7 +62,6 @@ class DecoratorHeadings extends Decorator {
 	 * Headers are transformed in part, chapter, section, subsection and subsubsection.
 	 */
 	function header($text, $level, $pos) {
-		error_log("DecoratorHeadings::Header $text, $level, $pos");
 		
 		switch($level) {
 			case 1:

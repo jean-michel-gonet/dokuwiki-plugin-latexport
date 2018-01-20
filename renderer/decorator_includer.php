@@ -84,7 +84,6 @@ class DecoratorIncluder extends Decorator {
 	 * If 
 	 */
 	function listu_open() {
-		error_log("DecoratorIncluder::listu_open - $this->state");
 		switch($this->state) {
 			case DecoratorIncluder::NOT_IN_LIST:
 				$this->listLevel = 1;
@@ -114,7 +113,6 @@ class DecoratorIncluder extends Decorator {
 	 * @param bool $node true when a node; false when a leaf
 	 */
 	function listitem_open($level,$node=false) {
-		error_log("DecoratorIncluder::listitem_open - $this->state");
 		
 		switch($this->state) {
 			case DecoratorIncluder::IN_CONTENT_MIXED:
@@ -136,7 +134,6 @@ class DecoratorIncluder extends Decorator {
 	 * Start the content of a list item
 	 */
 	function listcontent_open() {
-		error_log("DecoratorIncluder::listcontent_open - $this->state");
 		switch($this->state) {
 			case DecoratorIncluder::IN_CONTENT_MIXED:
 				$this->decorator->listcontent_open();
@@ -155,7 +152,6 @@ class DecoratorIncluder extends Decorator {
 	 * Stop the content of a list item
 	 */
 	function listcontent_close() {
-		error_log("DecoratorIncluder::listcontent_close - $this->state");
 		switch($this->state) {
 			case DecoratorIncluder::IN_CONTENT_INTERNAL_LINK:
 				$this->internalLinksToInclude[] = $this->internalLinkToInclude;
@@ -181,7 +177,6 @@ class DecoratorIncluder extends Decorator {
      * Close a list item
      */
     function listitem_close() {
-		error_log("DecoratorIncluder::listitem_close - $this->state");
 		switch($this->state) {
 			case DecoratorIncluder::IN_CONTENT_MIXED:
 				$this->decorator->listitem_close();			
@@ -200,7 +195,6 @@ class DecoratorIncluder extends Decorator {
 	 * Close an unordered list
 	 */
 	function listu_close() {
-		error_log("DecoratorIncluder::listu_close - $this->state");
 		// Only needs to render the list closing if there are items in it:
 		if ($this->state == DecoratorIncluder::IN_CONTENT_MIXED) {
 			$this->decorator->listu_close();

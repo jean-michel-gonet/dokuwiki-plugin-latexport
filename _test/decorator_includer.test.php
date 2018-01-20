@@ -111,7 +111,7 @@ class DecoratorIncluderTest extends DokuWikiTest {
 	}
 
 	public function testCanRenderANestedList() {
-		error_log("**********testCanRenderANestedList*******");
+
 		$this->decoratorIncluder->listu_open();
 		$this->decoratorIncluder->listitem_open(1);
 		$this->decoratorIncluder->listcontent_open();
@@ -126,7 +126,6 @@ class DecoratorIncluderTest extends DokuWikiTest {
 		$this->decoratorIncluder->listcontent_close();
 		$this->decoratorIncluder->listitem_close();
 		$this->decoratorIncluder->listu_close();
-		error_log("--------------------------------------------");
 		
 		$this->assertEquals($this->includes->count(), 0, "Should not have any include");
 
