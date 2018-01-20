@@ -92,7 +92,6 @@ class DecoratorIncluder extends Decorator {
 				$this->someItemsHaveMixedContent = false;
 				break;
 
-			case DecoratorIncluder::IN_ITEM:	// TODO: Remove this?
 			case DecoratorIncluder::IN_CONTENT:
 			case DecoratorIncluder::IN_ITEM_MIXED:
 				$this->thereIsMixedContentInThisItem();
@@ -116,7 +115,6 @@ class DecoratorIncluder extends Decorator {
 		
 		switch($this->state) {
 			case DecoratorIncluder::NOT_IN_LIST:
-			case DecoratorIncluder::IN_ITEM_MIXED:	// TODO: Remove this?
 			case DecoratorIncluder::IN_LIST_NESTED:
 				$this->decorator->listitem_open($level, $node);
 				break;
@@ -137,7 +135,6 @@ class DecoratorIncluder extends Decorator {
 	function listcontent_open() {
 		switch($this->state) {
 			case DecoratorIncluder::NOT_IN_LIST:
-			case DecoratorIncluder::IN_ITEM_MIXED:	// TODO: Remove this?
 			case DecoratorIncluder::IN_LIST_NESTED:
 				$this->decorator->listcontent_open();
 				break;
@@ -158,12 +155,6 @@ class DecoratorIncluder extends Decorator {
 		switch($this->state) {
 			case DecoratorIncluder::IN_CONTENT_INTERNAL_LINK:
 				$this->internalLinksToInclude[] = $this->internalLinkToInclude;
-				$this->state = DecoratorIncluder::IN_ITEM;
-				break;
-
-			case DecoratorIncluder::IN_CONTENT:   // TODO: Remove this?
-			case DecoratorIncluder::IN_ITEM:      // TODO: Remove this?
-				$this->decorator->listcontent_close();
 				$this->state = DecoratorIncluder::IN_ITEM;
 				break;
 
@@ -236,6 +227,7 @@ class DecoratorIncluder extends Decorator {
 
 			case DecoratorIncluder::NOT_IN_LIST:
 				parent::listu_close();
+				break;
 			
 			default:
 				trigger_error("listu_close unexpected - $this->state");
