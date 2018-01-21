@@ -34,6 +34,7 @@ class decorator extends Doku_Renderer {
 	 * @param int $recursionLevel The level of recursion. When a page includes a page, that's one level of recursion.
 	 */
 	function document_start($pageId, $recursionLevel) {
+		$this->any_command();
 		$this->decorator->document_start($pageId, $recursionLevel);
 	}
 
@@ -41,6 +42,7 @@ class decorator extends Doku_Renderer {
 	 * Headers are transformed in part, chapter, section, subsection and subsubsection.
 	 */
 	function header($text, $level, $pos) {
+		$this->any_command();
 		$this->decorator->header($text, $level, $pos);
 	}
 
@@ -48,6 +50,7 @@ class decorator extends Doku_Renderer {
 	 * Open a paragraph.
 	 */
 	function p_open() {
+		$this->any_command();
 		$this->decorator->p_open();
 	}
 
@@ -55,6 +58,7 @@ class decorator extends Doku_Renderer {
 	 * Renders plain text.
 	 */
 	function cdata($text) {
+		$this->any_command();
 		$this->decorator->cdata($text);
 	}
 
@@ -62,6 +66,7 @@ class decorator extends Doku_Renderer {
 	 * Close a paragraph.
 	 */
 	function p_close() {
+		$this->any_command();
 		$this->decorator->p_close();
 	}
 
@@ -69,6 +74,7 @@ class decorator extends Doku_Renderer {
 	 * Start emphasis (italics) formatting
 	 */
 	function emphasis_open() {
+		$this->any_command();
 		$this->decorator->emphasis_open();
 	}
 
@@ -76,6 +82,7 @@ class decorator extends Doku_Renderer {
 	 * Stop emphasis (italics) formatting
 	 */
 	function emphasis_close() {
+		$this->any_command();
 		$this->decorator->emphasis_close();
 	}
 
@@ -83,6 +90,7 @@ class decorator extends Doku_Renderer {
 	 * Start strong (bold) formatting
 	 */
 	function strong_open() {
+		$this->any_command();
 		$this->decorator->strong_open();
 	}
 
@@ -90,6 +98,7 @@ class decorator extends Doku_Renderer {
 	 * Stop strong (bold) formatting
 	 */
 	function strong_close() {
+		$this->any_command();
 		$this->decorator->strong_close();
 	}
 
@@ -97,6 +106,7 @@ class decorator extends Doku_Renderer {
 	 * Start underline formatting
 	 */ 
 	function underline_open() {
+		$this->any_command();
 		$this->decorator->underline_open();
 	}
 
@@ -104,6 +114,7 @@ class decorator extends Doku_Renderer {
 	 * Stop underline formatting
 	 */
 	function underline_close() {
+		$this->any_command();
 		$this->decorator->underline_close();
 	}
 
@@ -115,6 +126,7 @@ class decorator extends Doku_Renderer {
 	 * @param string|array $title name for the link, array for media file
 	 */
 	function internallink($link, $title = null) {
+		$this->any_command();
 		$this->decorator->internallink($link, $title);
 	}
 
@@ -124,10 +136,12 @@ class decorator extends Doku_Renderer {
 	 * @param string $title The associated text.
 	 */
 	function anchor($link, $title = null) {
+		$this->any_command();
 		$this->decorator->anchor($link, $title);
 	}
 
 	function input($link) {
+		$this->any_command();
 		$this->decorator->input($link);
 	}
 
@@ -145,6 +159,7 @@ class decorator extends Doku_Renderer {
 	function internalmedia($src, $title = null, $align = null, $width = null,
 			$height = null, $cache = null, $linking = null) {
 
+		$this->any_command();
 		$this->decorator->internalmedia($src, $title, $align, $width, $height, $cache, $linking);
 	}
 
@@ -152,6 +167,7 @@ class decorator extends Doku_Renderer {
      * Open an ordered list
      */
     function listo_open() {
+		$this->any_command();
 		$this->decorator->listo_open();
     }
 
@@ -159,6 +175,7 @@ class decorator extends Doku_Renderer {
      * Close an ordered list
      */
     function listo_close() {
+		$this->any_command();
 		$this->decorator->listo_close();
     }
 
@@ -166,6 +183,7 @@ class decorator extends Doku_Renderer {
 	 * Open an unordered list
 	 */
 	function listu_open() {
+		$this->any_command();
 		$this->decorator->listu_open();
 	}
 
@@ -173,6 +191,7 @@ class decorator extends Doku_Renderer {
 	 * Close an unordered list
 	 */
 	function listu_close() {
+		$this->any_command();
 		$this->decorator->listu_close();
 	}
 
@@ -183,6 +202,7 @@ class decorator extends Doku_Renderer {
 	 * @param bool $node true when a node; false when a leaf
 	 */
 	function listitem_open($level,$node=false) {
+		$this->any_command();
 		$this->decorator->listitem_open($level, $node);
 	}
 
@@ -190,6 +210,7 @@ class decorator extends Doku_Renderer {
 	 * Start the content of a list item
 	 */
 	function listcontent_open() {
+		$this->any_command();
 		$this->decorator->listcontent_open();
 	}
 
@@ -197,6 +218,7 @@ class decorator extends Doku_Renderer {
 	 * Stop the content of a list item
 	 */
 	function listcontent_close() {
+		$this->any_command();
 		$this->decorator->listcontent_close();
 	}
 
@@ -204,6 +226,7 @@ class decorator extends Doku_Renderer {
      * Close a list item
      */
     function listitem_close() {
+		$this->any_command();
 		$this->decorator->listitem_close();
     }
 
@@ -213,6 +236,7 @@ class decorator extends Doku_Renderer {
 	 * need to reprocess.
 	 */
 	function mathjax_content($formula) {
+		$this->any_command();
 		$this->decorator->mathjax_content($formula);
 	}
 
@@ -220,9 +244,40 @@ class decorator extends Doku_Renderer {
 	 * Closes the document
 	 */
 	function document_end($recursionLevel = 0){
+		$this->any_command();
 		$this->decorator->document_end($recursionLevel);
 	}
 	
+	/**
+	 * Adds a latex command to the document.
+	 * @param command  The command
+	 * @param scope    The name of the scope, or the mandatory argument, 
+	 *                 to be included inside the curly brackets.
+	 * @param argument If specified, to be included in square brackets. Depending
+	 *                 on the command, square brackets are placed before or after
+	 *                 the curly brackets.
+	 */
+	function appendCommand($command, $scope, $argument = '') {
+		$this->any_command();
+		$this->decorator->appendCommand($command, $scope, $argument);
+	}
+
+	/**
+	 * Adds simple content to the document.
+	 * @param c The content.
+	 */
+	function appendContent($c) {
+		$this->any_command();
+		$this->decorator->appendContent($c);
+	}
+
+	/**
+	 * Override this if you want to have code for all commands.
+	 */
+	function any_command() {
+		// Do nothing.
+	}
+		
 	/**
 	 * Returns a TeX compliant version of the page ID.
 	 * @param pageId the page ID, or page name.
