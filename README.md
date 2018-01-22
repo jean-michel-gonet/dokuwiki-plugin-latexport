@@ -38,6 +38,10 @@ If you wish, install the following plugins:
 ## How to write formulas
 - https://tex.stackexchange.com/questions/503/why-is-preferable-to
 - https://www.sharelatex.com/learn/Aligning_equations_with_amsmath
+- Inline formulas delimited with $ ... $ are changed to \( ... \)
+- Inline formulas delimited with \( ... \) are left untouched.
+- Display formulas delimited with $$ ... $$ and \[ ... \] are changed to \begin{equation} ... \end{equation}. Explicit \tag{.} command is removed, as it is not supported outside the amsmath package.
+- Display formulas explicitly delimited with a \begin{xx} ... \end{xx} are left untouched.
 
 ## How to make cross references
 - https://en.wikibooks.org/wiki/LaTeX/Labels_and_Cross-referencing
