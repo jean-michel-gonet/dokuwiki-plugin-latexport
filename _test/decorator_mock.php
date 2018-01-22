@@ -119,11 +119,15 @@ class DecoratorMock extends Decorator {
     }
 
 	function mathjax_content($formula) {
-		// Nothing to do?
+		$this->listOfCommands->enqueue(new CommandMathjaxContent($formula));
 	}
 
 	function document_end($recursionLevel = 0){
 		// Nothing to do?
+	}
+	
+	function appendCommand($command, $scope, $argument = '') {
+		$this->listOfCommands->enqueue(new CommandAppendCommand($command, $scope, $argument));
 	}
 }
 ?>

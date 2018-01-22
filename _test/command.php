@@ -113,5 +113,31 @@ class CommandListOClose extends TexCommand {
 		parent::__construct("listo_close");
 	}
 }
+class CommandMathjaxContent extends TexCommand {
+	public $formula;
+	
+	function __construct($formula) {
+		parent::__construct("mathjax_content");
+		$this->formula = $formula;
+	}
+	function __toString() {
+		return parent::__toString().'('.$this->formula.')';		
+	}
+}
+class CommandAppendCommand extends TexCommand {
+	public $command;
+	public $scope;
+	public $argument;
+
+	function __construct($command, $scope, $argument = '') {
+		parent::__construct("appendCommand");
+		$this->command = $command;
+		$this->scope = $scope;
+		$this->argument = $argument;
+	}
+	function __toString() {
+		return parent::__toString().'('.$this->command.', '.$this->scope.', '.$argument.')';
+	}
+}
 
 ?>

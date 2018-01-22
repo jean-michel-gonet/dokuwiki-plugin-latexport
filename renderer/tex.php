@@ -12,6 +12,7 @@ if(!defined('DOKU_INC')) die();
 require_once DOKU_PLUGIN . 'latexport/helpers/archive_helper_zip.php';
 require_once DOKU_PLUGIN . 'latexport/renderer/decorator_persister.php';
 require_once DOKU_PLUGIN . 'latexport/renderer/decorator_includer.php';
+require_once DOKU_PLUGIN . 'latexport/renderer/decorator_math.php';
 require_once DOKU_PLUGIN . 'latexport/renderer/decorator_headings.php';
 
 /**
@@ -61,7 +62,8 @@ class renderer_plugin_latexport_tex extends Decorator {
 		parent::__construct(
 			new DecoratorHeadings(
 				new DecoratorIncluder($this->includes,
-					new DecoratorPersister($this->archive))));
+					new DecoratorMath(
+						new DecoratorPersister($this->archive)))));
 	}
 
 	/**
