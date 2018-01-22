@@ -100,6 +100,7 @@ class DecoratorPersister {
 	 * Renders plain text.
 	 */
 	function cdata($text) {
+		$text = str_replace('#', '\\#', $text);
 		$this->appendContent($text);
 	}
 
