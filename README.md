@@ -30,6 +30,18 @@ If you wish, install the following plugins:
 - mathjax: This supports displaying latex-like formulae online. It is fully compatible with latexport, which will render the formulae in the PDF file.
 - anchor: This allows including anchors to specific places of a page. It is compatible with latexport, which will render the anchor as a crossreference with page number. You probably want to have the 'normal' option, referred in the install instructions.
 
+# Structuring dokuwiki to look good both online and printed
+
+## The traditional book structure
+- https://en.wikibooks.org/wiki/LaTeX/Document_Structure
+
+## How to write formulas
+- https://tex.stackexchange.com/questions/503/why-is-preferable-to
+- https://www.sharelatex.com/learn/Aligning_equations_with_amsmath
+
+## How to make cross references
+- https://en.wikibooks.org/wiki/LaTeX/Labels_and_Cross-referencing
+
 ## Use installed fonts in Mac OS X
 (To follow this procedure you need `fontspec` package and `otfinfo` utility. If you don't know how to get them, install Tex Live from the official web site: https://tug.org/texlive/ )
 
