@@ -16,6 +16,7 @@ Be sure that the following snippet is present in the document header:
 	\documentclass{book}
 	...
 	\usepackage{fontspec}
+	\usepackage{hyperref} # To display clickable URL
 	\setmainfont[Ligatures=TeX]{xits}
 	...
 	\begin{document}
