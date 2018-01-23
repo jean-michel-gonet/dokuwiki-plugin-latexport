@@ -171,7 +171,7 @@ class DecoratorPersister {
      * @param string|array $title name for the link, array for media file
      */
     function externallink($link, $title = null) {
-		$this->appendContent("$title ($link)");
+		$this->appendContent($title.' \\url{'.$link.'}');
     }
 
 	/**
