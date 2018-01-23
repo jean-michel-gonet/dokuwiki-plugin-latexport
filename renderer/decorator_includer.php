@@ -55,6 +55,8 @@ class DecoratorIncluder extends Decorator {
 	
 	/** To keep track of nested lists. */
 	private $listLevel;
+	/** Handy to log errors. */
+	private $pageId;
 	
 	/**
 	 * Class constructor.
@@ -68,7 +70,15 @@ class DecoratorIncluder extends Decorator {
 		$this->headingLevel = 0;
 		$this->listLevel = 0;
 	}
-	
+
+	/**
+	 * Remembers the current page identifier to log useful error messages.
+	 */
+	function document_start($pageId, $recursionLevel) {
+		$this->decorator->document_start($pageId, $recursionLevel);
+		$this->pageId = $pageId;
+	}
+
 	/**
 	 * Unordered list item starting with a link, includes the destination page, 
 	 * using the current level of heading as the base level.
@@ -101,7 +111,7 @@ class DecoratorIncluder extends Decorator {
 				break;
 				
 			default:
-				trigger_error("listu_open unexpected $this->state");
+				trigger_error("$this->pageId: listu_open unexpected $this->state");
 		}
 	}
 
@@ -125,7 +135,7 @@ class DecoratorIncluder extends Decorator {
 				break;
 
 			default:
-				trigger_error("listitem_open unexpected - $this->state");
+				trigger_error("$this->pageId: listitem_open unexpected - $this->state");
 		}
 	}
 
@@ -144,7 +154,7 @@ class DecoratorIncluder extends Decorator {
 				$this->needToOpenContent = true;
 				break;
 			default:
-				trigger_error("listcontent_open unexpected - $this->state");
+				trigger_error("$this->pageId: listcontent_open unexpected - $this->state");
 		}
 	}
 
@@ -168,7 +178,7 @@ class DecoratorIncluder extends Decorator {
 				break;
 			
 			default:
-				trigger_error("listcontent_close unexpected - $this->state");
+				trigger_error("$this->pageId: listcontent_close unexpected - $this->state");
 		}
 	}
 
@@ -192,7 +202,7 @@ class DecoratorIncluder extends Decorator {
 				break;
 				
 			default:
-				trigger_error("listitem_close unexpected - $this->state");
+				trigger_error("$this->pageId: listitem_close unexpected - $this->state");
 		}
     }
 
@@ -226,11 +236,11 @@ class DecoratorIncluder extends Decorator {
 				break;
 
 			case DecoratorIncluder::NOT_IN_LIST:
-				parent::listu_close();
+				$this->decorator->listu_close();
 				break;
 			
 			default:
-				trigger_error("listu_close unexpected - $this->state");
+				trigger_error("$this->pageId: listu_close unexpected - $this->state");
 		}
 	}
 
@@ -263,14 +273,6 @@ class DecoratorIncluder extends Decorator {
 	}	
 
 	/**
-	 * Open a paragraph.
-	 */
-	function p_open() {
-		$this->thereIsMixedContentInThisItem();
-		parent::p_open();
-	}
-
-	/**
 	 * Renders plain text.
 	 */
 	function cdata($text) {
@@ -285,59 +287,14 @@ class DecoratorIncluder extends Decorator {
 		
 		// Any other kind of content is propagated:
 		$this->thereIsMixedContentInThisItem();
-		parent::cdata($text);					
+		$this->decorator->cdata($text);					
 	}
 
 	/**
-	 * Start emphasis (italics) formatting
+	 * Any other command means mixed content in this item.
 	 */
-	function emphasis_open() {
+	function any_command() {
 		$this->thereIsMixedContentInThisItem();
-		parent::emphasis_open();
-	}
-
-	/**
-	 * Start strong (bold) formatting
-	 */
-	function strong_open() {
-		$this->thereIsMixedContentInThisItem();
-		parent::strong_open();
-	}
-
-	/**
-	 * Start underline formatting
-	 */ 
-	function underline_open() {
-		$this->thereIsMixedContentInThisItem();
-		parent::underline_open();
-	}
-
-	/**
-	 * Render an internal media file
-	 *
-	 * @param string $src     media ID
-	 * @param string $title   descriptive text
-	 * @param string $align   left|center|right
-	 * @param int    $width   width of media in pixel
-	 * @param int    $height  height of media in pixel
-	 * @param string $cache   cache|recache|nocache
-	 * @param string $linking linkonly|detail|nolink
-	 */
-	function internalmedia($src, $title = null, $align = null, $width = null,
-			$height = null, $cache = null, $linking = null) {
-		$this->thereIsMixedContentInThisItem();
-		parent::internalmedia($src, $title, $align, $width, $height, $cache, $linking);
-	}
-
-
-	/**
-	 * Receives mathematic formula from Mathjax plugin.
-	 * As Mathjax already uses $ or $$ as separator, there is no
-	 * need to reprocess.
-	 */
-	function mathjax_content($formula) {
-		$this->thereIsMixedContentInThisItem();
-		parent::mathjax_content($formula);
 	}
 
 	private function thereIsMixedContentInThisItem() {
@@ -345,17 +302,17 @@ class DecoratorIncluder extends Decorator {
 	
 		if ($this->state != DecoratorIncluder::NOT_IN_LIST) {
 			if ($this->needToOpenList) {
-				parent::listu_open();
+				$this->decorator->listu_open();
 				$this->needToOpenList = false;
 			}
 
 			if ($this->needToOpenItem) {
-				parent::listitem_open($this->listLevel);
+				$this->decorator->listitem_open($this->listLevel);
 				$this->needToOpenItem = false;
 			}
 
 			if ($this->needToOpenContent) {
-				parent::listcontent_open();
+				$this->decorator->listcontent_open();
 				$this->needToOpenContent = false;
 			}
 

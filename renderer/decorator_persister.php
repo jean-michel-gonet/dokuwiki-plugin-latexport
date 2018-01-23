@@ -164,6 +164,16 @@ class DecoratorPersister {
 		$this->appendContent('\\ref{'.str_replace("#", ":", $link).'}');
 	}
 
+    /**
+     * Render an external link
+     *
+     * @param string       $link  full URL with scheme
+     * @param string|array $title name for the link, array for media file
+     */
+    function externallink($link, $title = null) {
+		$this->appendContent("$title ($link)");
+    }
+
 	/**
 	 * Receives the anchors from the 'anchor' plugin.
 	 * @param string $link The anchor name.

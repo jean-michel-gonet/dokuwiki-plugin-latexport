@@ -130,6 +130,17 @@ class decorator extends Doku_Renderer {
 		$this->decorator->internallink($link, $title);
 	}
 
+    /**
+     * Render an external link
+     *
+     * @param string       $link  full URL with scheme
+     * @param string|array $title name for the link, array for media file
+     */
+    function externallink($link, $title = null) {
+		$this->any_command();
+		$this->decorator->externallink($link, $title);
+    }
+
 	/**
 	 * Receives the anchors from the 'anchor' plugin.
 	 * @param string $link The anchor name.
