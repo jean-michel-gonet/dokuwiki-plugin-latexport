@@ -17,6 +17,7 @@ Be sure that the following snippet is present in the document header:
 	...
 	\usepackage{fontspec}
 	\usepackage{hyperref} # To display clickable URL
+	\usepackage{soul} # To use st for strikethrough
 	\setmainfont[Ligatures=TeX]{xits}
 	...
 	\begin{document}
