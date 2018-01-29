@@ -187,6 +187,12 @@ class DecoratorPersister {
 		if ($recursionLevel == 0) {
 			$this->appendCommand('documentclass', 'book');
 			$this->appendCommand('usepackage', 'graphicx');
+			$this->appendCommand('usepackage', 'fontspec');
+			$this->appendCommand('usepackage', 'hyperref');
+			$this->appendCommand('usepackage', 'soul');
+			$this->appendCommand('usepackage', 'csquotes');
+			$this->appendCommand('usepackage', 'multirow');
+			$this->appendCommand('setmainfont', 'xits', 'Ligatures=TeX');
 			$this->appendCommand('graphicspath', ' {'.self::GRAPHICSPATH.'} ');
 			$this->appendCommand('begin', 'document');
 		}
@@ -823,7 +829,9 @@ class DecoratorPersister {
      * @param int $pos     byte position in the original source
      */
     function table_open($maxcols = null, $numrows = null, $pos = null) {
-		// TODO
+		$this->appendCommand("begin", "table", "h");
+		$this->appendCommand("begin", "center");
+		$this->appendContent("\\begin{tabular}{|".str_repeat("c|", $maxcols)."}\r\n");
     }
 
     /**
@@ -832,63 +840,65 @@ class DecoratorPersister {
      * @param int $pos byte position in the original source
      */
     function table_close($pos = null) {
-		// TODO
+		$this->appendCommand("end", "tabular");
+		$this->appendCommand("end", "center");
+		$this->appendCommand("end", "table");
     }
 
     /**
      * Open a table header
      */
     function tablethead_open() {
-		// TODO
+		// Nothing to do
     }
 
     /**
      * Close a table header
      */
     function tablethead_close() {
-		// TODO
+		// Nothing to do
     }
 
     /**
      * Open a table body
      */
     function tabletbody_open() {
-		// TODO
+		// Nothing to do
     }
 
     /**
      * Close a table body
      */
     function tabletbody_close() {
-		// TODO
+		// Nothing to do
     }
 
     /**
      * Open a table footer
      */
     function tabletfoot_open() {
-		// TODO
+		// Nothing to do
     }
 
     /**
      * Close a table footer
      */
     function tabletfoot_close() {
-		// TODO
+		// Nothing to do
     }
 
     /**
      * Open a table row
      */
     function tablerow_open() {
-		// TODO
+		// Nothing to do
     }
 
     /**
      * Close a table row
      */
     function tablerow_close() {
-		// TODO
+		$this->appendContent("\\\\ \r\n");
     }
 
     /**
@@ -899,14 +909,14 @@ class DecoratorPersister {
      * @param int    $rowspan
      */
     function tableheader_open($colspan = 1, $align = null, $rowspan = 1) {
-		// TODO
+		$this->appendContent("\\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{\\textbf{");
     }
 
     /**
      * Close a table header cell
      */
     function tableheader_close() {
-		// TODO
+		$this->appendContent("}}} & ");
     }
 
     /**
@@ -917,14 +927,14 @@ class DecoratorPersister {
      * @param int    $rowspan
      */
     function tablecell_open($colspan = 1, $align = null, $rowspan = 1) {
-		// TODO
+		$this->appendContent("\\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{");
     }
 
     /**
      * Close a table cell
      */
     function tablecell_close() {
-		// TODO
+		$this->appendContent("}} & ");
     }
 	
 }
