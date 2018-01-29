@@ -15,10 +15,11 @@ Be sure that the following snippet is present in the document header:
 
 	\documentclass{book}
 	...
-	\usepackage{fontspec}
-	\usepackage{hyperref} # To display clickable URL
-	\usepackage{soul} # To use st for strikethrough
-	\usepackage{csquotes} # To use quotations
+	\usepackage{graphicx} % To display images
+	\usepackage{fontspec} % To use system fonts.
+	\usepackage{hyperref} % To display clickable URL
+	\usepackage{soul}     % To use st for strikethrough
+	\usepackage{csquotes} % To use quotations
 	\setmainfont[Ligatures=TeX]{xits}
 	...
 	\begin{document}
