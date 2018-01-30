@@ -11,10 +11,6 @@ class TexCommand {
 	function __construct($command) {
 		$this->command = $command;
 	}
-	
-	public function __toString() {
-		return $this->command;
-	}
 }
 
 class CommandHeader extends TexCommand {
@@ -27,10 +23,6 @@ class CommandHeader extends TexCommand {
 		$this->text = $text;
 		$this->level = $level;
 		$this->pos = $pos;
-	}
-	
-	function __toString() {
-		return parent::__toString() + "$level -> \"$text\" ($pos)";
 	}
 }
 
@@ -54,10 +46,6 @@ class CommandListItemOpen extends TexCommand {
 		parent::__construct("listitem_open");
 		$this->level = $level;
 	}
-	
-	function __toString() {
-		return parent::__toString().'('.$this->level.')';
-	}
 }
 
 class CommandCData extends TexCommand {
@@ -66,10 +54,6 @@ class CommandCData extends TexCommand {
 	function __construct($text) {
 		parent::__construct("cdata");
 		$this->text = $text;
-	}
-
-	function __toString() {
-		return parent::__toString().'('.$this->text.')';
 	}
 }
 
@@ -80,9 +64,6 @@ class CommandInternalLink extends TexCommand {
 	function __construct($link, $title) {
 		parent::__construct("listcontent_open");
 	}	
-	function __toString() {
-		return parent::__toString().'('.$this->link.', '.$this->title.')';
-	}
 }
 
 class CommandListContentOpen extends TexCommand {
@@ -120,9 +101,6 @@ class CommandMathjaxContent extends TexCommand {
 		parent::__construct("mathjax_content");
 		$this->formula = $formula;
 	}
-	function __toString() {
-		return parent::__toString().'('.$this->formula.')';		
-	}
 }
 class CommandAppendCommand extends TexCommand {
 	public $command;
@@ -135,9 +113,115 @@ class CommandAppendCommand extends TexCommand {
 		$this->scope = $scope;
 		$this->argument = $argument;
 	}
-	function __toString() {
-		return parent::__toString().'('.$this->command.', '.$this->scope.', '.$argument.')';
+}
+
+class CommandTableOpen extends TexCommand {
+	private $maxcols = null;
+	private $numrows = null;
+	private $pos = null;
+	
+	function __construct($maxcols = null, $numrows = null, $pos = null) {
+		parent::__construct("table_open");
+		$this->maxcols = $maxcols;
+		$this->numrows = $numrows;
+		$this->pos = $pos;
 	}
 }
+
+class CommandTableClose extends TexCommand {
+	private $pos = null;
+	
+	function __construct($pos = null) {
+		parent::__construct("table_close");
+		$this->pos = $pos;
+	}
+}
+
+class CommandTableHeadOpen extends TexCommand {
+	function __construct() {
+		parent::__construct("tablethead_open");
+	}
+}
+
+class CommandTableHeadClose extends TexCommand {
+	function __construct() {
+		parent::__construct("tablethead_close");
+	}
+}
+
+class CommandTableBodyOpen extends TexCommand {
+	function __construct() {
+		parent::__construct("tabletbody_open");
+	}
+}
+
+class CommandTableBodyClose extends TexCommand {
+	function __construct() {
+		parent::__construct("tabletbody_close");
+	}
+}
+
+class CommandTableFootOpen extends TexCommand {
+	function __construct() {
+		parent::__construct("tabletfoot_open");
+	}
+}
+
+class CommandTableFootClose extends TexCommand {
+	function __construct() {
+		parent::__construct("tabletfoot_close");
+	}
+}
+
+class CommandTableRowOpen extends TexCommand {
+	function __construct() {
+		parent::__construct("tablerow_open");
+	}
+}
+
+class CommandTableRowClose extends TexCommand {
+	function __construct() {
+		parent::__construct("tablerow_close");
+	}
+}
+
+class CommandTableHeaderOpen extends TexCommand {
+	private $colspan;
+	private $align;
+	private $rowspan;
+
+	function __construct($colspan = 1, $align = null, $rowspan = 1) {
+		parent::__construct("tableheader_open");
+		$this->colspan = $colspan;
+		$this->align = $align;
+		$this->rowspan = $rowspan;
+	}
+}
+
+class CommandTableHeaderClose extends TexCommand {
+	function __construct() {
+		parent::__construct("tableheader_close");
+	}
+}
+
+class CommandTableCellOpen extends TexCommand {
+	private $colspan = 1;
+	private $align = null;
+	private $rowspan = 1;
+
+	function __construct($colspan = 1, $align = null, $rowspan = 1) {
+		parent::__construct("tablecell_open");
+		$this->colspan = $colspan;
+		$this->align = $align;
+		$this->rowspan = $rowspan;
+	}
+}
+
+class CommandTableCellClose extends TexCommand {
+	function __construct() {
+		parent::__construct("tablecell_close");
+	}
+}
+
 
 ?>

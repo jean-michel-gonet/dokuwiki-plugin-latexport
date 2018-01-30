@@ -898,7 +898,7 @@ class DecoratorPersister {
      * Close a table row
      */
     function tablerow_close() {
-		$this->appendContent("\\\\ \r\n");
+		$this->appendContent("\\\\\r\n");
     }
 
     /**
@@ -909,7 +909,7 @@ class DecoratorPersister {
      * @param int    $rowspan
      */
     function tableheader_open($colspan = 1, $align = null, $rowspan = 1) {
-		$this->appendContent("\\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{\\textbf{");
+		$this->appendContent("\r\n    \\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{\\textbf{");
     }
 
     /**
@@ -927,7 +927,7 @@ class DecoratorPersister {
      * @param int    $rowspan
      */
     function tablecell_open($colspan = 1, $align = null, $rowspan = 1) {
-		$this->appendContent("\\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{");
+		$this->appendContent("\r\n    \\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{");
     }
 
     /**

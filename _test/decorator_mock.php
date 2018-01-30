@@ -129,5 +129,61 @@ class DecoratorMock extends Decorator {
 	function appendCommand($command, $scope, $argument = '') {
 		$this->listOfCommands->enqueue(new CommandAppendCommand($command, $scope, $argument));
 	}
+
+    function table_open($maxcols = null, $numrows = null, $pos = null) {
+		$this->listOfCommands->enqueue(new CommandTableOpen($maxcols, $numrows, $pos));
+    }
+
+    function table_close($pos = null) {
+		$this->listOfCommands->enqueue(new CommandTableClose($pos));
+    }
+
+    function tablethead_open() {
+		$this->listOfCommands->enqueue(new CommandTableHeadOpen());
+    }
+
+    function tablethead_close() {
+		$this->listOfCommands->enqueue(new CommandTableHeadClose());
+    }
+
+    function tabletbody_open() {
+		$this->listOfCommands->enqueue(new CommandTableBodyOpen());
+    }
+
+    function tabletbody_close() {
+		$this->listOfCommands->enqueue(new CommandTableBodyClose());
+    }
+
+    function tabletfoot_open() {
+		$this->listOfCommands->enqueue(new CommandTableFootOpen());
+    }
+
+    function tabletfoot_close() {
+		$this->listOfCommands->enqueue(new CommandTableFootClose());
+    }
+
+    function tablerow_open() {
+		$this->listOfCommands->enqueue(new CommandTableRowOpen());
+    }
+
+    function tablerow_close() {
+		$this->listOfCommands->enqueue(new CommandTableRowClose());
+    }
+
+    function tableheader_open($colspan = 1, $align = null, $rowspan = 1) {
+		$this->listOfCommands->enqueue(new CommandTableHeaderOpen($colspan, $align, $rowspan));
+    }
+
+    function tableheader_close() {
+		$this->listOfCommands->enqueue(new CommandTableHeaderClose());
+    }
+
+    function tablecell_open($colspan = 1, $align = null, $rowspan = 1) {
+		$this->listOfCommands->enqueue(new CommandTableCellOpen($colspan, $align, $rowspan));
+    }
+
+    function tablecell_close() {
+		$this->listOfCommands->enqueue(new CommandTableCellClose());
+    }
 }
 ?>
