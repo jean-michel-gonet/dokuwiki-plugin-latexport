@@ -79,7 +79,6 @@ class DecoratorTables extends Decorator {
      * Open a table row
      */
     function tablerow_open() {
-		error_log("DecoratorTables::tablerow_open");
 		$this->column = 0;
 		$this->decorator->tablerow_open();
     }
@@ -88,7 +87,6 @@ class DecoratorTables extends Decorator {
      * Close a table row
      */
     function tablerow_close() {
-		error_log("DecoratorTables::tablerow_close");
 		$this->computeNextLine();
 		$this->decorator->tablerow_close();
     }
@@ -102,7 +100,6 @@ class DecoratorTables extends Decorator {
      * @param int    $rowspan
      */
     function tableheader_open($colspan = 1, $align = null, $rowspan = 1) {
-		error_log("DecoratorTables::tableheader_open($colspan, $align, $rowspan)");
 		$numberOfPlaceholders = $this->computePlaceholders($colspan, $rowspan);
 		for ($n = 0; $n < $numberOfPlaceholders; $n++) {
 			$this->decorator->tableheader_open(1, null, 1);
@@ -119,7 +116,6 @@ class DecoratorTables extends Decorator {
      * @param int    $rowspan
      */
     function tablecell_open($colspan = 1, $align = null, $rowspan = 1) {
-		error_log("DecoratorTables::tablecell_open($colspan, $align, $rowspan)");
 		$numberOfPlaceholders = $this->computePlaceholders($colspan, $rowspan);
 		for ($n = 0; $n < $numberOfPlaceholders; $n++) {
 			$this->decorator->tablecell_open(1, null, 1);
@@ -129,14 +125,11 @@ class DecoratorTables extends Decorator {
     }
 
 	function computePlaceholders($colspan, $rowspan) {
-		error_log("DecoratorTables::computePlaceholders($colspan, $rowspan) - column=$this->column, colspan=$colspan, rowspan=$rowspan");
 		$totalNumberOfPlaceholders = 0;
 		do {
 			$cell = $this->row[$this->column];
-			error_log("                 computePlaceholders row[column=$this->column]=".$cell);
 			if ($cell->getRows() > 0) {
 				$numberOfPlaceholders = $cell->getCols();
-				error_log("                 number of place holders: $numberOfPlaceholders");
 			} else {
 				$numberOfPlaceholders = 0;
 			}
@@ -158,7 +151,6 @@ class DecoratorTables extends Decorator {
 			$nrs.=$nextCell->__toString();
 			$row[] = $nextCell;
 		}
-		error_log("row: $rs  -->  $nrs");
 		$this->row = $row;
 		$this->column = 0;
 	}

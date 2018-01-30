@@ -887,18 +887,20 @@ class DecoratorPersister {
 		// Nothing to do
     }
 
+	private $firstCellInRow;
+
     /**
      * Open a table row
      */
     function tablerow_open() {
-		// Nothing to do
+		$this->firstCellInRow = true;
     }
 
     /**
      * Close a table row
      */
     function tablerow_close() {
-		$this->appendContent("\\\\\r\n");
+		$this->appendContent("\\\\ \r\n\r\n");
     }
 
     /**
@@ -909,14 +911,19 @@ class DecoratorPersister {
      * @param int    $rowspan
      */
     function tableheader_open($colspan = 1, $align = null, $rowspan = 1) {
-		$this->appendContent("\r\n    \\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{\\textbf{");
+		if ($this->firstCellInRow) {
+			$this->firstCellInRow = false;			
+		} else {
+			$this->appendContent(" &\r\n");
+		}
+		$this->appendContent("    \\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{\\textbf{");
     }
 
     /**
      * Close a table header cell
      */
     function tableheader_close() {
-		$this->appendContent("}}} & ");
+		$this->appendContent("}}}");
     }
 
     /**
@@ -927,14 +934,19 @@ class DecoratorPersister {
      * @param int    $rowspan
      */
     function tablecell_open($colspan = 1, $align = null, $rowspan = 1) {
-		$this->appendContent("\r\n    \\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{");
+		if ($this->firstCellInRow) {
+			$this->firstCellInRow = false;			
+		} else {
+			$this->appendContent(" &\r\n");
+		}
+		$this->appendContent("    \\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{");
     }
 
     /**
      * Close a table cell
      */
     function tablecell_close() {
-		$this->appendContent("}} & ");
+		$this->appendContent("}}");
     }
 	
 }

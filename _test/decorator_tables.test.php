@@ -126,7 +126,6 @@ class DecoratorTablesTest extends DokuWikiTest {
     }
 	
     public function testCanHandleMultirow() {
-		error_log("++++++++++++++++++++++++");
 		$this->decoratorTables->table_open(3, 0, 0);
 		
 		$this->decoratorTables->tablerow_open();
@@ -156,7 +155,6 @@ class DecoratorTablesTest extends DokuWikiTest {
 		$this->decoratorTables->tablerow_close();
 		
 		$this->decoratorTables->table_close();
-		error_log("++++++++++++++++++++++++");
 		
 		
 		$this->assertEquals(new CommandTableOpen(3, 0, 0),        $this->decoratorMock->nextCommand());
