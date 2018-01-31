@@ -918,7 +918,7 @@ class DecoratorPersister {
 		} else {
 			$this->appendContent(" &\r\n");
 		}
-		$this->appendContent("    \\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{\\textbf{");
+		$this->appendContent("    \\multicolumn{".$colspan."}".$this->alignment($align)."{\multirow{".$rowspan."}{*}{\\textbf{");
     }
 
     /**
@@ -941,8 +941,19 @@ class DecoratorPersister {
 		} else {
 			$this->appendContent(" &\r\n");
 		}
-		$this->appendContent("    \\multicolumn{".$colspan."}{c|}{\multirow{".$rowspan."}{*}{");
+		$this->appendContent("    \\multicolumn{".$colspan."}".$this->alignment($align)."{\multirow{".$rowspan."}{*}{");
     }
+
+	function alignment($align) {
+		switch($align) {
+			case "left":
+				return "{|l|}";
+			case "right":
+				return "{|r|}";
+			default:
+				return "{|c|}";
+		}
+	}
 
     /**
      * Close a table cell

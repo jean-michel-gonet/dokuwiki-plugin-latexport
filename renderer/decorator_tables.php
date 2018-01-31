@@ -116,7 +116,7 @@ class DecoratorTables extends Decorator {
      * @param string $align left|center|right
      * @param int    $rowspan
      */
-    function tablecell_open($colspan = 1, $align = null, $rowspan = 1) {
+    function tablecell_open($colspan = 1, $align = center, $rowspan = 1) {
 		$numberOfPlaceholders = $this->computePlaceholders($colspan, $rowspan);
 		for ($n = 0; $n < $numberOfPlaceholders; $n++) {
 			$this->decorator->tablecell_open(1, null, 1);
