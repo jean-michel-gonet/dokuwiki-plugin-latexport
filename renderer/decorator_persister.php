@@ -189,6 +189,7 @@ class DecoratorPersister {
 			$this->appendCommand('usepackage', 'graphicx');
 			$this->appendCommand('usepackage', 'fontspec');
 			$this->appendCommand('usepackage', 'hyperref');
+			$this->appendCommand('usepackage', 'array');
 			$this->appendCommand('usepackage', 'soul');
 			$this->appendCommand('usepackage', 'csquotes');
 			$this->appendCommand('usepackage', 'multirow');
@@ -831,7 +832,7 @@ class DecoratorPersister {
     function table_open($maxcols = null, $numrows = null, $pos = null) {
 		$this->appendCommand("begin", "table", "h");
 		$this->appendCommand("begin", "center");
-		$this->appendContent("\\begin{tabular}{|".str_repeat("c|", $maxcols)."}\r\n");
+		$this->appendContent("\\begin{tabular}{|".str_repeat("c|", $maxcols)."}\\hline\r\n");
     }
 
     /**
@@ -893,6 +894,7 @@ class DecoratorPersister {
      * Open a table row
      */
     function tablerow_open() {
+		$this->appendContent("\r\n");
 		$this->firstCellInRow = true;
     }
 
@@ -900,7 +902,7 @@ class DecoratorPersister {
      * Close a table row
      */
     function tablerow_close() {
-		$this->appendContent("\\\\ \r\n\r\n");
+		$this->appendContent("\\\\\r\n");
     }
 
     /**
@@ -948,5 +950,9 @@ class DecoratorPersister {
     function tablecell_close() {
 		$this->appendContent("}}");
     }
+	
+	function table_cline($start, $end) {
+		$this->appendContent("\\cline{".$start." - ".$end."}");
+	}
 	
 }

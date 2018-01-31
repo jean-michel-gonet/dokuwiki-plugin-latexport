@@ -185,5 +185,10 @@ class DecoratorMock extends Decorator {
     function tablecell_close() {
 		$this->listOfCommands->enqueue(new CommandTableCellClose());
     }
+	
+	function table_cline($start, $end) {
+		$this->listOfCommands->enqueue(new CommandTableCline($start, $end));		
+	}
+
 }
 ?>

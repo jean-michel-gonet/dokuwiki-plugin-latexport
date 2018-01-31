@@ -60,6 +60,7 @@ class DecoratorTablesTest extends DokuWikiTest {
 		$this->assertEquals(new CommandTableHeaderClose(),       $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableRowClose(),          $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandTableCline(1, 3),         $this->decoratorMock->nextCommand());		
 		$this->assertEquals(new CommandTableRowOpen(),           $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableCellOpen(1, 1, 1),   $this->decoratorMock->nextCommand());
@@ -70,6 +71,7 @@ class DecoratorTablesTest extends DokuWikiTest {
 	 	$this->assertEquals(new CommandTableCellClose(),         $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableRowClose(),          $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandTableCline(1, 3),         $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableClose(),             $this->decoratorMock->nextCommand());
 
@@ -109,6 +111,7 @@ class DecoratorTablesTest extends DokuWikiTest {
 		$this->assertEquals(new CommandTableHeaderClose(),       $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableRowClose(),          $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandTableCline(1, 3),         $this->decoratorMock->nextCommand());		
 		$this->assertEquals(new CommandTableRowOpen(),           $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableCellOpen(1, 1, 1),   $this->decoratorMock->nextCommand());
@@ -119,6 +122,7 @@ class DecoratorTablesTest extends DokuWikiTest {
 	 	$this->assertEquals(new CommandTableCellClose(),         $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableRowClose(),          $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandTableCline(1, 3),         $this->decoratorMock->nextCommand());		
 		
 		$this->assertEquals(new CommandTableClose(),             $this->decoratorMock->nextCommand());		
 		
@@ -126,6 +130,7 @@ class DecoratorTablesTest extends DokuWikiTest {
     }
 	
     public function testCanHandleMultirow() {
+		
 		$this->decoratorTables->table_open(3, 0, 0);
 		
 		$this->decoratorTables->tablerow_open();
@@ -169,6 +174,7 @@ class DecoratorTablesTest extends DokuWikiTest {
 		$this->assertEquals(new CommandTableHeaderClose(),        $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableRowClose(),           $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandTableCline(3, 3),         $this->decoratorMock->nextCommand());		
 		$this->assertEquals(new CommandTableRowOpen(),            $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableCellOpen(1, null, 1), $this->decoratorMock->nextCommand());
@@ -179,6 +185,7 @@ class DecoratorTablesTest extends DokuWikiTest {
 	 	$this->assertEquals(new CommandTableCellClose(),          $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableRowClose(),           $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandTableCline(1, 3),         $this->decoratorMock->nextCommand());		
 		$this->assertEquals(new CommandTableRowOpen(),            $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableCellOpen(1, 1, 1),    $this->decoratorMock->nextCommand());
@@ -189,6 +196,7 @@ class DecoratorTablesTest extends DokuWikiTest {
 	 	$this->assertEquals(new CommandTableCellClose(),          $this->decoratorMock->nextCommand());
 		
 		$this->assertEquals(new CommandTableRowClose(),           $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandTableCline(1, 3),         $this->decoratorMock->nextCommand());		
 		
 		$this->assertEquals(new CommandTableClose(),              $this->decoratorMock->nextCommand());		
 		

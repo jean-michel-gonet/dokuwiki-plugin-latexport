@@ -87,8 +87,9 @@ class DecoratorTables extends Decorator {
      * Close a table row
      */
     function tablerow_close() {
-		$this->computeNextLine();
 		$this->decorator->tablerow_close();
+		$this->computeCline();
+		$this->computeNextLine();
     }
 
 
@@ -141,16 +142,39 @@ class DecoratorTables extends Decorator {
 		return $totalNumberOfPlaceholders;
 	}
 
+	function computeCLine() {
+		$lineIsPresent = false;
+		$column = 0;
+		
+		do {
+			$cell = $this->row[$column];
+
+			if ($cell->getRows() == 1 && !$lineIsPresent) {
+				$starts = $column + 1;
+				$lineIsPresent = true;
+			}
+
+			if ($cell->getRows() > 1 && $lineIsPresent) {
+				$this->decorator->table_cline($starts, $column);
+				$lineIsPresent = false;
+			}
+
+			$column += $cell->getCols();
+		} while($column < sizeof($this->row));
+
+		if ($lineIsPresent) {
+			$this->decorator->table_cline($starts, $column);		
+		}		
+	}
+
 	function computeNextLine() {
 		$row = [];
-		$rs = "";
-		$nrs = "";
+
 		foreach($this->row as $cell) {
 			$nextCell = $cell->nextCellSize();
-			$rs.=$cell->__toString();
-			$nrs.=$nextCell->__toString();
 			$row[] = $nextCell;
 		}
+
 		$this->row = $row;
 		$this->column = 0;
 	}

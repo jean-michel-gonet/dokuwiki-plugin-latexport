@@ -54,7 +54,17 @@ class decorator extends Doku_Renderer {
 		$this->any_command();
 		$this->decorator->input($link);
 	}
-	
+
+	/**
+	 * To draw an horizontal rule between two rows of a table,
+	 * @param $start int The starting column.
+	 * @param $end int The ending column.
+	 */
+	function table_cline($start, $end) {
+		$this->any_command();
+		$this->decorator->table_cline($start, $end);		
+	}
+
 	/**
 	 * Adds a latex command to the document.
 	 * @param command  The command

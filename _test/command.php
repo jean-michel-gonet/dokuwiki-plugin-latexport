@@ -223,5 +223,16 @@ class CommandTableCellClose extends TexCommand {
 	}
 }
 
+class CommandTableCline extends TexCommand {
+	private $start;
+	private $end;
+
+	function __construct($start, $end) {
+		parent::__construct("table_cline");
+		$this->start = $start;
+		$this->end = $end;
+	}
+}
+
 
 ?>
