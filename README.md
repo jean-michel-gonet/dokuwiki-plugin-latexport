@@ -20,6 +20,8 @@ Be sure that the following snippet is present in the document header:
 	\usepackage{hyperref} % To display clickable URL
 	\usepackage{soul}     % To use st for strikethrough
 	\usepackage{csquotes} % To use quotations
+	\usepackage{listings} % To render code blocks.
+
 	\setmainfont[Ligatures=TeX]{xits}
 	...
 	\begin{document}
