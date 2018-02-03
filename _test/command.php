@@ -57,6 +57,24 @@ class CommandCData extends TexCommand {
 	}
 }
 
+class CommandPOpen extends TexCommand {
+	function __construct() {
+		parent::__construct("p_open");
+	}
+}
+
+class CommandPClose extends TexCommand {
+	function __construct() {
+		parent::__construct("p_close");
+	}
+}
+
+class CommandLinebreak extends TexCommand {
+	function __construct() {
+		parent::__construct("linebreak");
+	}
+}
+
 class CommandInternalLink extends TexCommand {
 	public $link;
 	public $text;

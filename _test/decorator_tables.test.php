@@ -23,6 +23,20 @@ class DecoratorTablesTest extends DokuWikiTest {
 		$this->decoratorTables = new DecoratorTables($this->decoratorMock);
     }
 	
+	public function testInTablesNewLinesAreReplacedByWordWrap() {
+		$this->decoratorTables->p_close();
+		$this->decoratorTables->table_open(3, 0, 0);
+		$this->decoratorTables->p_close();
+		$this->decoratorTables->table_close();
+		$this->decoratorTables->p_close();
+		
+		$this->assertEquals(new CommandPClose(),            $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandTableOpen(3, 0, 0),  $this->decoratorMock->nextCommand());		
+		$this->assertEquals(new CommandLinebreak(),         $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandTableClose(),        $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandPClose(),            $this->decoratorMock->nextCommand());
+	}
+
     public function testDoesNotChangeAnythingOnTablesWithoutSpanning() {
 		$this->decoratorTables->table_open(3, 0, 0);
 		

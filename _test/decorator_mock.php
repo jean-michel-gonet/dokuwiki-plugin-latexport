@@ -37,7 +37,7 @@ class DecoratorMock extends Decorator {
 	}
 
 	function p_open() {
-		// Nothing to do?
+		$this->listOfCommands->enqueue(new CommandPOpen());
 	}
 
 	function cdata($text) {
@@ -45,8 +45,12 @@ class DecoratorMock extends Decorator {
 	}
 
 	function p_close() {
-		// Nothing to do?
+		$this->listOfCommands->enqueue(new CommandPClose());
 	}
+
+    function linebreak() {
+		$this->listOfCommands->enqueue(new CommandLinebreak());
+    }
 
 	function emphasis_open() {
 		// Nothing to do?

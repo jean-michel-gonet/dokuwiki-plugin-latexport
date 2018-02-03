@@ -246,6 +246,8 @@ class DecoratorPersister {
 			$this->appendCommand('usepackage', 'soul');
 			$this->appendCommand('usepackage', 'csquotes');
 			$this->appendCommand('usepackage', 'multirow');
+			$this->appendCommand('usepackage', 'listings');
+			$this->appendCommand('usepackage', 'makecell');
 			$this->appendCommand('setmainfont', 'xits', 'Ligatures=TeX');
 			$this->appendCommand('graphicspath', ' {'.self::GRAPHICSPATH.'} ');
 			$this->appendCommand('begin', 'document');
@@ -342,6 +344,7 @@ class DecoratorPersister {
 	 */
 	function cdata($text) {
 		$text = str_replace('#', '\\#', $text);
+		$text = str_replace('_', '\\_', $text);
 		$this->appendContent($text);
 	}
 
@@ -363,7 +366,7 @@ class DecoratorPersister {
      * Create a line break
      */
     function linebreak() {
-		$this->appendContent("\r\n\r\n");
+		$this->appendContent(" \\\\ ");
     }
 
     /**
@@ -982,7 +985,7 @@ class DecoratorPersister {
 		} else {
 			$this->appendContent(" &\r\n");
 		}
-		$this->appendContent("    \\multicolumn{".$colspan."}".$this->alignment($align)."{\multirow{".$rowspan."}{*}{\\textbf{");
+		$this->appendContent("    \\multicolumn{".$colspan."}".$this->alignment($align)."{\multirow{".$rowspan."}{*}{\\thead{");
     }
 
     /**
@@ -1005,7 +1008,7 @@ class DecoratorPersister {
 		} else {
 			$this->appendContent(" &\r\n");
 		}
-		$this->appendContent("    \\multicolumn{".$colspan."}".$this->alignment($align)."{\multirow{".$rowspan."}{*}{");
+		$this->appendContent("    \\multicolumn{".$colspan."}".$this->alignment($align)."{\multirow{".$rowspan."}{*}{\\makecell{");
     }
 
 	function alignment($align) {
@@ -1023,7 +1026,7 @@ class DecoratorPersister {
      * Close a table cell
      */
     function tablecell_close() {
-		$this->appendContent("}}");
+		$this->appendContent("}}}");
     }
 	
 	function table_cline($start, $end) {

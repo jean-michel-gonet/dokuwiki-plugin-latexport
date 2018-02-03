@@ -63,6 +63,30 @@ class DecoratorTables extends Decorator {
 
 	private $column;
 
+	private $inTable;
+
+	/**
+	 * Open a paragraph.
+	 */
+	function p_open() {
+		if ($this->inTable) {
+			// No paragraphs allowed in tables
+		} else {
+			$this->decorator->p_open();
+		}
+	}
+
+	/**
+	 * Close a paragraph.
+	 */
+	function p_close() {
+		if ($this->inTable) {
+			$this->decorator->linebreak();
+		} else {
+			$this->decorator->p_close();
+		}
+	}
+	
     /**
      * Start a table
      *
@@ -73,7 +97,13 @@ class DecoratorTables extends Decorator {
     function table_open($maxcols = null, $numrows = null, $pos = null) {
 		$this->row = CellSize::makeRow($maxcols); 
 		$this->decorator->table_open($maxcols, $numrows, $pos);
+		$this->inTable = true;
     }
+
+    function table_close($pos = null) {
+		$this->decorator->table_close($pos);
+		$this->inTable = false;
+	}
 
     /**
      * Open a table row
