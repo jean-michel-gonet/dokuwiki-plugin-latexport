@@ -28,6 +28,8 @@ class DecoratorPersister {
 	private $matterNumber;
 	
 	private $pageId;
+	
+	private $firstHeader;
 
 	/**
 	 * Class constructor.
@@ -126,6 +128,21 @@ class DecoratorPersister {
 		return $baseFilename;
 	}
 
+	function appendLabel($link = null) {
+		$this->appendLabelInline($link);
+		$this->appendContent("\r\n");
+	}
+	
+	function appendLabelInline($link = null) {
+		if ($link) {
+			$label = $this->pageId.':'.$this->texifyReference($link);
+		} else {
+			$label = $this->pageId;
+		}
+		error_log("DecoratorPersister::appendLabelInline('$link' ==> '$label'");
+		$this->appendInlineCommand('label', $label);
+	}
+
 	/**
 	 * Returns a TeX compliant version of the specified file name.
 	 * @param filename The filename.
@@ -138,10 +155,43 @@ class DecoratorPersister {
 			$ext = substr($filename, $extPosition + 1);
 			$filename = substr($filename, 0, -strlen($ext) - 1);
 		}
-		$texifiedFilename = str_replace(".", "_", $filename);
-		$texifiedFilename = str_replace(" ", "_", $texifiedFilename);
+		$texifiedFilename = $this->texifyReference($filename);
 		return "$texifiedFilename.$ext";
 	}
+	
+	/**
+	 * Returns a TeX compliant version of the specified reference.
+	 * @param filename The reference.
+	 * @return A TeX compliant version, with no spaces, and no weird char.
+	 */
+	function texifyReference($reference) {
+		$patterns[ 0] = '/[áâàåä]/ui';
+		$patterns[ 1] = '/[ðéêèë]/ui';
+		$patterns[ 2] = '/[íîìï]/ui';
+		$patterns[ 3] = '/[óôòøõö]/ui';
+		$patterns[ 4] = '/[úûùü]/ui';
+		$patterns[ 5] = '/æ/ui';
+		$patterns[ 6] = '/ç/ui';
+		$patterns[ 7] = '/ß/ui';
+		$patterns[ 8] = '/\\s/';
+		$patterns[ 9] = '/#/';
+		$patterns[10] = '/[^A-Za-z0-9\\-:]/';
+		$replacements[ 0] = 'a';
+		$replacements[ 1] = 'e';
+		$replacements[ 2] = 'i';
+		$replacements[ 3] = 'o';
+		$replacements[ 4] = 'u';
+		$replacements[ 5] = 'ae';
+		$replacements[ 6] = 'c';
+		$replacements[ 7] = 'ss';
+		$replacements[ 8] = '-';
+		$replacements[ 9] = ':';
+		$replacements[10] = '_';
+		
+		return preg_replace($patterns, $replacements, $reference);
+	}
+	
+	
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
@@ -166,7 +216,9 @@ class DecoratorPersister {
 	 * @param string $title The associated text.
 	 */
 	function anchor($link, $title = null) {
-		$this->appendContent(' \\label{'.$this->pageId.':'.$link.'}'.$title);
+		error_log("DecoratorPersister::anchor($link, $title)");
+		$this->appendLabelInline($link);
+		$this->appendContent($title);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -184,6 +236,7 @@ class DecoratorPersister {
 	 */
 	function document_start($pageId, $recursionLevel) {
 		$this->pageId = $pageId;
+		$this->firstHeader = true;
 		if ($recursionLevel == 0) {
 			$this->appendCommand('documentclass', 'book');
 			$this->appendCommand('usepackage', 'graphicx');
@@ -230,7 +283,7 @@ class DecoratorPersister {
 			case 1:
 				switch($this->matterNumber) {
 					case 0:
-						$this->appendContent("\\frontmatter\r\n");
+						$this->appendContent("\\mainmatter\r\n");
 						$this->matterNumber = 1;
 						break;
 					case 1:
@@ -239,23 +292,34 @@ class DecoratorPersister {
 						break;
 					default:
 						$this->appendCommand('chapter', $text);
+						$this->appendLabel($text);
 						break;
 				}
 				break;
 
 			case 2:
 				$this->appendCommand('part', $text);
+				$this->appendLabel($text);
 				break;
 			case 3:
 				$this->appendCommand('chapter', $text);
+				$this->appendLabel($text);
 				break;
 			case 4:
 				$this->appendCommand('section', $text);
+				$this->appendLabel($text);
 				break;
 			default:
 				$this->appendCommand('subsection', $text);
+				$this->appendLabel($text);
 				break;
 		}
+		
+		if ($this->firstHeader) {
+			$this->appendLabel();
+			$this->firstHeader = false;
+		}
+		
 	}
 
     /**
@@ -487,7 +551,7 @@ class DecoratorPersister {
      */
     function unformatted($text) {
         $this->appendCommand("begin", "verbatim");
-		$this->appencContent($text);
+		$this->appendContent($text);
 		$this->appendCommand("end", "verbatim");
     }
     /**
@@ -683,7 +747,7 @@ class DecoratorPersister {
      * @param string $name name for the link
      */
     function locallink($hash, $name = null) {
-		$this->internallink($this->pageId.":".$hash, $title);
+		$this->internallink($this->pageId.":".$hash, $name);
     }
 
 	/**
@@ -696,7 +760,7 @@ class DecoratorPersister {
 	function internallink($link, $title = null) {
 		$this->appendContent($title);
 		$this->appendContent(" ");
-		$this->appendContent('\\ref{'.str_replace("#", ":", $link).'}');
+		$this->appendInlineCommand("ref", $this->texifyReference($link));
 	}
 
     /**
