@@ -27,7 +27,7 @@ class DecoratorMock extends Decorator {
 		return $this->listOfCommands->isEmpty();
 	}
 
-	function document_start($pageId, $recursionLevel = 0) {
+	function document_start($pageId = NULL, $recursionLevel = 0) {
 		$this->recursionLevel = $recursionLevel;
 		// Nothing to do?
 	}

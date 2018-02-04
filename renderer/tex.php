@@ -85,7 +85,7 @@ class renderer_plugin_latexport_tex extends Decorator {
 	/**
 	 * Initializes the rendering.
 	 */
-	function document_start() {
+	function document_start($doNotCareAboutProviedPageId = null, $doNotCareAboutProvidedRecursionLevel = 0) {
 		global $ID;
 
 		if (!$this->currentPageId) {
@@ -124,7 +124,7 @@ class renderer_plugin_latexport_tex extends Decorator {
 	/**
 	 * Closes the document and processes the gathered includes.
 	 */
-	function document_end(){
+	function document_end($doNotCareAboutProvidedRecursionLevel = 0){
 		$this->decorator->document_end($this->recursionLevel - 1);
 
 		$this->archive->closeFile();

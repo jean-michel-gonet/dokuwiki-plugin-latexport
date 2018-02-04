@@ -74,7 +74,7 @@ class DecoratorIncluder extends Decorator {
 	/**
 	 * Remembers the current page identifier to log useful error messages.
 	 */
-	function document_start($pageId, $recursionLevel) {
+	function document_start($pageId = null, $recursionLevel = 0) {
 		$this->decorator->document_start($pageId, $recursionLevel);
 		$this->pageId = $pageId;
 	}
