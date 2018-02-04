@@ -90,6 +90,14 @@ class DecoratorMock extends Decorator {
 		// Nothing to do?
 	}
 
+	function footnote_open() {
+		$this->listOfCommands->enqueue(new CommandFootnoteOpen());
+	}
+	
+	function footnote_close() {
+		$this->listOfCommands->enqueue(new CommandFootnoteClose());		
+	}
+	
     function listo_open() {
 		$this->listOfCommands->enqueue(new CommandListOOpen());
     }

@@ -63,6 +63,8 @@ class DecoratorMath extends Decorator {
 	 * - Formula surrounded (inline) by $ ... $ is transformed to \( ... \)
 	 * - Formula surrounded by $$ ... $$ or \[ ... \] is surrounded with \begin{equation} ... \end{equation}
 	 * - Formula containing any amsmath command is left as is.
+	 * @param String $equation The equation.
+	 * @return String The escaped equation.
 	 */
 	private function processEquation($equation) {
 		if (substr( $equation, 0, 2 ) === "$$" || substr( $equation, 0, 2 ) === '\\[') {
@@ -86,11 +88,17 @@ class DecoratorMath extends Decorator {
 		return '\\('.$trimmedEquation.'\\)';
 	}
 
-	private function removeTagCommand($equation) {
-		return preg_replace('/\\\\tag\{[^}]+\}/', '', $equation);
-	}
-
 	private function processAmsMathEquation($equation) {
 		return $equation;
 	}
+	
+	/**
+	 * The tag command, although supported in Mathjax, it is not well handled by the 'equation'
+	 * environment. 
+	 * @param String $equation The equation.
+	 * @return String The escaped equation.
+	 */
+	private function removeTagCommand($equation) {
+		return preg_replace('/\\\\tag\{[^}]+\}/', '', $equation);
+	}	
 }

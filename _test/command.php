@@ -84,6 +84,18 @@ class CommandInternalLink extends TexCommand {
 	}	
 }
 
+class CommandFootnoteOpen extends TexCommand {
+	function __construct() {
+		parent::__construct("footnote_open");
+	}	
+}
+
+class CommandFootnoteClose extends TexCommand {
+	function __construct() {
+		parent::__construct("footnote_close");
+	}	
+}
+
 class CommandListContentOpen extends TexCommand {
 	function __construct() {
 		parent::__construct("listcontent_open");

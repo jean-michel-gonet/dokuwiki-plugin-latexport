@@ -128,19 +128,44 @@ class DecoratorPersister {
 		return $baseFilename;
 	}
 
+	/**
+	 * Renders a label (crossreference) so it can be referenced from elsewhere in the document.
+	 * Places a line break after the label.
+	 * @param link String The label identifier. The method precedes it with the page id. If null,
+	 *                    then the label contains only the page id.
+	 */
 	function appendLabel($link = null) {
 		$this->appendLabelInline($link);
 		$this->appendContent("\r\n");
 	}
 	
+	/**
+	 * Renders a label (crossreference) so it can be referenced from elsewhere in the document.
+	 * Does not place a linebreak after the label.
+	 * @param link String The label identifier. The method precedes it with the page id. If null,
+	 *                    then the label contains only the page id.
+	 */
 	function appendLabelInline($link = null) {
 		if ($link) {
 			$label = $this->pageId.':'.$this->texifyReference($link);
 		} else {
 			$label = $this->pageId;
 		}
-		error_log("DecoratorPersister::appendLabelInline('$link' ==> '$label'");
 		$this->appendInlineCommand('label', $label);
+	}
+
+	/**
+	 * Escapes Tex reserved chars.
+	 * @param text String The text to escape.
+	 * @return String The escaped text.
+	 */
+	function texifyText($text) {
+		$text = str_replace('}', '\\}', $text);
+		$text = str_replace('{', '\\{', $text);
+		$text = str_replace('%', '\\%', $text);
+		$text = str_replace('#', '\\#', $text);
+		$text = str_replace('_', '\\_', $text);
+		return $text;
 	}
 
 	/**
@@ -149,16 +174,48 @@ class DecoratorPersister {
 	 * @return A TeX compliant version, with no spaces, and no dot besides the extension.
 	 */
 	function texifyFilename($filename) {
-		$ext = '';
-		$extPosition = strrpos($filename, ".");
-		if ($extPosition) {
-			$ext = substr($filename, $extPosition + 1);
+		$ext = $this->extractExtension($filename);
+		if ($ext) {
 			$filename = substr($filename, 0, -strlen($ext) - 1);
 		}
 		$texifiedFilename = $this->texifyReference($filename);
 		return "$texifiedFilename.$ext";
 	}
-	
+
+	/**
+	 * Returns true if provided filename's extension is of a printable media.
+	 * @param filename String the file name.
+	 * @return boolean true if file is printable.
+	 */
+	function isPrintable($filename) {
+		$ext = $this->extractExtension($filename);
+		switch($ext) {
+			case "jpg":
+			case "jpeg":
+			case "gif":
+			case "png":
+				error_log("DecoratorPersister::isPrintable($filename) --> yes");
+				return true;
+			default:
+				error_log("DecoratorPersister::isPrintable($filename) --> no");
+				return false;
+		}
+	}
+
+	/**
+	 * Returns the extension of the provided filename.
+	 * @param filename String The filename.
+	 * @return String the filename extension, or null;
+	 */
+	function extractExtension($filename) {
+		$ext = null;
+		$extPosition = strrpos($filename, ".");
+		if ($extPosition) {
+			$ext = substr($filename, $extPosition + 1);
+		}
+		return $ext;
+	}
+
 	/**
 	 * Returns a TeX compliant version of the specified reference.
 	 * @param filename The reference.
@@ -203,10 +260,12 @@ class DecoratorPersister {
 	
 	/**
 	 * Receives mathematic formula from Mathjax plugin.
-	 * As Mathjax already uses latex separators, there is no
-	 * need to reprocess.
 	 */
 	function mathjax_content($formula) {
+		// The '%' is a comment in latex, you can't use it in Mathjax:
+		$formula = str_replace('%', '\\%', $formula);
+		
+   	 	// As Mathjax already uses latex separators, there is no need to reprocess:
 		$this->appendContent("$formula");
 	}
 
@@ -216,9 +275,8 @@ class DecoratorPersister {
 	 * @param string $title The associated text.
 	 */
 	function anchor($link, $title = null) {
-		error_log("DecoratorPersister::anchor($link, $title)");
 		$this->appendLabelInline($link);
-		$this->appendContent($title);
+		$this->appendContent($this->texifyText($title));
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -293,26 +351,26 @@ class DecoratorPersister {
 						$this->matterNumber = 2;
 						break;
 					default:
-						$this->appendCommand('chapter', $text);
+						$this->appendCommand('chapter', $this->texifyText($text));
 						$this->appendLabel($text);
 						break;
 				}
 				break;
 
 			case 2:
-				$this->appendCommand('part', $text);
+				$this->appendCommand('part', $this->texifyText($text));
 				$this->appendLabel($text);
 				break;
 			case 3:
-				$this->appendCommand('chapter', $text);
+				$this->appendCommand('chapter', $this->texifyText($text));
 				$this->appendLabel($text);
 				break;
 			case 4:
-				$this->appendCommand('section', $text);
+				$this->appendCommand('section', $this->texifyText($text));
 				$this->appendLabel($text);
 				break;
 			default:
-				$this->appendCommand('subsection', $text);
+				$this->appendCommand('subsection', $this->texifyText($text));
 				$this->appendLabel($text);
 				break;
 		}
@@ -343,9 +401,7 @@ class DecoratorPersister {
 	 * Renders plain text.
 	 */
 	function cdata($text) {
-		$text = str_replace('#', '\\#', $text);
-		$text = str_replace('_', '\\_', $text);
-		$this->appendContent($text);
+		$this->appendContent($this->texifyText($text));
 	}
 
 	/**
@@ -761,7 +817,7 @@ class DecoratorPersister {
 	 * @param string|array $title name for the link, array for media file
 	 */
 	function internallink($link, $title = null) {
-		$this->appendContent($title);
+		$this->appendContent($this->texifyText($text));
 		$this->appendContent(" ");
 		$this->appendInlineCommand("ref", $this->texifyReference($link));
 	}
@@ -773,7 +829,7 @@ class DecoratorPersister {
      * @param string|array $title name for the link, array for media file
      */
     function externallink($link, $title = null) {
-		$this->appendContent($title.' \\url{'.$link.'}');
+		$this->appendContent($this->texifyText($text).' \\url{'.$link.'}');
     }
 
     /**
@@ -844,14 +900,22 @@ class DecoratorPersister {
 	 * @param string $linking linkonly|detail|nolink
 	 */
 	function internalmedia($src, $title = null, $align = null, $width = null, $height = null, $cache = null, $linking = null) {
-		global $ID;
-		list($src, $hash) = explode('#', $src, 2);
-		resolve_mediaid(getNS($ID), $src, $exists, $this->date_at, true);
-		$file   = mediaFN($src);
-		$this->appendCommand('begin', 'figure', 'ht');
-		$this->appendCommand('includegraphics', $this->insertImage($file), 'width=\textwidth');
-		$this->appendCommand('caption', $title);
-		$this->appendCommand('end', 'figure');
+		if ($this->isPrintable($src)) {
+			global $ID;
+			list($src, $hash) = explode('#', $src, 2);
+			resolve_mediaid(getNS($ID), $src, $exists, $this->date_at, true);
+			$file   = mediaFN($src);
+			$this->appendCommand('begin', 'figure', 'ht');
+			$this->appendCommand('includegraphics', $this->insertImage($file), 'width=\textwidth');
+			$this->appendCommand('caption', $this->texifyText($title));
+			$this->appendCommand('end', 'figure');
+		} else {
+			$this->cdata($title);
+		}
+	}
+
+	function isPrintableMedia($src) {
+		
 	}
 
     /**
@@ -862,28 +926,15 @@ class DecoratorPersister {
     }
 
     /**
-     * Render a link to an internal media file as if it were an internal media.
-     *
-     * @param string $src     media ID
-     * @param string $title   descriptive text
-     * @param string $align   left|center|right
-     * @param int    $width   width of media in pixel
-     * @param int    $height  height of media in pixel
-     * @param string $cache   cache|recache|nocache
+     * Render a link to an internal media file.
+     * There is no correct way to render this on a printed media, so we just display the title.
      */
     function internalmedialink($src, $title = null, $align = null, $width = null, $height = null, $cache = null) {
-  		$this->internalmedia($src, $title, $align, $width, $height, $cache);
+  		$this->cdata($title);
     }
 
     /**
      * Render a link to an external media file as a url.
-     *
-     * @param string $src     media ID
-     * @param string $title   descriptive text
-     * @param string $align   left|center|right
-     * @param int    $width   width of media in pixel
-     * @param int    $height  height of media in pixel
-     * @param string $cache   cache|recache|nocache
      */
     function externalmedialink($src, $title = null, $align = null, $width = null, $height = null, $cache = null) {
 		$this->externallink($src, $title);
