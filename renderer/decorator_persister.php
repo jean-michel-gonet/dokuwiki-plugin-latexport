@@ -13,7 +13,7 @@ require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author Jean-Michel Gonet <jmgonet@yahoo.com>
  */
-class DecoratorPersister {
+class DecoratorPersister extends Decorator {
 	
 	/**
 	 * Were we're going to save image files.
@@ -65,7 +65,7 @@ class DecoratorPersister {
 	 *                 on the command, square brackets are placed before or after
 	 *                 the curly brackets.
 	 */
-	function appendCommand($command, $scope, $argument = '') {
+	function appendCommand($command, $scope = null, $argument = '') {
 		$this->appendInlineCommand($command, $scope, $argument);
 		$this->archive->appendContent("\r\n");
 	}
@@ -79,7 +79,7 @@ class DecoratorPersister {
 	 *                 on the command, square brackets are placed before or after
 	 *                 the curly brackets.
 	 */
-	function appendInlineCommand($command, $scope, $argument = '') {
+	function appendInlineCommand($command, $scope = null, $argument = '') {
 		if ($argument) {
 			switch($command) {
 				// Some commands have the optional arguments after the curly brackets:
@@ -153,102 +153,6 @@ class DecoratorPersister {
 		}
 		$this->appendInlineCommand('label', $label);
 	}
-
-	/**
-	 * Escapes Tex reserved chars.
-	 * @param text String The text to escape.
-	 * @return String The escaped text.
-	 */
-	function texifyText($text) {
-		$text = str_replace('}', '\\}', $text);
-		$text = str_replace('{', '\\{', $text);
-		$text = str_replace('%', '\\%', $text);
-		$text = str_replace('#', '\\#', $text);
-		$text = str_replace('_', '\\_', $text);
-		return $text;
-	}
-
-	/**
-	 * Returns a TeX compliant version of the specified file name.
-	 * @param filename The filename.
-	 * @return A TeX compliant version, with no spaces, and no dot besides the extension.
-	 */
-	function texifyFilename($filename) {
-		$ext = $this->extractExtension($filename);
-		if ($ext) {
-			$filename = substr($filename, 0, -strlen($ext) - 1);
-		}
-		$texifiedFilename = $this->texifyReference($filename);
-		return "$texifiedFilename.$ext";
-	}
-
-	/**
-	 * Returns true if provided filename's extension is of a printable media.
-	 * @param filename String the file name.
-	 * @return boolean true if file is printable.
-	 */
-	function isPrintable($filename) {
-		$ext = $this->extractExtension($filename);
-		switch($ext) {
-			case "jpg":
-			case "jpeg":
-			case "gif":
-			case "png":
-				error_log("DecoratorPersister::isPrintable($filename) --> yes");
-				return true;
-			default:
-				error_log("DecoratorPersister::isPrintable($filename) --> no");
-				return false;
-		}
-	}
-
-	/**
-	 * Returns the extension of the provided filename.
-	 * @param filename String The filename.
-	 * @return String the filename extension, or null;
-	 */
-	function extractExtension($filename) {
-		$ext = null;
-		$extPosition = strrpos($filename, ".");
-		if ($extPosition) {
-			$ext = substr($filename, $extPosition + 1);
-		}
-		return $ext;
-	}
-
-	/**
-	 * Returns a TeX compliant version of the specified reference.
-	 * @param filename The reference.
-	 * @return A TeX compliant version, with no spaces, and no weird char.
-	 */
-	function texifyReference($reference) {
-		$patterns[ 0] = '/[áâàåä]/ui';
-		$patterns[ 1] = '/[ðéêèë]/ui';
-		$patterns[ 2] = '/[íîìï]/ui';
-		$patterns[ 3] = '/[óôòøõö]/ui';
-		$patterns[ 4] = '/[úûùü]/ui';
-		$patterns[ 5] = '/æ/ui';
-		$patterns[ 6] = '/ç/ui';
-		$patterns[ 7] = '/ß/ui';
-		$patterns[ 8] = '/\\s/';
-		$patterns[ 9] = '/#/';
-		$patterns[10] = '/[^A-Za-z0-9\\-:]/';
-		$replacements[ 0] = 'a';
-		$replacements[ 1] = 'e';
-		$replacements[ 2] = 'i';
-		$replacements[ 3] = 'o';
-		$replacements[ 4] = 'u';
-		$replacements[ 5] = 'ae';
-		$replacements[ 6] = 'c';
-		$replacements[ 7] = 'ss';
-		$replacements[ 8] = '-';
-		$replacements[ 9] = ':';
-		$replacements[10] = '_';
-		
-		return preg_replace($patterns, $replacements, $reference);
-	}
-	
-	
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
@@ -900,22 +804,25 @@ class DecoratorPersister {
 	 * @param string $linking linkonly|detail|nolink
 	 */
 	function internalmedia($src, $title = null, $align = null, $width = null, $height = null, $cache = null, $linking = null) {
-		if ($this->isPrintable($src)) {
-			global $ID;
-			list($src, $hash) = explode('#', $src, 2);
-			resolve_mediaid(getNS($ID), $src, $exists, $this->date_at, true);
-			$file   = mediaFN($src);
-			$this->appendCommand('begin', 'figure', 'ht');
-			$this->appendCommand('includegraphics', $this->insertImage($file), 'width=\textwidth');
-			$this->appendCommand('caption', $this->texifyText($title));
-			$this->appendCommand('end', 'figure');
-		} else {
-			$this->cdata($title);
-		}
-	}
 
-	function isPrintableMedia($src) {
-		
+		$angle = 0;
+		$scale = round($width / 1000, 1);
+		if ($scale > 1) {
+			if ($scale > 2) {
+				if ($height < $width) {
+					$angle = 90;
+				}
+			}
+			$scale = 1;
+		}
+
+		$this->appendCommand('begin', 'figure', 'ht');
+		if ($align == 'center') {
+			$this->appendCommand('centering');
+		}
+		$this->appendCommand('includegraphics', $src, "width=$scale\\textwidth, angle=$angle");
+		$this->appendCommand('caption', $this->texifyText($title));
+		$this->appendCommand('end', 'figure');
 	}
 
     /**

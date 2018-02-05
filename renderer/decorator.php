@@ -38,6 +38,66 @@ class decorator extends Doku_Renderer {
 		return str_replace(':','-',$pageId).'.'.$ext;
 	}
 
+	/**
+	 * Escapes Tex reserved chars.
+	 * @param text String The text to escape.
+	 * @return String The escaped text.
+	 */
+	function texifyText($text) {
+		$text = str_replace('}', '\\}', $text);
+		$text = str_replace('{', '\\{', $text);
+		$text = str_replace('%', '\\%', $text);
+		$text = str_replace('#', '\\#', $text);
+		$text = str_replace('_', '\\_', $text);
+		return $text;
+	}
+
+	/**
+	 * Returns a TeX compliant version of the specified file name.
+	 * @param filename The filename.
+	 * @return A TeX compliant version, with no spaces, and no dot besides the extension.
+	 */
+	function texifyFilename($filename) {
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+		if ($ext) {
+			$filename = substr($filename, 0, -strlen($ext) - 1);
+		}
+		$texifiedFilename = $this->texifyReference($filename);
+		return "$texifiedFilename.$ext";
+	}
+
+	/**
+	 * Returns a TeX compliant version of the specified reference.
+	 * @param filename The reference.
+	 * @return A TeX compliant version, with no spaces, and no weird char.
+	 */
+	function texifyReference($reference) {
+		$patterns[ 0] = '/[áâàåä]/ui';
+		$patterns[ 1] = '/[ðéêèë]/ui';
+		$patterns[ 2] = '/[íîìï]/ui';
+		$patterns[ 3] = '/[óôòøõö]/ui';
+		$patterns[ 4] = '/[úûùü]/ui';
+		$patterns[ 5] = '/æ/ui';
+		$patterns[ 6] = '/ç/ui';
+		$patterns[ 7] = '/ß/ui';
+		$patterns[ 8] = '/\\s/';
+		$patterns[ 9] = '/#/';
+		$patterns[10] = '/[^A-Za-z0-9\\-:]/';
+		$replacements[ 0] = 'a';
+		$replacements[ 1] = 'e';
+		$replacements[ 2] = 'i';
+		$replacements[ 3] = 'o';
+		$replacements[ 4] = 'u';
+		$replacements[ 5] = 'ae';
+		$replacements[ 6] = 'c';
+		$replacements[ 7] = 'ss';
+		$replacements[ 8] = '-';
+		$replacements[ 9] = ':';
+		$replacements[10] = '_';
+		
+		return preg_replace($patterns, $replacements, $reference);
+	}
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
 	//                                                                              //

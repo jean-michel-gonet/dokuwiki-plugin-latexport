@@ -15,6 +15,7 @@ require_once DOKU_PLUGIN . 'latexport/renderer/decorator_includer.php';
 require_once DOKU_PLUGIN . 'latexport/renderer/decorator_math.php';
 require_once DOKU_PLUGIN . 'latexport/renderer/decorator_tables.php';
 require_once DOKU_PLUGIN . 'latexport/renderer/decorator_headings.php';
+require_once DOKU_PLUGIN . 'latexport/renderer/decorator_images.php';
 
 /**
  * A façade between doku wiki and the actual tex renderer.
@@ -65,7 +66,8 @@ class renderer_plugin_latexport_tex extends Decorator {
 				new DecoratorIncluder($this->includes,
 					new DecoratorMath(
 						new DecoratorTables(
-							new DecoratorPersister($this->archive))))));
+							new DecoratorImages($this->archive,
+								new DecoratorPersister($this->archive)))))));
 	}
 
 	/**
