@@ -90,6 +90,8 @@ class renderer_plugin_latexport_tex extends Decorator {
 	function document_start($doNotCareAboutProviedPageId = null, $doNotCareAboutProvidedRecursionLevel = 0) {
 		global $ID;
 
+		$this->nocache();
+		
 		if (!$this->currentPageId) {
 			$this->currentPageId = $ID;
 		}
