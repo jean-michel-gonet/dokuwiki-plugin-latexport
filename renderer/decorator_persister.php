@@ -943,7 +943,7 @@ class DecoratorPersister extends Decorator {
 		} else {
 			$this->appendContent(" &\r\n");
 		}
-		$this->appendContent("    \\multicolumn{".$colspan."}".$this->alignment($align)."{\multirow{".$rowspan."}{*}{\\thead{");
+		$this->appendContent("    \\multicolumn{".$colspan."}".$this->alignment($align)."{\\multirow{".$rowspan."}{*}{\\thead{");
     }
 
     /**
@@ -966,7 +966,7 @@ class DecoratorPersister extends Decorator {
 		} else {
 			$this->appendContent(" &\r\n");
 		}
-		$this->appendContent("    \\multicolumn{".$colspan."}".$this->alignment($align)."{\multirow{".$rowspan."}{*}{\\makecell{");
+		$this->appendContent("    \\multicolumn{".$colspan."}".$this->alignment($align)."{\\multirow{".$rowspan."}{*}{\\makecell{");
     }
 
 	function alignment($align) {
