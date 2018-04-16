@@ -5,6 +5,9 @@ Call the export with:
 
 http://xxx.yyy.com/start?do=export_latexport_tex
 
+If the downloaded ZIP file is not valid, or it contains a *.zip.cpgz file, then you may have some text warnings in it.
+To find out, open it with a text editor.
+
 ## Install Tex environment
 
 On Mac: Use http://www.tug.org/mactex/mactex-download.html
