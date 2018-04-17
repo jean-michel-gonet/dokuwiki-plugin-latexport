@@ -196,7 +196,7 @@ class DecoratorPersister extends Decorator {
 	 * @param string $pageId The identifier of the opening page.
 	 * @param int $recursionLevel The level of recursion. When a page includes a page, that's one level of recursion.
 	 */
-	function document_start($pageId, $recursionLevel) {
+	function document_start($pageId = NULL, $recursionLevel = 0) {
 		$this->pageId = $pageId;
 		$this->firstHeader = true;
 		if ($recursionLevel == 0) {
