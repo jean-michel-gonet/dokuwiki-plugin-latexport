@@ -49,6 +49,7 @@ unzip my_page.zip -d my_page/
 3. Prepare your root document, and save it *besides the folder where you extracted the latex archive*. 
 This is the simplest example I could come with. Mind the ``graphicspath`` command, that specifies the destination folder
 plus the ``images`` folder. Mind also the ``import`` command, specifying the destination folder and the exported page.
+Save it as ```root.tex``` or any other name that you see fit:
 
 ```latex
 \documentclass{book}
@@ -74,8 +75,14 @@ plus the ``images`` folder. Mind also the ``import`` command, specifying the des
 \end{document}
 ```
 
-4. To launch the PDF generation, open a command line, navigate to your wor
-5. Launch it again, so the cross-references, table of contents, lists of figures, etc. are correctly filled:
+4. To launch the PDF generation, execute ``lualatex`` twice from your working folder:
+```bash
+cd working_folder
+lualatex root.tex
+lualatex root.tex
+```
+
+5. If everything went correctly, you should have a PDF
 
 ## Structure your pages to obtain a nicely structured document
 This is the traditional page order for books (see https://en.wikibooks.org/wiki/LaTeX/Document_Structure) suggested by common practice:
