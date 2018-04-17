@@ -1,12 +1,34 @@
-# Using the dokuwiki-plugin-latexport
+# Latexport - A Latex export plugin
 A latex export renderer plugin to export latex documents from Dokuwiki. In early stages. Very early stages.
 
-Call the export with:
+## Purpose and limitations 
+The main objective of this plugin are:
+- It is possible to export a page or a set of pages as a structure of latex files and images.
+- Export forces as little presentation choices as possible. This forces/allows user to make their own styles.
+- Mapping as naturally as possible the dokuwiki formatting into sensible latex formatting.
+- Latex scripting is readable.
 
-http://xxx.yyy.com/start?do=export_latexport_tex
+Limitations are:
+- Export forces the use of certain packages (listed below).
+- Text wrapping in table cells is not supported. Latex has issues with text wrapping multi-column cells. They're possible to overcome when you write the Latex document manually, but I haven't been able to found a satisfactory automated solution. In the end I had to choose between rowspan/colspan and text wrapping, and I chose the former.
+- I did an opinionated choice about how to map a navigable page hierarchy into a readable document structure. After testing it with two very big documents (more than 20 chapters, more than 200 pages), I believe it works quite well. I hope it will work also for you.
 
-If the downloaded ZIP file is not valid, or it contains a *.zip.cpgz file, then you may have some text warnings in it.
-To find out, open it with a text editor.
+## Using the latexport plugin
+After installing the plugin, export one page by calling an url as follows:
+
+http://xxx.yyy.com/path/to/my_page?do=export_latexport_tex
+
+This downloads a ZIP archive with the following structure:
+- The name of the archive is the same as the page. In this example it is 'my_page.zip'
+- One folder named 'images' contains all media.
+- The root file is named as the page. In this example it is 'my_page.tex'
+- All linked pages are represented by one file 'name_of_the_linked_page.tex'
+
+## Creating a PDF file based on the exported latex
+The exported latex document do not contain any configuration. You need to create it separately. This is a very simple example (there is another, more complex, below):
+
+## Troubleshooting
+If the downloaded ZIP file is not valid, or it contains a *.zip.cpgz file, then you may have some text warnings in it.To find out, open it with a text editor.
 
 ## Install Tex environment
 
