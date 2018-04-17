@@ -422,6 +422,13 @@ sudo mv phpunit-5.7.26.phar /usr/local/bin/phpab
 phpab --version
 phpab 1.24.1 - Copyright (C) 2009 - 2018 by Arne Blankerts and Contributors
 ```
+
+Test commands:
+```bash
+cd /wherever/is/dokuwiki/_test
+phpunit --group plugin_latexport --testdox
+```
+
 ## Adding the timezone configuration
 
 You may be required to add the timezone configuration.
