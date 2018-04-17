@@ -33,10 +33,48 @@ You can establish two kind of links between pages that affect the latex export:
 ## Creating a PDF file based on the exported latex
 The exported latex document do not contain any configuration. You need to create it separately. This is a very simple example (there is another, more complex, below):
 
-1. Download the zip archive from the page:
-2. Unzip:
-3. Prepare your root document:
-4. Launch the PDF generation:
+1. Download the zip archive from the page. You can either type the url in your browser and save the content 
+in an appropriate place, or use a command similar to:
+```bash
+cd working_folder
+curl -o my_page.zip www.xxx.yyy/path/to/the/my_page?do=export_latexport_tex
+```
+
+2. Unzip the archive into a destination folder, either with your favorite application, or using command line:
+```bash
+mkdir my_page
+unzip my_page.zip -d my_page/
+```
+
+3. Prepare your root document, and save it *besides the folder where you extracted the latex archive*. 
+This is the simplest example I could come with. Mind the ``graphicspath`` command, that specifies the destination folder
+plus the ``images`` folder. Mind also the ``import`` command, specifying the destination folder and the exported page.
+
+```latex
+\documentclass{book}
+
+\usepackage{import}
+\usepackage[french]{babel}
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{soul}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{makecell}
+\usepackage{tabulary}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\graphicspath{ {content/images/} }
+
+\begin{document}
+
+\import{content/}{my_page.tex}
+
+\end{document}
+```
+
+4. To launch the PDF generation, open a command line, navigate to your wor
 5. Launch it again, so the cross-references, table of contents, lists of figures, etc. are correctly filled:
 
 ## Structure your pages to obtain a nicely structured document
