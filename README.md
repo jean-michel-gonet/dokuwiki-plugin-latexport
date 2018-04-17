@@ -13,7 +13,7 @@ Limitations are:
 - Text wrapping in table cells is not supported. Latex has issues with text wrapping multi-column cells. They're possible to overcome when you write the Latex document manually, but I haven't been able to found a satisfactory automated solution. In the end I had to choose between rowspan/colspan and text wrapping, and I chose the former.
 - I did an opinionated choice about how to map a navigable page hierarchy into a readable document structure. After testing it with two very big documents (more than 20 chapters, more than 200 pages), I believe it works quite well. I hope it will work also for you.
 
-## Using the latexport plugin
+## Exporting a single page to latex
 After installing the plugin, export one page by calling an url as follows:
 
 http://xxx.yyy.com/path/to/my_page?do=export_latexport_tex
@@ -24,8 +24,41 @@ This downloads a ZIP archive with the following structure:
 - The root file is named as the page. In this example it is 'my_page.tex'
 - All linked pages are represented by one file 'name_of_the_linked_page.tex'
 
+## Exporting multiple pages to latex - Links between pages
+
+You can establish two kind of links between pages that affect the latex export:
+- In-line links: It is replaced by the p reference in the final document.
+- Isolated link in a bullet item: This inserts the destination 
+
 ## Creating a PDF file based on the exported latex
 The exported latex document do not contain any configuration. You need to create it separately. This is a very simple example (there is another, more complex, below):
+
+1. Download the zip archive from the page:
+2. Unzip:
+3. Prepare your root document:
+4. Launch the PDF generation:
+5. Launch it again, so the cross-references, table of contents, lists of figures, etc. are correctly filled:
+
+## Structure your pages to obtain a nicely structured document
+This is the traditional page order for books (see https://en.wikibooks.org/wiki/LaTeX/Document_Structure) suggested by common practice:
+- Frontmatter  
+  - Half-title  
+  - Empty  
+  - Title page  
+  - Information (copyright notice, ISBN, etc.)  
+  - Dedication if any, else empty  
+  - Table of contents  
+  - List of figures (can be in the backmatter too)  
+  - Preface chapter
+- Mainmatter
+  - Main topic
+- Appendix
+  - Some subordinate chapters
+- Backmatter
+  - Bibliography  
+  - Glossary / Index
+
+The plugin helps you to structure your pages in the same way. 
 
 ## Troubleshooting
 If the downloaded ZIP file is not valid, or it contains a *.zip.cpgz file, then you may have some text warnings in it.To find out, open it with a text editor.
