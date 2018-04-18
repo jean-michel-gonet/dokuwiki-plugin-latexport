@@ -62,7 +62,7 @@ in the following procedure. There is a more elaborated example further down.
 in an appropriate place, or use a command similar to:
 ```bash
 cd working_folder
-curl -o content.zip www.xxx.yyy/path/to/the/my_page?do=export_latexport_tex
+curl -o content.zip www.xxx.yyy/path/to/my_page?do=export_latexport_tex
 ```
 
 2. Unzip the archive into a destination folder, either with your favorite application, or using command line:
@@ -112,6 +112,16 @@ lualatex root.tex
 
 5. If everything went correctly, you should have a PDF containing the exported page(s)
 
+# Syntax of the latexport plugin
+
+## Including a page into another
+
+## Cross-reference / linking two pages
+
+## Friendly plugins - mathjax
+
+## Friendly plugins - anchor
+
 ## Friendly plugins:
 If you wish, install the following plugins:
 - mathjax: This supports displaying latex-like formulae online. It is 
@@ -120,20 +130,48 @@ If you wish, install the following plugins:
   which will render the anchor as a cross-reference with page number. You probably want to have the 'normal' option, 
   referred in the install instructions.
 
+## Using system fonts
+To use system fonts, and not be restricted to the ones packaged in Latex, use the `fontspec`package:
+
+```latex
+\usepackage{fontspec}
+\setmainfont{Lucida Bright}
+```
+
+To know the name of the font:
+
+1. Open the Font Book
+2. Locate your desired font
+3. Right click on it, and select _Show in Finder_
+4. Right click on the file and click on _Get Info_
+5. Copy the path to the font file, open a console, and type:
+
+```bash
+otfinfo -i '/Path/To/The/File/Name of the font.ttf'
+```
+
+The last command shows a series of identifiers:
+```
+Family:              Lucida Bright 
+Subfamily:           Demibold 
+Full name:           Lucida Bright Demibold 
+PostScript name:     LucidaBright-Demi 
+Version:             Version 1.69 
+Unique ID:           Lucida Bright Demibold 
+Trademark:           Lucida® is a registered trademark of Bigelow & Holmes Inc. 
+Copyright:           © 1991 by Bigelow & Holmes Inc. Pat. Des. 289,422.                      
+                     All Rights Reserved. © 1990-1991 Type Solutions, Inc. All Rights Reserved
+Vendor ID:           B&H
+```
+
+Use the font family name as main font, as in the example above.
+
 ## Exporting multiple pages to latex - Links between pages
 You can establish two kind of links between pages that affect the latex export:
 - A bullet item containing only an internal link to another page is replaced by the content of the destination page
 - An internal link to  link to In-line links: It is replaced by the p reference in the final document.
 
 The plugin helps you to structure your pages in the same way. 
-
-## Troubleshooting
-If the downloaded ZIP file is not valid, or it contains a *.zip.cpgz file, then you may have some text 
-warnings in it.To find out, open it with a text editor.
-
-## Install Tex environment
-
-On Mac: Use http://www.tug.org/mactex/mactex-download.html
 
 # Structuring dokuwiki to look good both online and printed
 Making a satisfactorily structured dokuwiki site to export nicely as a printed document is not hard, provided
@@ -175,38 +213,11 @@ The most straight forward way to structure
 ## How to make cross references
 - https://en.wikibooks.org/wiki/LaTeX/Labels_and_Cross-referencing
 
+# Troubleshooting
+If the downloaded ZIP file is not valid, or it contains a *.zip.cpgz file, then you may have some text warnings in it.To find out, open it with a text editor.
+
 ## Use installed fonts in Mac OS X
 (To follow this procedure you need `fontspec` package and `otfinfo` utility. If you don't know how to get them, install Tex Live from the official web site: https://tug.org/texlive/ )
-
-To use system fonts, and not be restricted to the ones packaged in Latex, use the `fontspec`package:
-
-	\usepackage{fontspec}
-	\setmainfont{Lucida Bright}
-
-To know the name of the font:
-
-1. Open the Font Book
-2. Locate your desired font
-3. Right click on it, and select _Show in Finder_
-4. Right click on the file and click on _Get Info_
-5. Copy the path to the font file, open a console, and type:
-
-	otfinfo -i '/Path/To/The/File/Name of the font.ttf'
-
-The last command shows a series of identifiers:
-
-	Family:              Lucida Bright
-	Subfamily:           Demibold
-	Full name:           Lucida Bright Demibold
-	PostScript name:     LucidaBright-Demi
-	Version:             Version 1.69
-	Unique ID:           Lucida Bright Demibold
-	Trademark:           Lucida® is a registered trademark of Bigelow & Holmes Inc.
-	Copyright:           © 1991 by Bigelow & Holmes Inc. Pat. Des. 289,422. 
-	                     All Rights Reserved. © 1990-1991 Type Solutions, Inc. All Rights Reserved.
-	Vendor ID:           B&H
-
-Use the font family name as main font, as in the example above.
 
 ## The fearsome 0 bytes font file in Mac OS X
 (See www.dmertl.com/blog/?p=11 )
