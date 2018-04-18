@@ -118,6 +118,18 @@ The plugin doesn't define any new syntax. It does define mappings between usual 
 it consists into straight forward mapping: foot notes into foot notes, italic into italic, quotes into quotes and code blocks into code 
 blocks. I've listed less intuitive elements in the next points.
 
+## Mapping Dokuwiki's headers into TeX's document structure
+When exporting a page, the latexport plugin transforms headers into sections and chapters using the following rule:
+- H1:    
+  - The first H1 opens the *main matter*. The text of header is ignored.    
+  - The second H1 opens the *appendix*.
+  - The third and next H1 are considered chapters in the appendix.
+- H2: Opens a *part*. The text of header is placed as title of the part. Also, H2 following the third or next H1 are considered chapters in the appendix.
+- H3: Opens a *chapter*. The text of header is placed as title of the chapter.
+- H4: Opens a *section*. The text of header is placed as title of the section.
+- H5: Opens a *subsection*. The text of header is placed as title of the part.
+- Lesser headings: Open a *subsection*.
+
 ## Including a page into another
 This is actually the main feature of the plugin. If you place a standalone internal link in a bullet element, latexport replaces it by the content of the destination page:
 
@@ -128,14 +140,12 @@ This is actually the main feature of the plugin. If you place a standalone inter
 * [[more:like:this|etc.]]
 ```
 
-Map from the following dokuwiki structure:
-The root document:
-- H1:  
-  - The first H1 opens the *main matter*. The text of header is ignored.  
-  - The second H1 opens the *appendix*  
-  - The third and next H1 are considered chapters in the appendix.
-- H2: Opens a *part*. The text of header is placed as title of the part. Also, H2 following the third or next H1 are considered chapters in the appendix.- H3: Opens a *chapter*. The text of header is placed as title of the chapter.- H4: Opens a *section*. The text of header is placed as title of the section.- H5: Opens a *subsection*. The text of header is placed as title of the part.- Unordered list item starting with a link, includes the destination page, using the current level of heading as the base level.
-In the destination page:- The H1 opens a *chapter*, *section*, *subsection*, etc depending on the level of heading in the referring page. Text of header is used as title of the heading.- The H1 never opens a level higher than *chapter*.- Lower header levels open a lower level headings.- Unordered list item starting with a link, includes the destination page, using the current level of heading as the base level.
+In the destination page:
+- H1 opens a *chapter*, *section*, *subsection*, etc depending on the level of heading in the referring page where the link is 
+placed. Text of header is used as title of the heading.
+- H1 never opens a level higher than *chapter*.
+- Lower header levels open a lower level headings.
+- Unordered list item starting with a link, includes the destination page, using the current level of heading as the base level.
 
 ## Cross-reference / linking two pages
 
