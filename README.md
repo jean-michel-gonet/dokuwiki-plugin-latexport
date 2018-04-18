@@ -18,22 +18,18 @@ wrapping, and I chose the former.
 After testing it with two very big documents (more than 20 chapters, more than 200 pages), I believe it works 
 quite well. I hope it will work also for you.
 
-## Exporting a single page to latex
+## Using the plugin to export pages as latex
 After installing the plugin, export one page by calling an url as follows:
 
 http://xxx.yyy.com/path/to/my_page?do=export_latexport_tex
 
 This downloads a ZIP archive with the following structure:
 - The name of the archive is the same as the page. In this example it is 'my_page.zip'
-- One folder named 'images' contains all media.
-- The root file, which corresponds to the exported page, is named ``aaa.tex``
-- All linked pages are represented by one file 'name_of_the_linked_page.tex'
+- The ``aaa.tex`` file, which corresponds to the exported page.
+- Each of the linked pages are represented by a file 'name_of_the_linked_page.tex'
+- One folder named 'images', containing all printable media.
 
-## Exporting multiple pages to latex - Links between pages
-
-You can establish two kind of links between pages that affect the latex export:
-- In-line links: It is replaced by the p reference in the final document.
-- Isolated link in a bullet item: This inserts the destination.
+To export not only a single page, but a structured collection of pages, see below.
 
 ## Creating a PDF file based on the exported latex
 The exported latex document do not contain any configuration. I'm showing you how to create it separately
@@ -93,24 +89,18 @@ lualatex root.tex
 
 5. If everything went correctly, you should have a PDF containing the exported page(s)
 
-## Structure your pages to obtain a nicely structured document
-This is the traditional page order for books (see https://en.wikibooks.org/wiki/LaTeX/Document_Structure) suggested by common practice:
-- Frontmatter  
-  - Half-title  
-  - Empty  
-  - Title page  
-  - Information (copyright notice, ISBN, etc.)  
-  - Dedication if any, else empty  
-  - Table of contents  
-  - List of figures (can be in the backmatter too)  
-  - Preface chapter
-- Mainmatter
-  - Main topic
-- Appendix
-  - Some subordinate chapters
-- Backmatter
-  - Bibliography  
-  - Glossary / Index
+## Friendly plugins:
+If you wish, install the following plugins:
+- mathjax: This supports displaying latex-like formulae online. It is 
+  fully compatible with latexport, which will render the formulae in the PDF file.
+- anchor: This allows including anchors to specific places of a page. It is compatible with latexport, 
+  which will render the anchor as a cross-reference with page number. You probably want to have the 'normal' option, 
+  referred in the install instructions.
+
+## Exporting multiple pages to latex - Links between pages
+You can establish two kind of links between pages that affect the latex export:
+- A bullet item containing only an internal link to another page is replaced by the content of the destination page
+- An internal link to  link to In-line links: It is replaced by the p reference in the final document.
 
 The plugin helps you to structure your pages in the same way. 
 
@@ -122,37 +112,34 @@ warnings in it.To find out, open it with a text editor.
 
 On Mac: Use http://www.tug.org/mactex/mactex-download.html
 
-## Generate the PDF file.
-
-Be sure that the following snippet is present in the document header:
-
-	\documentclass{book}
-	...
-	\usepackage{graphicx} % To display images
-	\usepackage{fontspec} % To use system fonts.
-	\usepackage{hyperref} % To display clickable URL
-	\usepackage{soul}     % To use st for strikethrough
-	\usepackage{csquotes} % To use quotations
-	\usepackage{listings} % To render code blocks.
-
-	\setmainfont[Ligatures=TeX]{xits}
-	...
-	\begin{document}
-
-Then compile the TeX document with:
-	lualatex [name-of-page].tex
-
-## Friendly plugins:
-
-If you wish, install the following plugins:
-
-- mathjax: This supports displaying latex-like formulae online. It is fully compatible with latexport, which will render the formulae in the PDF file.
-- anchor: This allows including anchors to specific places of a page. It is compatible with latexport, which will render the anchor as a crossreference with page number. You probably want to have the 'normal' option, referred in the install instructions.
-
 # Structuring dokuwiki to look good both online and printed
+Making a satisfactorily structured dokuwiki site to export nicely as a printed document is not hard, provided
+you follow certain directions.
 
 ## The traditional book structure
-- https://en.wikibooks.org/wiki/LaTeX/Document_Structure
+The traditional page order for books, as suggested by common practice (see https://en.wikibooks.org/wiki/LaTeX/Document_Structure),
+is the following:
+- Frontmatter
+  - Half-title
+  - Empty
+  - Title page
+  - Information (copyright notice, ISBN, etc.)
+  - Dedication if any, else empty
+  - Table of contents
+  - List of figures (can be in the backmatter too)
+  - Preface chapter
+- Mainmatter
+  - Main topic
+- Appendix
+  - Some subordinate chapters
+- Backmatter
+  - Bibliography
+  - Glossary / Index
+
+The main matter is usually divided in chapters, but chapters may be organized in parts.
+
+## A usual way to structure dokuwiki
+The most straight forward way to structure 
 
 ## How to write formulas
 - https://tex.stackexchange.com/questions/503/why-is-preferable-to
