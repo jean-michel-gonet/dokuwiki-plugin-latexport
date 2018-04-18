@@ -25,10 +25,6 @@ wrapping, and I chose the former.
 After testing it with two very big documents (more than 20 chapters, more than 200 pages), I believe it works 
 quite well. I hope it will work also for you.
 
-## Installing TeX on your local system
-Unless you know what you're doing I suggest TeXLive, which provides a fully functional, ready to use, well configured TeX engine. It exists for almost all platforms at the official web site:
-- https://tug.org/texlive/
-
 ## Installing the plugin on Dokuwiki
 Either install it using Dokuwiki's plugin manager, or clone this project into the plugin repository:
 
@@ -53,6 +49,11 @@ This downloads a ZIP archive with the following structure:
 - One folder named 'images', containing all printable media.
 
 To export not only a single page, but a structured collection of pages, see below.
+
+## Installing TeX on your local system
+Unless you know better I suggest to use TeX Live, which provides a fully functional, ready to use, well configured TeX engine. 
+It exists for almost all platforms at the official web site:
+- https://tug.org/texlive/
 
 ## Creating a PDF file based on the exported latex
 The exported latex document do not contain any configuration. I'm showing you how to create it separately
@@ -113,8 +114,28 @@ lualatex root.tex
 5. If everything went correctly, you should have a PDF containing the exported page(s)
 
 # Syntax of the latexport plugin
+The plugin doesn't define any new syntax. It does define mappings between usual _Dokuwiki_ syntax and _Latex_ syntax. Most of the time 
+it consists into straight forward mapping: foot notes into foot notes, italic into italic, quotes into quotes and code blocks into code 
+blocks. I've listed less intuitive elements in the next points.
 
 ## Including a page into another
+This is actually the main feature of the plugin. If you place a standalone internal link in a bullet element, latexport replaces it by the content of the destination page:
+
+```dokuwiki
+===== Généralités =====  
+* [[path:to:a:destination:page|Link title is only visible online]]  
+* [[path:to:another:destination:page|Link title is only visible online]]
+* [[more:like:this|etc.]]
+```
+
+Map from the following dokuwiki structure:
+The root document:
+- H1:  
+  - The first H1 opens the *main matter*. The text of header is ignored.  
+  - The second H1 opens the *appendix*  
+  - The third and next H1 are considered chapters in the appendix.
+- H2: Opens a *part*. The text of header is placed as title of the part. Also, H2 following the third or next H1 are considered chapters in the appendix.- H3: Opens a *chapter*. The text of header is placed as title of the chapter.- H4: Opens a *section*. The text of header is placed as title of the section.- H5: Opens a *subsection*. The text of header is placed as title of the part.- Unordered list item starting with a link, includes the destination page, using the current level of heading as the base level.
+In the destination page:- The H1 opens a *chapter*, *section*, *subsection*, etc depending on the level of heading in the referring page. Text of header is used as title of the heading.- The H1 never opens a level higher than *chapter*.- Lower header levels open a lower level headings.- Unordered list item starting with a link, includes the destination page, using the current level of heading as the base level.
 
 ## Cross-reference / linking two pages
 
