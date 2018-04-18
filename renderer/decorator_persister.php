@@ -199,21 +199,6 @@ class DecoratorPersister extends Decorator {
 	function document_start($pageId = NULL, $recursionLevel = 0) {
 		$this->pageId = $pageId;
 		$this->firstHeader = true;
-		if ($recursionLevel == 0) {
-			$this->appendCommand('documentclass', 'book');
-			$this->appendCommand('usepackage', 'graphicx');
-			$this->appendCommand('usepackage', 'fontspec');
-			$this->appendCommand('usepackage', 'hyperref');
-			$this->appendCommand('usepackage', 'array');
-			$this->appendCommand('usepackage', 'soul');
-			$this->appendCommand('usepackage', 'csquotes');
-			$this->appendCommand('usepackage', 'multirow');
-			$this->appendCommand('usepackage', 'listings');
-			$this->appendCommand('usepackage', 'makecell');
-			$this->appendCommand('setmainfont', 'xits', 'Ligatures=TeX');
-			$this->appendCommand('graphicspath', ' {'.self::GRAPHICSPATH.'} ');
-			$this->appendCommand('begin', 'document');
-		}
 	}
 
 	/**
