@@ -50,23 +50,12 @@ class DecoratorHeadings extends Decorator {
 	private $state;
 
 	/**
-	 * If recursion level is greater than 0, then
-	 * no heading is higher than chapter.
-	 */
-	private $recursionLevel;
-
-	/**
 	 * Class constructor.
 	 * @param decorator The next decorator.
 	 */	
 	function __construct($decorator) {
 		parent::__construct($decorator);
 		$this->state = DecoratorHeadings::FRONT_MATTER;
-	}
-
-	function document_start($pageId = NULL, $recursionLevel = 0) {
-		$this->decorator->document_start($pageId, $recursionLevel);
-		$this->recursionLevel = $recursionLevel;
 	}
 
 	/**
@@ -106,10 +95,7 @@ class DecoratorHeadings extends Decorator {
 	 * </ul>
 	 */
 	private function h1($text, $pos) {
-		if ($this->recursionLevel > 0) {
-			$this->h3($text, $pos);
-		} else {
-			switch($this->state) {
+		switch($this->state) {
 			case DecoratorHeadings::FRONT_MATTER:
 				$this->state = DecoratorHeadings::MAIN_MATTER;
 				$this->decorator->header($text, 1, $pos);
@@ -126,7 +112,6 @@ class DecoratorHeadings extends Decorator {
 
 			default:
 				trigger_error("h1 unexpected $this->state");
-			}
 		}
 	}
 
@@ -139,10 +124,7 @@ class DecoratorHeadings extends Decorator {
 	 * </ul>
 	 */
 	private function h2($text, $pos) {
-		if ($this->recursionLevel > 0) {
-			$this->h3($text, $pos);
-		} else {
-			switch($this->state) {
+		switch($this->state) {
 			case DecoratorHeadings::FRONT_MATTER:
 				$this->decorator->header($text, 3, $pos);
 				break;
@@ -157,7 +139,6 @@ class DecoratorHeadings extends Decorator {
 
 			default:
 				trigger_error("h2 unexpected $this->state");
-			}
 		}
 	}
 

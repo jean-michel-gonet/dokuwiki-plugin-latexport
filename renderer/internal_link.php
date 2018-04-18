@@ -30,7 +30,11 @@ class InternalLink {
 	 */
 	function __construct($link, $headingLevel, $title = null) {
 		$this->link = $link;
-		$this->headingLevel = $headingLevel;
+		if ($headingLevel < 2) {
+			$this->headingLevel = 2;
+		} else {
+			$this->headingLevel = $headingLevel;
+		}
 		$this->title = $title;
 	}
 

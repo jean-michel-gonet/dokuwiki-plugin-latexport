@@ -55,14 +55,6 @@ class DecoratorHeadingsTest extends DokuWikiTest {
     public function testMinimumLevelIsH5() {
 		$this->decoratorHeadings->header("text1", 10, 10);
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandHeader("text1", 5, 10));
-    }
-	
-	public function testDestinationPageCanNotBeHigherThanH3() {
-		$this->decoratorHeadings->document_start("any", 1);
-		$this->decoratorHeadings->header("MatterWannaBe", 1, 1);
-		$this->decoratorHeadings->header("PartWannaBe", 2, 2);
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandHeader("MatterWannaBe", 3, 1));
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandHeader("PartWannaBe", 3, 2));
-	}
+    }	
 }
 ?>

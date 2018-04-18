@@ -42,12 +42,12 @@ class DecoratorIncluderTest extends DokuWikiTest {
 		$this->decoratorIncluder->listitem_close();
 		$this->decoratorIncluder->listu_close();
 		
-		$this->assertTrue($this->decoratorMock->noCommands(), "Should not have any command");
-		$this->assertEquals($this->includes->count(), 1, "Should have one include");
+		$this->assertTrue(  $this->decoratorMock->noCommands(),                     "Should not have any command");
+		$this->assertEquals(1,                            $this->includes->count(), "Should have one include");
 		
 		$link = $this->includes->pop();
-		$this->assertEquals($link->getLink(), DecoratorIncluderTest::LINK, "Link is not as expected");
-		$this->assertEquals($link->getTitle(), DecoratorIncluderTest::TITLE, "Title is not as expected");
+		$this->assertEquals(DecoratorIncluderTest::LINK,  $link->getLink(),          "Link");
+		$this->assertEquals(DecoratorIncluderTest::TITLE, $link->getTitle(),         "Title is not as expected");
     }
 
 	public function testInternalLinksMixedWithTextInAnUnorderedListItemAreRendered() {
@@ -62,16 +62,18 @@ class DecoratorIncluderTest extends DokuWikiTest {
 		$this->decoratorIncluder->listitem_close();
 		$this->decoratorIncluder->listu_close();
 		
-		$this->assertEquals($this->includes->count(), 0, "Should not have any include");
+		$this->assertEquals($this->includes->count(),             0, "Should not have any include");
 
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListUOpen());
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListItemOpen(1));
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListContentOpen());
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandCData('Follow the link:'));
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandInternalLink(DecoratorIncluderTest::LINK, DecoratorIncluderTest::TITLE));
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListContentClose());
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListItemClose());
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandListUClose());
+		$this->assertEquals(new CommandListUOpen(),                $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandListItemOpen(1),            $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandListContentOpen(),          $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandCData('Follow the link:'),  $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandInternalLink(
+		                        	DecoratorIncluderTest::LINK, 
+						        	DecoratorIncluderTest::TITLE), $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandListContentClose(),         $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandListItemClose(),            $this->decoratorMock->nextCommand());
+		$this->assertEquals(new CommandListUClose(),               $this->decoratorMock->nextCommand());
 	}
 
 	public function testCanRenderAListWithSeveralItems() {
@@ -242,6 +244,41 @@ class DecoratorIncluderTest extends DokuWikiTest {
 		
 
 	}
-	
+		
+    public function testIncludesHaveSameLevelCurrentHeader() {
+		$this->decoratorIncluder->header("a", 4, 0);
+		
+		$this->decoratorIncluder->listu_open();
+		$this->decoratorIncluder->listitem_open(1);
+		$this->decoratorIncluder->listcontent_open();
+		
+		$this->decoratorIncluder->cdata(' ');
+		$this->decoratorIncluder->internallink(DecoratorIncluderTest::LINK, DecoratorIncluderTest::TITLE);
+
+		$this->decoratorIncluder->listcontent_close();
+		$this->decoratorIncluder->listitem_close();
+		$this->decoratorIncluder->listu_close();
+				
+		$link = $this->includes->pop();
+
+		$this->assertEquals(4, $link->getHeadingLevel(),  "Heading level");
+    }
+
+    public function testIncludesHaveLevelNeverLessThan2() {
+		$this->decoratorIncluder->listu_open();
+		$this->decoratorIncluder->listitem_open(1);
+		$this->decoratorIncluder->listcontent_open();
+		
+		$this->decoratorIncluder->cdata(' ');
+		$this->decoratorIncluder->internallink(DecoratorIncluderTest::LINK, DecoratorIncluderTest::TITLE);
+
+		$this->decoratorIncluder->listcontent_close();
+		$this->decoratorIncluder->listitem_close();
+		$this->decoratorIncluder->listu_close();
+				
+		$link = $this->includes->pop();
+
+		$this->assertEquals(2, $link->getHeadingLevel(),  "Heading level");
+    }
 }
 ?>
