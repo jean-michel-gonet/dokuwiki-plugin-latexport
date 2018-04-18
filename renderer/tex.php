@@ -96,6 +96,8 @@ class renderer_plugin_latexport_tex extends Decorator {
 			$this->currentPageId = $ID;
 		}
 
+		$fileName = $this->texifyPageId($this->currentPageId);
+
 		if ($this->recursionLevel == 0) {
 			// Create HTTP headers
 			$output_filename = $this->texifyPageId($this->currentPageId, 'zip');
@@ -108,11 +110,14 @@ class renderer_plugin_latexport_tex extends Decorator {
 			p_set_metadata($this->currentPageId,array('format' => array('latexport_tex' => $headers) ));
 
 			// Starts the archive:
-			$this->archive->startArchive();			
+			$this->archive->startArchive();
+			
+			// The root page has always the same file name:
+			$fileName = "aaa.tex";
 		}
 		
 		// Starts the document:
-		$this->archive->startFile($this->texifyPageId($this->currentPageId));
+		$this->archive->startFile($fileName);
 		$this->decorator->document_start($this->currentPageId, $this->recursionLevel);			
 		$this->recursionLevel++;
 	}

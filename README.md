@@ -4,14 +4,19 @@ A latex export renderer plugin to export latex documents from Dokuwiki. In early
 ## Purpose and limitations 
 The main objective of this plugin are:
 - It is possible to export a page or a set of pages as a structure of latex files and images.
-- Export forces as little presentation choices as possible. This forces/allows user to make their own styles.
+- Export forces as little presentation choices as possible, allowing user to make their own styles.
 - Mapping as naturally as possible the dokuwiki formatting into sensible latex formatting.
 - Latex scripting is readable.
 
 Limitations are:
 - Export forces the use of certain packages (listed below).
-- Text wrapping in table cells is not supported. Latex has issues with text wrapping multi-column cells. They're possible to overcome when you write the Latex document manually, but I haven't been able to found a satisfactory automated solution. In the end I had to choose between rowspan/colspan and text wrapping, and I chose the former.
-- I did an opinionated choice about how to map a navigable page hierarchy into a readable document structure. After testing it with two very big documents (more than 20 chapters, more than 200 pages), I believe it works quite well. I hope it will work also for you.
+- Text wrapping in table cells is not supported. Latex has issues with text wrapping multi-column cells. 
+They're possible to overcome when you write the Latex document manually, but I haven't been able to found a 
+satisfactory automated solution. In the end I had to choose between rowspan/colspan and text 
+wrapping, and I chose the former.
+- I did an opinionated choice about how to map a navigable page hierarchy into a readable document structure. 
+After testing it with two very big documents (more than 20 chapters, more than 200 pages), I believe it works 
+quite well. I hope it will work also for you.
 
 ## Exporting a single page to latex
 After installing the plugin, export one page by calling an url as follows:
@@ -21,7 +26,7 @@ http://xxx.yyy.com/path/to/my_page?do=export_latexport_tex
 This downloads a ZIP archive with the following structure:
 - The name of the archive is the same as the page. In this example it is 'my_page.zip'
 - One folder named 'images' contains all media.
-- The root file is named as the page. In this example it is 'my_page.tex'
+- The root file, which corresponds to the exported page, is named ``aaa.tex``
 - All linked pages are represented by one file 'name_of_the_linked_page.tex'
 
 ## Exporting multiple pages to latex - Links between pages
@@ -31,24 +36,25 @@ You can establish two kind of links between pages that affect the latex export:
 - Isolated link in a bullet item: This inserts the destination.
 
 ## Creating a PDF file based on the exported latex
-The exported latex document do not contain any configuration. You need to create it separately. This is a very simple example (there is another, more complex, below):
+The exported latex document do not contain any configuration. I'm showing you how to create it separately
+in the following procedure. There is a more elaborated example further down.
 
 1. Download the zip archive from the page. You can either type the url in your browser and save the content 
 in an appropriate place, or use a command similar to:
 ```bash
 cd working_folder
-curl -o my_page.zip www.xxx.yyy/path/to/the/my_page?do=export_latexport_tex
+curl -o content.zip www.xxx.yyy/path/to/the/my_page?do=export_latexport_tex
 ```
 
 2. Unzip the archive into a destination folder, either with your favorite application, or using command line:
 ```bash
-mkdir my_page
-unzip my_page.zip -d my_page/
+mkdir content
+unzip content.zip -d content/
 ```
 
 3. Prepare your root document, and save it *besides the folder where you extracted the latex archive*. 
 This is the simplest example I could come with. Mind the ``graphicspath`` command, that specifies the destination folder
-plus the ``images`` folder. Mind also the ``import`` command, specifying the destination folder and the exported page.
+plus the ``images`` folder. Mind also the ``import`` command, specifying the destination folder and the root page.
 Save it as ```root.tex``` or any other name that you see fit:
 
 ```latex
@@ -70,12 +76,15 @@ Save it as ```root.tex``` or any other name that you see fit:
 
 \begin{document}
 
-\import{content/}{my_page.tex}
+\import{content/}{aaa.tex}
 
 \end{document}
 ```
 
-4. To launch the PDF generation, execute ``lualatex`` twice from your working folder:
+4. To launch the PDF generation, execute ``lualatex`` from your working folder. Execute it twice if
+the document contains an index, a list of figures, a table of contents or cross references (this is a standard
+latex requirement):
+
 ```bash
 cd working_folder
 lualatex root.tex
@@ -106,7 +115,8 @@ This is the traditional page order for books (see https://en.wikibooks.org/wiki/
 The plugin helps you to structure your pages in the same way. 
 
 ## Troubleshooting
-If the downloaded ZIP file is not valid, or it contains a *.zip.cpgz file, then you may have some text warnings in it.To find out, open it with a text editor.
+If the downloaded ZIP file is not valid, or it contains a *.zip.cpgz file, then you may have some text 
+warnings in it.To find out, open it with a text editor.
 
 ## Install Tex environment
 
@@ -471,6 +481,7 @@ phpab 1.24.1 - Copyright (C) 2009 - 2018 by Arne Blankerts and Contributors
 Test commands:
 ```bash
 cd /wherever/is/dokuwiki/_test
+phpunit --group plugin_latexport
 phpunit --group plugin_latexport --testdox
 ```
 
