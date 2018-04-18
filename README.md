@@ -8,7 +8,14 @@ The main objective of this plugin are:
 - Mapping as naturally as possible the dokuwiki formatting into sensible latex formatting.
 - Latex scripting is readable.
 
-Limitations are:
+The main limitation of the plugin is that it is not possible to directly download a finished PDF file. It was never my intention to provide such a feature with unrestricted access for two reasons:
+- Although most of its content is freely available online, I still want to sell my book.
+- I rekon that online content is a perpetual work in progress. I don't want non-revised, half baked versions of my book 
+circulating around.
+
+With the procedure described below, you can obtain a PDF version in less than a minute.
+
+Other limitations are:
 - Export forces the use of certain packages (listed below).
 - Text wrapping in table cells is not supported. Latex has issues with text wrapping multi-column cells. 
 They're possible to overcome when you write the Latex document manually, but I haven't been able to found a 
@@ -17,6 +24,22 @@ wrapping, and I chose the former.
 - I did an opinionated choice about how to map a navigable page hierarchy into a readable document structure. 
 After testing it with two very big documents (more than 20 chapters, more than 200 pages), I believe it works 
 quite well. I hope it will work also for you.
+
+## Installing TeX on your local system
+Unless you know what you're doing I suggest TeXLive, which provides a fully functional, ready to use, well configured TeX engine. It exists for almost all platforms at the official web site:
+- https://tug.org/texlive/
+
+## Installing the plugin on Dokuwiki
+Either install it using Dokuwiki's plugin manager, or clone this project into the plugin repository:
+
+```bash
+cd /wherever/is/dokuwiki/lib/plugins
+git clone [obtain the repository url] latexport
+```
+
+Or download the latest version as a ZIP archive and extract it into the ``plugins`` folder.
+
+The plugin doesn't require any specific configuration or access rights.
 
 ## Using the plugin to export pages as latex
 After installing the plugin, export one page by calling an url as follows:
