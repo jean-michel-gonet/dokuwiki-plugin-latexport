@@ -28,7 +28,7 @@ This downloads a ZIP archive with the following structure:
 
 You can establish two kind of links between pages that affect the latex export:
 - In-line links: It is replaced by the p reference in the final document.
-- Isolated link in a bullet item: This inserts the destination 
+- Isolated link in a bullet item: This inserts the destination.
 
 ## Creating a PDF file based on the exported latex
 The exported latex document do not contain any configuration. You need to create it separately. This is a very simple example (there is another, more complex, below):
@@ -82,7 +82,7 @@ lualatex root.tex
 lualatex root.tex
 ```
 
-5. If everything went correctly, you should have a PDF
+5. If everything went correctly, you should have a PDF containing the exported page(s)
 
 ## Structure your pages to obtain a nicely structured document
 This is the traditional page order for books (see https://en.wikibooks.org/wiki/LaTeX/Document_Structure) suggested by common practice:
