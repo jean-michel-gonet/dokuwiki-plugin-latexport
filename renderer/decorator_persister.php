@@ -519,7 +519,7 @@ class DecoratorPersister extends Decorator {
      * @param string $text The PHP code
      */
     function phpblock($text) {
-		$this->appendCommand("begin", "lstlisting", "language=php");
+		$this->appendCommand("begin", "lstlisting", "language=php, style=php-style");
 		$this->appendContent($text);
 		$this->appendCommand("end", "lstlisting");
     }
@@ -545,7 +545,7 @@ class DecoratorPersister extends Decorator {
      * @param string $text The HTML
      */
     function htmlblock($text) {
-		$this->appendCommand("begin", "lstlisting", "language=html");
+		$this->appendCommand("begin", "lstlisting", "language=html, style=html-style");
 		$this->appendContent($text);
 		$this->appendCommand("end", "lstlisting");
     }
@@ -585,7 +585,7 @@ class DecoratorPersister extends Decorator {
 			$this->unformatted("--> $file");
 		}
 		if ($lang) {
-			$this->appendCommand("begin", "lstlisting", "language=$lang");			
+			$this->appendCommand("begin", "lstlisting", "language=$lang, style=$lang-style");			
 		} else {
 			$this->appendCommand("begin", "lstlisting");
 		}
