@@ -134,7 +134,7 @@ In the destination page:
 - H1 never opens a level higher than *chapter*.
 - Lower header levels open a lower level headings.
 
-## Cross-reference / linking two pages
+## Cross-referencing
 Internal links in Dokuwiki are translated in TeX as cross references mentioning a page number.
 
 You can place an internal link to another heading of the same page. For example:
