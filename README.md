@@ -177,6 +177,26 @@ Bla bla bla
 
 Further down in the text, or any page {{anchor:anchor_name:text}}
 ```
+## Pictures
+Pictures are exported as centered figures with the caption underneath:
+
+```dokuwiki
+{{ :path:to:image.png |Caption}}
+```
+
+Size matters:
+- When resulting resolution is 240 ppi or better, images are exported with the same width as the text. 
+- Smaller images are exported centered and with a smaller width.
+- Landscape images whose height would be enough to grant 240 ppi or better are rotated 90º and scaled to fit a whole page.
+
+If you place several images without line breaking, they're exported as one single figure with as many images in it. 
+In this case the size is not checked.
+
+```dokuwiki
+{{ :path:to:image1.png |Caption}} {{ :path:to:image2.png |Caption}}
+```
+
+For more information about ppi, see https://en.wikipedia.org/wiki/Pixel_density
 
 ## Writing mathematical expressions
 Use the mathjax plugin to write mathematical expressions. They are mapped into the TeX with very little changes:
