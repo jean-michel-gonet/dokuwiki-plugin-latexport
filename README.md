@@ -186,11 +186,64 @@ Use the mathjax plugin to write mathematical expressions. They are mapped into t
 - Explicit ``\tag{.}`` command, needed in Dokuwiki to make visible references to equations,is removed during export to TeX, as it is not supported outside the amsmath package, and not needed.
 - Display formulas explicitly delimited in Dokuwiki with ``\begin{xx} ... \end{xx}`` are exported unchanged.
 
+## Blocks of code
+In Dokuwiki, blocks of code are written as:
+
+```dokuwiki
+<code pascal>
+Program HelloWorld(output);
+begin
+  writeln('Hello, world!');
+end.
+</code>
+```
+
+This is exported to TeX as:
+
+```latex
+\begin{lstlisting}[language=pascal, style=pascal-style]
+Program HelloWorld(output);
+begin
+  writeln('Hello, world!');
+end.
+\end{lstlisting}
+```
+
+Should you need to configure the presentation of the code, you can either redefine the language or use the style. For
+example you may use this snippet:
+```latex
+\usepackage{listings}
+\usepackage[dvipsnames]{xcolor}
+
+\definecolor{light-gray}{gray}{0.95}
+
+\lstdefinestyle{pascal-style}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=L,
+  xleftmargin=\parindent,
+  language=Pascal,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{green},
+  commentstyle=\itshape\color{purple},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+  backgroundcolor=\color{light-gray},   
+}
+```
+
+See more information here:
+- https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
+- https://en.wikibooks.org/wiki/LaTeX/Colors
+
 ## Using system fonts
 To use system fonts, and not be restricted to the ones packaged in Latex, use the `fontspec`package:
 
-	\usepackage{fontspec}
-	\setmainfont{Lucida Bright}
+```latex
+\usepackage{fontspec}
+\setmainfont{Lucida Bright}
+```
 
 To know the name of the font:
 
