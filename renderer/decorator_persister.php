@@ -15,16 +15,13 @@ require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
  */
 class DecoratorPersister extends Decorator {
 	
-	/**
-	 * Were we're going to save image files.
-	 */
+	/** Where to save images. */
 	const GRAPHICSPATH = 'images/';
-
-	/** 
-	 * Receives the content of the document.
-	 */
+	
+	/** Content of the document is saved in the ZIP archive. */
 	private $archive;
 	
+	/** Counts the number of matters (frontmatter = 0, mainmatter = 1, etc.) */
 	private $matterNumber;
 	
 	private $pageId;
@@ -115,17 +112,6 @@ class DecoratorPersister extends Decorator {
 	 */
 	function appendContent($c) {
 		$this->archive->appendContent($c);
-	}
-
-	/**
-	 * Inserts the specified file.
-	 * @param The physical path to the file.
-	 * @return The TeX-ified name of the file.
-	 */
-	function insertImage($filename) {
-		$baseFilename = $this->texifyFilename(basename($filename));
-		$this->archive->insertContent(self::GRAPHICSPATH.$baseFilename, file_get_contents($filename));
-		return $baseFilename;
 	}
 
 	/**
@@ -787,9 +773,24 @@ class DecoratorPersister extends Decorator {
 	 * @param int    $height  height of media in pixel
 	 * @param string $cache   cache|recache|nocache
 	 * @param string $linking linkonly|detail|nolink
+	 * @param int    $positionInGroup Position of the media in the group.
+	 * @param int    $totalInGroup Size of the group of media.
 	 */
-	function internalmedia($src, $title = null, $align = null, $width = null, $height = null, $cache = null, $linking = null) {
+	function internalmedia($src, $title = null, $align = null, $width = null, 
+	                       $height = null, $cache = null, $linking = null, $positionInGroup = 0, $totalInGroup = 1) {
 
+   		$filename = $this->obtainFilename($src);
+
+		// If not printable, just display the title:
+   		if (!$this->isPrintable($filename)) {
+   			$this->decorator->cdata($title);
+			return;
+		}
+	
+		// Estimate the image size:
+		list($width, $height) = getimagesize($filename);
+
+		// Should we rotate the image?
 		$angle = 0;
 		$scale = round($width / 1000, 1);
 		if ($scale > 1) {
@@ -801,13 +802,57 @@ class DecoratorPersister extends Decorator {
 			$scale = 1;
 		}
 
+		// Display the image:
 		$this->appendCommand('begin', 'figure', 'ht');
 		if ($align == 'center') {
 			$this->appendCommand('centering');
 		}
-		$this->appendCommand('includegraphics', $src, "width=$scale\\textwidth, angle=$angle");
+		$this->appendCommand('includegraphics', $this->insertImage($filename), "width=$scale\\textwidth, angle=$angle");
 		$this->appendCommand('caption', $this->texifyText($title));
 		$this->appendCommand('end', 'figure');
+	}
+
+	/**
+	 * Returns true if provided filename's extension is of a printable media.
+	 * @param filename String the file name.
+	 * @return boolean true if file is printable.
+	 */
+	private function isPrintable($filename) {
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+		switch($ext) {
+			case "jpg":
+			case "jpeg":
+			case "gif":
+			case "png":
+				return true;
+
+			default:
+				return false;
+		}
+	}
+
+	/**
+	 * Obtains the filesystem path to the specified resource.
+	 * @param $src String The resource.
+	 * @return String The file name.
+	 */
+	private function obtainFilename($src) {
+		global $ID;
+		list($src, $hash) = explode('#', $src, 2);
+		resolve_mediaid(getNS($ID), $src, $exists, $this->date_at, true);
+		return mediaFN($src);
+	}
+
+	/**
+	 * Inserts the specified file.
+	 * @param The physical path to the file.
+	 * @return The TeX-ified name of the file.
+	 */
+	private function insertImage($filename) {
+		$baseFilename = $this->texifyFilename(basename($filename));
+		$this->archive->insertContent(self::GRAPHICSPATH.$baseFilename, file_get_contents($filename));
+		return $baseFilename;
 	}
 
     /**

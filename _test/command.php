@@ -264,5 +264,14 @@ class CommandTableCline extends TexCommand {
 	}
 }
 
+class CommandInternalMedia extends TexCommand {
+	private $src;
+	private $title;
+	private $align;
+	private $width;
+	private $height;
+	private $positionInGroup;
+	private $totalInGroup;
+}
 
 ?>

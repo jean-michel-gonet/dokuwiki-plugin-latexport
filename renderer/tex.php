@@ -66,7 +66,7 @@ class renderer_plugin_latexport_tex extends Decorator {
 				new DecoratorIncluder($this->includes,
 					new DecoratorMath(
 						new DecoratorTables(
-							new DecoratorImages($this->archive,
+							new DecoratorImages(
 								new DecoratorPersister($this->archive)))))));
 	}
 
