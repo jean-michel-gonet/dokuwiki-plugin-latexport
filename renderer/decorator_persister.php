@@ -15,16 +15,13 @@ require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
  */
 class DecoratorPersister extends Decorator {
 	
-	/**
-	 * Were we're going to save image files.
-	 */
+	/** Where to save images. */
 	const GRAPHICSPATH = 'images/';
-
-	/** 
-	 * Receives the content of the document.
-	 */
+	
+	/** Content of the document is saved in the ZIP archive. */
 	private $archive;
 	
+	/** Counts the number of matters (frontmatter = 0, mainmatter = 1, etc.) */
 	private $matterNumber;
 	
 	private $pageId;
@@ -85,7 +82,15 @@ class DecoratorPersister extends Decorator {
 				// Some commands have the optional arguments after the curly brackets:
 				case 'begin':
 				case 'end':
-					$text = '\\'.$command.'{'.$scope.'}['.$argument.']';
+					switch($scope) {
+						case 'minipage':
+							$text = '\\'.$command.'{'.$scope.'}{'.$argument.'}';
+							break;
+
+						default:
+							$text = '\\'.$command.'{'.$scope.'}['.$argument.']';
+							break;						
+					}
 					break;
 
 				// Most commands have the optional arguments before the curly brackets:
@@ -115,17 +120,6 @@ class DecoratorPersister extends Decorator {
 	 */
 	function appendContent($c) {
 		$this->archive->appendContent($c);
-	}
-
-	/**
-	 * Inserts the specified file.
-	 * @param The physical path to the file.
-	 * @return The TeX-ified name of the file.
-	 */
-	function insertImage($filename) {
-		$baseFilename = $this->texifyFilename(basename($filename));
-		$this->archive->insertContent(self::GRAPHICSPATH.$baseFilename, file_get_contents($filename));
-		return $baseFilename;
 	}
 
 	/**
@@ -787,27 +781,88 @@ class DecoratorPersister extends Decorator {
 	 * @param int    $height  height of media in pixel
 	 * @param string $cache   cache|recache|nocache
 	 * @param string $linking linkonly|detail|nolink
+	 * @param int    $positionInGroup Position of the media in the group.
+	 * @param int    $totalInGroup Size of the group of media.
 	 */
-	function internalmedia($src, $title = null, $align = null, $width = null, $height = null, $cache = null, $linking = null) {
+	function internalmedia($src, $title = null, $align = null, $width = null, 
+	$height = null, $cache = null, $linking = null, $positionInGroup = 0, $totalInGroup = 1) {
 
+		// Find the image and estimate its real size:
+   		$filename = $this->obtainFilename($src);
+   		if (!$this->isPrintable($filename)) {
+   			$this->cdata($title);
+			return;
+		}
+		list($width, $height) = getimagesize($filename);
+
+		// Opens the group of images:
+		if ($positionInGroup == 0) {
+			$this->appendCommand('begin', 'figure', '!htb');
+		}
+		
+		// Places the image:
+		$availableSpace = round(1 / $totalInGroup, 1);
+		$sizeInCmAt240ppi = round(2.54 * $width / 240, 1);
 		$angle = 0;
-		$scale = round($width / 1000, 1);
-		if ($scale > 1) {
-			if ($scale > 2) {
-				if ($height < $width) {
-					$angle = 90;
-				}
-			}
-			$scale = 1;
-		}
-
-		$this->appendCommand('begin', 'figure', 'ht');
-		if ($align == 'center') {
-			$this->appendCommand('centering');
-		}
-		$this->appendCommand('includegraphics', $src, "width=$scale\\textwidth, angle=$angle");
+		
+		$this->appendCommand('begin', 'minipage', "$availableSpace\\textwidth");
+		$this->appendCommand('centering');
+		
+		$this->appendCommand('includegraphics', $this->insertImage($filename), 
+		"width=".$sizeInCmAt240ppi."cm, max width=\\textwidth, angle=$angle");
+		
 		$this->appendCommand('caption', $this->texifyText($title));
-		$this->appendCommand('end', 'figure');
+		$this->appendCommand('end', 'minipage');
+
+		// Closes the group of images:
+		if ($positionInGroup == $totalInGroup - 1) {
+			$this->appendCommand('end', 'figure');
+		} else {
+			$this->appendCommand('hfill');
+		}		
+	}
+
+	/**
+	 * Returns true if provided filename's extension is of a printable media.
+	 * @param filename String the file name.
+	 * @return boolean true if file is printable.
+	 */
+	private function isPrintable($filename) {
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+		switch($ext) {
+			case "jpg":
+			case "jpeg":
+			case "gif":
+			case "png":
+				return true;
+
+			default:
+				return false;
+		}
+	}
+
+	/**
+	 * Obtains the filesystem path to the specified resource.
+	 * @param $src String The resource.
+	 * @return String The file name.
+	 */
+	private function obtainFilename($src) {
+		global $ID;
+		list($src, $hash) = explode('#', $src, 2);
+		resolve_mediaid(getNS($ID), $src, $exists, $this->date_at, true);
+		return mediaFN($src);
+	}
+
+	/**
+	 * Inserts the specified file.
+	 * @param The physical path to the file.
+	 * @return The TeX-ified name of the file.
+	 */
+	private function insertImage($filename) {
+		$baseFilename = $this->texifyFilename(basename($filename));
+		$this->archive->insertContent(self::GRAPHICSPATH.$baseFilename, file_get_contents($filename));
+		return $baseFilename;
 	}
 
     /**

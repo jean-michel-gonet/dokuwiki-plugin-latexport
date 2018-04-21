@@ -84,10 +84,11 @@ class DecoratorMock extends Decorator {
 		// Nothing to do?
 	}
 
-	function internalmedia($src, $title = null, $align = null, $width = null,
-			$height = null, $cache = null, $linking = null) {
+	function internalmedia($src, $title = null, $align = null, $width = null, $height = null, 
+	                       $cache = null, $linking = null, $positionInGroup = 1, $totalInGroup = 1) {
 
-		// Nothing to do?
+		$this->listOfCommands->enqueue(new CommandInternalMedia($src, $title, $align, $width, $height, 
+		                                                        $positionInGroup, $totalInGroup));
 	}
 
 	function footnote_open() {

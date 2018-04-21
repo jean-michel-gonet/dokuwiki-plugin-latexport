@@ -821,11 +821,13 @@ class decorator extends Doku_Renderer {
 	 * @param int    $height  height of media in pixel
 	 * @param string $cache   cache|recache|nocache
 	 * @param string $linking linkonly|detail|nolink
+	 * @param int    $positionInGroup Position of the media in the group.
+	 * @param int    $totalInGroup Size of the group of media.
 	 */
-	function internalmedia($src, $title = null, $align = null, $width = null,
-			$height = null, $cache = null, $linking = null) {
+	function internalmedia($src, $title = null, $align = null, $width = null, 
+	                       $height = null, $cache = null, $linking = null, $positionInGroup = 1, $totalInGroup = 1) {
 		$this->any_command();
-		$this->decorator->internalmedia($src, $title, $align, $width, $height, $cache, $linking);
+		$this->decorator->internalmedia($src, $title, $align, $width, $height, $cache, $linking, $positionInGroup, $totalInGroup);
 	}
 
     /**

@@ -4,33 +4,31 @@
 if(!defined('DOKU_INC')) die();
 
 require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
+require_once DOKU_PLUGIN . 'latexport/helpers/internal_media.php';
 
 /**
- * Final tex decorator, takes care of internal media when they're images.
+ * Can make groups of images if internal media are only separated by spaces.
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author Jean-Michel Gonet <jmgonet@yahoo.com>
  */
 class DecoratorImages extends Decorator {
 	
-	const GRAPHICSPATH = 'images/';
-
-	/** 
-	 * To archive images.
-	 */
-	private $archive;
+	private $internalMediaGroup;
+	
+	private $groupHasInternalMedia;
 	
 	/**
 	 * Class constructor.
-	 * @param archive To place images.
 	 * @param decorator The next decorator.
 	 */
-	function __construct($archive, $decorator) {
+	function __construct($decorator) {
 		parent::__construct($decorator);
-		$this->archive = $archive;
+		$this->internalMediaGroup = [];
+		$this->groupHasInternalMedia = FALSE;
 	}
 
 	/**
-	 * Render an internal media file
+	 * Receives an internal media
 	 *
 	 * @param string $src     media ID
 	 * @param string $title   descriptive text
@@ -40,57 +38,58 @@ class DecoratorImages extends Decorator {
 	 * @param string $cache   cache|recache|nocache
 	 * @param string $linking linkonly|detail|nolink
 	 */
-	function internalmedia($src, $title = null, $align = null, $width = null, $height = null, $cache = null, $linking = null) {
-		$filename = $this->obtainFilename($src);
-		if ($this->isPrintable($filename)) {
-			list($width, $height) = getimagesize($filename);
-			$this->decorator->internalmedia($this->insertImage($filename), $title, $align, $width, $height, $cache, $linking);
-		} else {
-			$this->decorator->cdata($title);
-		}
+	function internalmedia($src, $title = null, $align = null, $width = null, 
+	                       $height = null, $cache = null, $linking = null, $positionInGroup = 0, $totalInGroup = 1) {
+
+		// New media are temporarily stored in the list.
+		$this->internalMediaGroup[] = new InternalMedia($src, $title, $align, $width, $height, $cache, $linking);
+		$this->groupHasInternalMedia = TRUE;
 	}	
-	
+
 	/**
-	 * Returns true if provided filename's extension is of a printable media.
-	 * @param filename String the file name.
-	 * @return boolean true if file is printable.
+	 * Any command different than white text closes the group of media.
 	 */
-	function isPrintable($filename) {
-		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+	function any_command() {
+		$this->dumpInternalMediaGroup();
+	}
 
-		switch($ext) {
-			case "jpg":
-			case "jpeg":
-			case "gif":
-			case "png":
-				return true;
-
-			default:
-				return false;
+	/**
+	 * Multiple images can be separated by spaces.
+	 */
+	function cdata($text) {
+		// If text contains only spaces, then we accept more
+		// media in the group.
+		if (!ctype_space($text)) {
+			// Otherwise, we dump the group.
+			$this->dumpInternalMediaGroup();
 		}
+		
+		// In any case, propagate the text:
+		$this->decorator->cdata($text);					
 	}
 
 	/**
-	 * Obtains the filesystem path to the specified resource.
-	 * @param $src String The resource.
-	 * @return String The file name.
+	 * Renders all images in the group.
+	 * And empties the group.
 	 */
-	function obtainFilename($src) {
-		global $ID;
-		list($src, $hash) = explode('#', $src, 2);
-		resolve_mediaid(getNS($ID), $src, $exists, $this->date_at, true);
-		return mediaFN($src);
-	}
-
-	/**
-	 * Inserts the specified file.
-	 * @param The physical path to the file.
-	 * @return The TeX-ified name of the file.
-	 */
-	function insertImage($filename) {
-		$baseFilename = $this->texifyFilename(basename($filename));
-		$this->archive->insertContent(self::GRAPHICSPATH.$baseFilename, file_get_contents($filename));
-		return $baseFilename;
-	}
-	
+	private function dumpInternalMediaGroup() {
+		if ($this->groupHasInternalMedia) {
+			$positionInGroup = 0;
+			$totalInGroup = count($this->internalMediaGroup);
+			foreach($this->internalMediaGroup as $internalMedia) {
+				$this->decorator->internalmedia(
+					$internalMedia->getSrc(),
+					$internalMedia->getTitle(),
+					$internalMedia->getAlign(),
+					$internalMedia->getWidth(),
+					$internalMedia->getHeight(),
+					$internalMedia->getCache(),
+					$internalMedia->getLinking(),
+					$positionInGroup ++,
+					$totalInGroup);
+			}	
+		}
+		$this->internalMediaGroup = [];
+		$this->groupHasInternalMedia = FALSE;
+	}		
 }
