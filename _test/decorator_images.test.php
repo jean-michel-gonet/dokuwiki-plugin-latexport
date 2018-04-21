@@ -25,18 +25,47 @@ class DecoratorImagesTest extends DokuWikiTest {
     }
 	
     public function testCanDisplayASingleImage() {
-		return;
-		$this->decoratorImages->header("text1", 1, 10);	// This would open the main matter.
-		$this->decoratorImages->header("text2", 1, 20);	// This would open the appendix.
-		$this->decoratorImages->header("text3", 1, 30);	// This is a chapter in the appendix.
-		$this->decoratorImages->header("text4", 1, 40);    // This is a chapter in the appendix.
+		$this->decoratorImages->p_open();
+		$this->decoratorImages->internalmedia("S1", "Title1", "centered", 10, 20); 
+		$this->decoratorImages->p_close();
 
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandHeader("text1", 1, 10));
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandHeader("text2", 1, 20));
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandHeader("text3", 3, 30));
-		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandHeader("text4", 3, 40));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandPOpen());
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandInternalMedia("S1", "Title1", "centered", 10, 20, 0, 1));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandPClose());
 
 		$this->assertTrue($this->decoratorMock->noCommands(), "Should not have more commands");
     }
+
+    public function testCanDisplayTwoSingleImages() {
+		$this->decoratorImages->p_open();
+		$this->decoratorImages->internalmedia("S1", "Title1", "centered", 10, 20); 
+		$this->decoratorImages->cdata(" x ");
+		$this->decoratorImages->internalmedia("S2", "Title2", "22", 12, 22); 
+		$this->decoratorImages->p_close();
+
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandPOpen());
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandInternalMedia("S1", "Title1", "centered", 10, 20, 0, 1));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandCData(" x "));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandInternalMedia("S2", "Title2", "22", 12, 22, 0, 1));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandPClose());
+
+		$this->assertTrue($this->decoratorMock->noCommands(), "Should not have more commands");
+    }
+	
+	public function testCanGroupTwoImagesSeparatedWithASpace() {
+		$this->decoratorImages->p_open();
+		$this->decoratorImages->internalmedia("S1", "Title1", "11", 11, 21); 
+		$this->decoratorImages->cdata(" ");
+		$this->decoratorImages->internalmedia("S2", "Title2", "22", 12, 22); 
+		$this->decoratorImages->p_close();
+
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandPOpen());
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandCData(" "));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandInternalMedia("S1", "Title1", "11", 11, 21, 0, 2));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandInternalMedia("S2", "Title2", "22", 12, 22, 1, 2));
+		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandPClose());
+
+		$this->assertTrue($this->decoratorMock->noCommands(), "Should not have more commands");
+	}
 }
 ?>

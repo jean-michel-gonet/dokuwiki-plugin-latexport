@@ -272,6 +272,18 @@ class CommandInternalMedia extends TexCommand {
 	private $height;
 	private $positionInGroup;
 	private $totalInGroup;
+	
+	function __construct($src, $title, $align, $width, $height, $positionInGroup, $totalInGroup) {
+		parent::__construct("internalmedia");
+		$this->src = $src;
+		$this->title = $title;
+		$this->align = $align;
+		$this->width = $width;
+		$this->height = $height;
+		$this->positionInGroup = $positionInGroup;
+		$this->totalInGroup = $totalInGroup;
+	}
+	
 }
 
 ?>

@@ -82,7 +82,15 @@ class DecoratorPersister extends Decorator {
 				// Some commands have the optional arguments after the curly brackets:
 				case 'begin':
 				case 'end':
-					$text = '\\'.$command.'{'.$scope.'}['.$argument.']';
+					switch($scope) {
+						case 'minipage':
+							$text = '\\'.$command.'{'.$scope.'}{'.$argument.'}';
+							break;
+
+						default:
+							$text = '\\'.$command.'{'.$scope.'}['.$argument.']';
+							break;						
+					}
 					break;
 
 				// Most commands have the optional arguments before the curly brackets:
@@ -777,39 +785,41 @@ class DecoratorPersister extends Decorator {
 	 * @param int    $totalInGroup Size of the group of media.
 	 */
 	function internalmedia($src, $title = null, $align = null, $width = null, 
-	                       $height = null, $cache = null, $linking = null, $positionInGroup = 0, $totalInGroup = 1) {
+	$height = null, $cache = null, $linking = null, $positionInGroup = 0, $totalInGroup = 1) {
 
+		// Find the image and estimate its real size:
    		$filename = $this->obtainFilename($src);
-
-		// If not printable, just display the title:
    		if (!$this->isPrintable($filename)) {
-   			$this->decorator->cdata($title);
+   			$this->cdata($title);
 			return;
 		}
-	
-		// Estimate the image size:
 		list($width, $height) = getimagesize($filename);
 
-		// Should we rotate the image?
+		// Opens the group of images:
+		if ($positionInGroup == 0) {
+			$this->appendCommand('begin', 'figure', '!htb');
+		}
+		
+		// Places the image:
+		$availableSpace = round(1 / $totalInGroup, 1);
+		$sizeInCmAt240ppi = round(2.54 * $width / 240, 1);
 		$angle = 0;
-		$scale = round($width / 1000, 1);
-		if ($scale > 1) {
-			if ($scale > 2) {
-				if ($height < $width) {
-					$angle = 90;
-				}
-			}
-			$scale = 1;
-		}
-
-		// Display the image:
-		$this->appendCommand('begin', 'figure', 'ht');
-		if ($align == 'center') {
-			$this->appendCommand('centering');
-		}
-		$this->appendCommand('includegraphics', $this->insertImage($filename), "width=$scale\\textwidth, angle=$angle");
+		
+		$this->appendCommand('begin', 'minipage', "$availableSpace\\textwidth");
+		$this->appendCommand('centering');
+		
+		$this->appendCommand('includegraphics', $this->insertImage($filename), 
+		"width=".$sizeInCmAt240ppi."cm, max width=\\textwidth, angle=$angle");
+		
 		$this->appendCommand('caption', $this->texifyText($title));
-		$this->appendCommand('end', 'figure');
+		$this->appendCommand('end', 'minipage');
+
+		// Closes the group of images:
+		if ($positionInGroup == $totalInGroup - 1) {
+			$this->appendCommand('end', 'figure');
+		} else {
+			$this->appendCommand('hfill');
+		}		
 	}
 
 	/**
