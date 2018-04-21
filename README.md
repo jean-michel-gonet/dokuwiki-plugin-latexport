@@ -71,23 +71,29 @@ that you see fit:
 
 ```latex
 \documentclass{book}
-\usepackage{import}
-\usepackage[french]{babel}
-\usepackage{hyperref}
-\usepackage{array}
-\usepackage{soul}
-\usepackage{csquotes}
-\usepackage{multirow}
-\usepackage{listings}
-\usepackage{makecell}
-\usepackage{tabulary}
-\usepackage{fontspec}
-\usepackage{graphicx}
 
-\graphicspath{ {content/images/} }
+\usepackage{import}                 % To import an external document.
+\usepackage[french]{babel}          % To help with hyphenation.
+\usepackage{soul}                   % To provide nice hyphenation.
+\usepackage{hyperref}               % To have hyperlinks to internet.
+\usepackage{array}                  % To have better presentation in tables.
+\usepackage{csquotes}               % To display quotes.
+\usepackage{multirow}               % To have rowspan in tables.
+\usepackage{makecell}               % To have colspan in tables.
+\usepackage{tabulary}               % To make tables.
+\usepackage{fontspec}               % To use local system fonts.
+\usepackage{listings}               % To show source code.
+\usepackage[dvipsnames]{xcolor}     % To define nice colors.
+\usepackage[export]{adjustbox}      % To resize images.
+\usepackage{graphicx}               % To import images.
+
+\graphicspath{ {content/images/} }  % Where the images are
+\lstdefinestyle{c-style}{}          % Define styles for each used source code language
+
 \begin{document}
 \import{content/}{aaa.tex}
 \end{document}
+
 ```
 
 4. To launch the PDF generation, execute ``lualatex`` from your working folder. Execute it twice ifthe document contains an index, a list of figures, a table of contents or cross references (this is a standardlatex requirement):
