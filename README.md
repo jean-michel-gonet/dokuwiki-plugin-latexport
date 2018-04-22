@@ -141,7 +141,6 @@ In the destination page:
 - Lower header levels open a lower level headings.
 
 ## Cross-referencing
-Internal links in Dokuwiki are translated in TeX as cross references mentioning a page number.
 
 You can place an internal link to another heading of the same page. For example:
 
@@ -183,6 +182,11 @@ Bla bla bla
 
 Further down in the text, or any page {{anchor:anchor_name:text}}
 ```
+
+Internal links in Dokuwiki are translated in TeX as cross references:
+- When the link points to a page or heading, then the cross reference mentions part/chapter/section number.
+- When yoy use the anchor syntax, then the cross reference mentions a page number.
+
 ## Pictures
 Pictures are exported as centered figures with the caption underneath:
 
@@ -194,6 +198,7 @@ Size matters:
 - When resulting resolution is 240 ppi or better, images are exported with the same width as the text. 
 - Smaller images are exported centered and with a smaller width.
 - Landscape images whose height would be enough to grant 240 ppi or better are rotated 90º and scaled to fit a whole page.
+- For more information about ppi, see https://en.wikipedia.org/wiki/Pixel_density
 
 If you place several images without line breaking, they're exported as one single figure with as many images in it. 
 In this case the size is not checked.
@@ -202,14 +207,14 @@ In this case the size is not checked.
 {{ :path:to:image1.png |Caption}} {{ :path:to:image2.png |Caption}}
 ```
 
-For more information about ppi, see https://en.wikipedia.org/wiki/Pixel_density
-
 ## Writing mathematical expressions
 Use the mathjax plugin to write mathematical expressions. They are mapped into the TeX with very little changes:
 - Inline formulas delimited in Dokuwiki with ``$ ... $`` are exported to TeX as ``\( ... \)``.
 - Inline formulas delimited in Dokuwiki with ``\( ... \)`` are exported unchanged to TeX.
-- Display formulas delimited in Dokuwiki with ``$$ ... $$`` and ``\[ ... \]`` are exported to TeX as ``\begin{equation} ... \end{equation}``.
-- Explicit ``\tag{.}`` command, needed in Dokuwiki to make visible references to equations,is removed during export to TeX, as it is not supported outside the amsmath package, and not needed.
+- Display formulas delimited in Dokuwiki with ``$$ ... $$`` and ``\[ ... \]`` are exported 
+to TeX as ``\begin{equation} ... \end{equation}``.
+- Explicit ``\tag{.}`` command, needed in Dokuwiki to make visible references to equations,
+is removed during export to TeX, as it is not supported outside the amsmath package, and not needed.
 - Display formulas explicitly delimited in Dokuwiki with ``\begin{xx} ... \end{xx}`` are exported unchanged.
 
 ## Blocks of code
@@ -296,6 +301,134 @@ The last command shows a series of identifiers:
 
 Use the font family name as main font, as in the example above.
 
+# Structuring dokuwiki to look good both online and printed
+Making a satisfactorily structured dokuwiki site to export nicely as a printed document is not hard, provided
+you follow certain directions:
+
+- Structure your content with both online and print in mind (read below more about this)
+- Render often the PDF, to keep checking.
+- Start each page with a top heading, which will become the chapter title. 
+- Size your images keeping the 240 ppi resolution in mind:
+  - 240ppi means that you need 94 pixels to reach a dimension of 1 cms. 
+  - A4 page is 21cm wide and 29cm tall. 
+- 
+
+The most important precaution:
+
+## The traditional book structure
+The traditional page order for books, as suggested by common practice 
+(see https://en.wikibooks.org/wiki/LaTeX/Document_Structure), is the following:
+
+- Frontmatter
+  - Half-title: Usually contains a a picture, the title in fancy letters, and
+  anything you would expect to have in the cover page. This is page 1, and it is a right side page.
+  - Empty: This is page 2, and it is a left page. It's the back of the cover page, and usually
+  left blank.
+  - Title page: A boring looking but elegant composition with the title (again), the sub-title, the
+  authors, and little else. This is page 3, a right page, and the actual first page of your book.
+  - Information (copyright notice, ISBN, etc.). This is page 4, a left side.
+  - Dedication if any, else empty. This is page 5, a right side. The idea is that table of contents starts in
+  an even page, as it is not a title.
+  - Table of contents
+  - List of figures (can be in the backmatter, too)
+  - Preface chapter. There can be more than one. You can present the author(s), your intentions, or whatever
+  information relevant to introduce your book.
+- Mainmatter
+  - Main topic, divided in chapters. Optionnally, chapters are organized in parts.
+- Appendix  
+  - Some subordinate chapters
+- Backmatter
+  - Bibliography  
+  - Glossary / Index
+
+## The latex document sectioning
+
+Latex documents are structured according to the following hierarchy:
+
+- document: This is the highest element. All other are contained in it.
+- matter: There are front matter, main matter and back matter.
+- part: Parts are groups of chapters.
+- chapter: Chapter start in their own page.
+- section: A chapter can have multiple sections.
+- subsection: A section can be divided into sub-sections.
+- subsubsection: Each sub-division is smaller and smaller.
+- paragraph: Small.
+- subparagraph: Smallest.
+
+See more about this in https://www.sharelatex.com/learn/Sections_and_chapters
+
+## Exporting dokuwiki into a book
+
+The most straight forward way to structure a website is to have quite a few articles, organized into 
+areas of knowledge. When articles are too long, you may want to split them into sections:
+
+- Top page:
+  - Mathematics
+    - The natural numbers
+	- The real numbers
+	- Arithmetic
+	  - Summation
+	  - Substraction
+  - Physics
+    - Thermodynamics
+	  - The first law
+	  - The second law
+  - Biology 
+      - The invertebrae
+	  - The vertebrae
+
+To export such a structure into a latex book using the plugin create a separate top page with a content similar to:
+
+```dokuwiki
+===== H2 or H3 A Preface Chapter =====
+Write here introductory information about your book.
+
+===== H2 or H3 Another preface chapter =====
+In case you feel your book needs more introduction.
+
+====== H1 Title of your book ======
+
+===== H2 Mathematics =====
+* [[mathematics:natural-numbers|The Natural numbers]]
+* [[mathematics:real-numbers|The Real numbers]]
+
+==== H3 The Arithmetic ====
+* [[mathematics:arithmetic:summation|Summation]]
+* [[mathematics:arithmetic:substraction|Substraction]]
+
+===== H2 Physics =====
+* [[physics:thermodynamics|Thermodynamics]]
+
+===== H2 Biology =====
+* [[biology:invertebrae|The Invertebrae]]
+* [[biology:vertebrae|The Vertebrae]]
+```
+
+The first H1 marks the starting of the main matter. The preceeding H2 are preface chapters. Following H2 are mapped
+as parts. Standalone links are always one level below the preceeding heading. Standalone links below a
+part are chapters.
+
+To split a chapter into multiple dokuwiki pages, you have two options
+- First option is to directly place a H3 heding to mark a chapter level, so stand-alone links underneath will be sections.
+I've illustrated this with the _Arithmetics_ chapter.
+- Second option is to keep a single stand-alone link for the whole chapter, but then the chapter page looks like this.
+
+```dokuwiki
+====== H1 Chapter title ======
+* [[physics:thermodynamics:first-law|The first law of thermodynamics]]
+* [[physics:thermodynamics:second-law|The second law of thermodynamics]]
+```
+
+I advise to separate the online top page from the book top page:
+- Because appropriate content of the online top page obeys to other considerations like navigational aids, advertisements, 
+search engine optimization, highlighted content, etc. and you don't want this in your book.
+- Because you probably don't want to make the root page of your book publicly accessible.
+- Finally, in such an extensive body of knowledge as the example above, you may end splitting and splitting into smaller bits, and yet 
+find your articles too long. If that's the case, and you don't want to revise your ambitions, you may have multiple
+books and still one single home page.
+
+# Troubleshooting
+
 ## The fearsome 0 bytes font file in Mac OS X
 (See www.dmertl.com/blog/?p=11 )
 (See https://en.wikipedia.org/wiki/Resource_fork )
@@ -307,9 +440,11 @@ If `otfinfo` complains of the file being too small, check from the command line 
 	MacBook-Pro:Fonts me$ ls -la Playbill 
 	-rw-rw-r--@ 1 me       staff  0 Jun 15  2010 Playbill
 
-Zero length is visible only from command line. If you check the size from the Finder you see a non-zero size. Also you can tell that the file is not corrupt because you can open it in the Font Book.
+Zero length is visible only from command line. If you check the size from the Finder 
+you see a non-zero size. Also you can tell that the file is not corrupt because you can open it in the Font Book.
 
-For some reason, lots of font files have their content hidden in metadata attributes. You can check if it's your case with the `xattr`command. There are two versions. The short one:
+For some reason, lots of font files have their content hidden in metadata attributes. You can check if it's your 
+case with the `xattr`command. There are two versions. The short one:
 
 	MacBook-Pro:Fonts me$ xattr Playbill 	
 	com.apple.FinderInfo
@@ -331,7 +466,8 @@ And the long one:
 	0000B8A0  6C 61 79 62 69 6C 6C                             |laybill|
 	0000b8a7
 
-You can see that `com.apple.ResourceFork` attribute contains the whole data. To extract the data as binary in a separated file, use `xattr` in conjunction with `xxd`, as demostrated below. 
+You can see that `com.apple.ResourceFork` attribute contains the whole data. To extract the data as binary in a 
+separated file, use `xattr` in conjunction with `xxd`, as demostrated below. 
 
 	MacBook-Pro:Fonts me$ xattr -px com.apple.ResourceFork Playbill | xxd -r -p > Playbill.ttf	
 
