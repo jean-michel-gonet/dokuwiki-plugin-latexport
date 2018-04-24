@@ -208,12 +208,18 @@ In this case the size is not checked.
 ```
 
 ## Writing mathematical expressions
-Use the mathjax plugin to write mathematical expressions. They are mapped into the TeX with very little changes:
+Use the mathjax plugin to write mathematical expressions. Use ``$`` to place inline equations, and ``$$`` to place display equations. 
+To make references of the equations in the main text, use ``\ref`` and ``\label`` commands. To visually identify the equation in Dokuwiki, you need to have a ``\tag\\`` command:
+
+```dokuwiki
+You can refer to the equation using $\ref{unique-ident}$, and specify the same identifier as label:
+$$ V_{AIN} - V_{CHOLD}(t_c) < \frac{1}{2} \cdot \frac{V_{AIN}}{2^{10}} \label{unique-identifier}\tag{1} $$
+```
+Mathematical expressions are mapped into the TeX with very little changes:
 - Inline formulas delimited in Dokuwiki with ``$ ... $`` are exported to TeX as ``\( ... \)``.
 - Inline formulas delimited in Dokuwiki with ``\( ... \)`` are exported unchanged to TeX.
-- Display formulas delimited in Dokuwiki with ``$$ ... $$`` and ``\[ ... \]`` are exported 
-to TeX as ``\begin{equation} ... \end{equation}``.
-- Explicit ``\tag{.}`` command, needed in Dokuwiki to make visible references to equations,
+- Display formulas delimited in Dokuwiki with ``$$ ... $$`` and ``\[ ... \]`` are exported to TeX as ``\begin{equation} ... \end{equation}``.
+- Explicit ``\tag{.}`` command, needed in Dokuwiki to make visible references to equations, 
 is removed during export to TeX, as it is not supported outside the amsmath package, and not needed.
 - Display formulas explicitly delimited in Dokuwiki with ``\begin{xx} ... \end{xx}`` are exported unchanged.
 
