@@ -1,0 +1,138 @@
+\documentclass[10pt]{book}
+
+\usepackage{import}                 % To import an external document.
+\usepackage[french]{babel}          % To help with hyphenation.
+\usepackage{soul}                   % To provide nice hyphenation.
+\usepackage{hyperref}               % To have hyperlinks to internet.
+\usepackage{csquotes}               % To display quotes.
+\usepackage{array}                  % To have better presentation in tables.
+\usepackage{multirow}               % To have rowspan in tables.
+\usepackage{makecell}               % To have colspan in tables.
+\usepackage{tabulary}               % To make tables.
+
+\author{Put here your name}
+\title{A nice and catchy title}
+
+%-------------------------------------------------
+%--                Page layout                  --
+%-------------------------------------------------
+\usepackage[
+	inner=1.2in, 
+	outer=0.8in, 
+	top=1.2in, 
+	bottom=1.2in, 
+	a4paper, 
+	twoside]
+	{geometry} % showframe
+
+%-------------------------------------------------
+%--                   Fonts types               --
+%-------------------------------------------------
+\usepackage{fontspec}              % To use local system fonts.
+\setmainfont{Lucida Bright}        % The local system font.
+
+%-------------------------------------------------
+%--               Headers and footers           --
+%-------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   LE                CE                  RE | LO                  CO                 RO  % 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Sc nº: Sc title                     page |  page                    Ch nº: Ch title   %
+%-----------------------------------------------------------------------------------------%
+%                                            |                                            %
+%   Bla bla bla bla bla bla bla              |   Bla bla bla bla bla bla bla              %
+%   Bla bla bla bla bla bla bla              |   Bla bla bla bla bla bla bla              %
+%   Bla bla bla bla bla bla bla              |   Bla bla bla bla bla bla bla              %
+%   Bla bla bla bla bla bla bla              |   Bla bla bla bla bla bla bla              %
+%   Bla bla bla bla bla bla bla              |   Bla bla bla bla bla bla bla              %
+%-------                                     |                                            %
+%   Note: bla bla bla                        |                                            %
+%--------------------------------------------+--------------------------------------------%
+%   Author name                              |                               Main title   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{fancyhdr}               % To have fancy headers.
+\pagestyle{fancy}                   % To activate fancy headers.
+
+% Copy author and title into variables that can be
+% used in headers:
+\makeatletter
+\let\Author\@author
+\let\Title\@title
+\makeatother
+
+% Configure all pages:
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter~-~#1}{}} % leftmark  (higher level)
+\renewcommand{\sectionmark}[1]{\markright{\thesection~-~#1}}  % rightmark (lower  level)
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[LE]{\leftmark}
+\fancyhead[RE,LO]{\thepage}
+\fancyhead[RO]{\rightmark}
+\fancyfoot[LE]{\Title}
+\fancyfoot[RO]{2018 - \Author}
+
+% Configure chapter pages:
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\fancyhead[RE,LO]{\thepage}
+	\fancyfoot[RO]{2018 - \Author}
+}
+
+%--------------------------------------------------
+%--            Listing configuration             --
+%--------------------------------------------------
+\usepackage{listings}                  % To display source code.
+\usepackage[dvipsnames]{xcolor}        % To define fancy colors.
+
+\definecolor{light-gray}{gray}{0.97}
+\lstdefinestyle{c-style}{
+  backgroundcolor=\color{light-gray},
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  xleftmargin=0pt,
+  language=C,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{black},
+  commentstyle=\itshape\color{OliveGreen},
+  identifierstyle=\color{Violet},
+  stringstyle=\color{Sepia},
+}
+
+%--------------------------------------------------
+%--           Graphics configuration             --
+%--------------------------------------------------
+\usepackage[export]{adjustbox}         % To use min width, for better scaling images
+\usepackage{graphicx}                  % To include images.
+\usepackage{pdfpages}                  % To import a full image for the half-title
+
+%--------------------------------------------------
+%--              The document                    --
+%--------------------------------------------------
+\begin{document}
+
+%----------------- Half title ---------------------
+\frontmatter
+\includepdf{couverture.jpg}            % This image should have same ratio as paper in your document.
+
+%---------------- Title ---------------------------
+\maketitle
+
+%----- Information, copyright notice, etc --(TODO)-
+%----- Dedication (TODO) --------------------------
+
+%------------- Table of contents ------------------
+\tableofcontents
+
+%------------- List of figures -------------------
+\listoffigures
+
+%------------- Actual content --------------------
+\graphicspath{ {content/images/} }     % That's where images are.
+\import{content/}{aaa.tex}
+
+%------------- End of document -------------------
+\end{document}
