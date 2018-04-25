@@ -8,16 +8,22 @@ The main objective of this plugin are:
 - Mapping as naturally as possible the dokuwiki formatting into sensible latex formatting.
 - Latex scripting is readable.
 
-The main limitation of the plugin is that it is not possible to directly download a finished PDF file. It was never my intention to provide such a feature with unrestricted access for two reasons:
+The main limitation of the plugin is that it is not possible to directly download a finished PDF file. It was 
+never my intention to provide such a feature with unrestricted access for two reasons:
 - Although most of its content is freely available online, I still want to sell my book.
-- I rekon that online content is a perpetual work in progress. I don't want non-revised, half baked versions of my book circulating around.
+- I rekon that online content is a perpetual work in progress. I don't want non-revised, half baked versions of 
+my book circulating around.
 
 Anyway, with the procedure described below, you can obtain a PDF version in less than a minute.
 
 Other limitations are:
 - Exported files assume that certain packages are available (listed below).
-- Text wrapping in table cells is not supported. Latex has issues with text wrapping multi-column cells. They're possible to overcome when you write the Latex document manually, but I haven't been able to found a satisfactory automated solution. In the end I had to choose between rowspan/colspan and text wrapping, and I chose the former.
-- I did an opinionated choice about how to map a navigable page hierarchy into a readable document structure. After testing it with two very big documents (more than 20 chapters, more than 200 pages), I believe it works quite well. I hope it will work also for you.
+- Text wrapping in table cells is not supported. Latex has issues with text wrapping multi-column cells. They're 
+possible to overcome when you write the Latex document manually, but I haven't been able to found a satisfactory 
+automated solution. In the end I had to choose between rowspan/colspan and text wrapping, and I chose the former.
+- I did an opinionated choice about how to map a navigable page hierarchy into a readable document structure. After 
+testing it with two very big documents (more than 20 chapters, more than 200 pages), I believe it works quite well. I hope 
+it will work also for you.
 
 ## Installing the plugin on Dokuwiki
 Either install it using Dokuwiki's plugin manager, or clone this project into the plugin repository:
@@ -42,14 +48,16 @@ This downloads a ZIP archive with the following structure:
 - One folder named 'images', containing all printable media.
 
 ## Installing TeX on your local system
-Unless you know better I suggest to use TeX Live, which provides a fully functional, ready to use, well configured TeX engine. It exists for almost all platforms at the official web site:
+Unless you know better I suggest to use TeX Live, which provides a fully functional, ready to use, well configured 
+TeX engine. It exists for almost all platforms at the official web site:
 
 - https://tug.org/texlive/
 
 ## Creating a PDF file based on the exported latex
 The exported latex document do not contain any configuration. You have to create it separately. This procedure shows you how:
 
-1. Download the zip archive from the page. You can either type the url in your browser and save the content in an appropriate place, or use a command similar to:
+1. Download the zip archive from the page. You can either type the url in your browser and save the content in an 
+appropriate place, or use a command similar to:
 
 ```bash
 cd working_folder
@@ -96,7 +104,8 @@ that you see fit:
 
 ```
 
-4. To launch the PDF generation, execute ``lualatex`` from your working folder. Execute it twice ifthe document contains an index, a list of figures, a table of contents or cross references (this is a standardlatex requirement):
+4. To launch the PDF generation, execute ``lualatex`` from your working folder. Execute it twice ifthe document contains an 
+index, a list of figures, a table of contents or cross references (this is a standardlatex requirement):
 
 ```bash
 cd working_folder
@@ -136,7 +145,8 @@ as the base level.
 ```
 
 In the destination page:
-- H1 opens a *chapter*, *section*, *subsection*, etc depending on the level of heading in the referring page where the link is placed. Text of header is used as title of the heading.
+- H1 opens a *chapter*, *section*, *subsection*, etc depending on the level of heading in the referring page where the 
+link is placed. Text of header is used as title of the heading.
 - H1 never opens a level higher than *chapter*.
 - Lower header levels open a lower level headings.
 
@@ -228,18 +238,12 @@ Visit this nice web page: [[https://fr.wikipedia.org/wiki/Convertisseur_analogiq
 ```
 
 ## Writing mathematical expressions
-Use the mathjax plugin to write mathematical expressions. Use ``$`` to place inline equations, and ``$$`` to place display equations. 
-To make references of the equations in the main text, use ``\ref`` and ``\label`` commands. To visually identify the equation in Dokuwiki, you need to have a ``\tag\\`` command:
-
-```dokuwiki
-You can refer to the equation using $\ref{unique-ident}$, and specify the same identifier as label:
-$$ V_{AIN} - V_{CHOLD}(t_c) < \frac{1}{2} \cdot \frac{V_{AIN}}{2^{10}} \label{unique-identifier}\tag{1} $$
-```
-Mathematical expressions are mapped into the TeX with very little changes:
+Use the mathjax plugin to write mathematical expressions. They are mapped into the TeX with very little changes:
 - Inline formulas delimited in Dokuwiki with ``$ ... $`` are exported to TeX as ``\( ... \)``.
 - Inline formulas delimited in Dokuwiki with ``\( ... \)`` are exported unchanged to TeX.
-- Display formulas delimited in Dokuwiki with ``$$ ... $$`` and ``\[ ... \]`` are exported to TeX as ``\begin{equation} ... \end{equation}``.
-- Explicit ``\tag{.}`` command, needed in Dokuwiki to make visible references to equations, 
+- Display formulas delimited in Dokuwiki with ``$$ ... $$`` and ``\[ ... \]`` are exported 
+to TeX as ``\begin{equation} ... \end{equation}``.
+- Explicit ``\tag{.}`` command, needed in Dokuwiki to make visible references to equations,
 is removed during export to TeX, as it is not supported outside the amsmath package, and not needed.
 - Display formulas explicitly delimited in Dokuwiki with ``\begin{xx} ... \end{xx}`` are exported unchanged.
 
@@ -449,9 +453,9 @@ I advise to separate the online top page from the book top page:
 - Because appropriate content of the online top page obeys to other considerations like navigational aids, advertisements, 
 search engine optimization, highlighted content, etc. and you don't want this in your book.
 - Because you probably don't want to make the root page of your book publicly accessible.
-- Finally, in such an extensive body of knowledge as the example above, you may end splitting and splitting into smaller bits, and yet 
-find your articles too long. If that's the case, and you don't want to revise your ambitions, you may have multiple
-books and still one single home page.
+- Finally, in such an extensive body of knowledge as the example above, you may end splitting and 
+splitting into smaller bits, and yet find your articles too long. If that's the case, and you don't want to revise your 
+ambitions, you may have multiple books and still one single home page.
 
 # Troubleshooting
 
@@ -503,15 +507,18 @@ If everything went right, you should have a second file with non-zero length:
 	-rw-rw-r--@ 1 me       staff      0 Jun 15  2010 Playbill
 	-rw-r--r--+ 1 me       staff  47271 Sep 17 09:36 Playbill.ttf
 
-Alas, although you can open this file in Font Book, if you _Validate Font_ it shows a _System Validation_ error. Also, `otfinfo` returns yet another error:
+Alas, although you can open this file in Font Book, if you _Validate Font_ it shows a _System Validation_ error. Also, 
+`otfinfo` returns yet another error:
 
 	MacBook-Pro:Fonts me$ otfinfo -i Playbill.ttf 
 	otfinfo: Playbill.ttf: not an OpenType font (bad magic number)
 
-To overcome this problem, I uploaded the TTF file to a online font converter (for example, https://onlinefontconverter.com/ ), and converted it into TTF (yes, same). Then:
+To overcome this problem, I uploaded the TTF file to a online font converter (for example, https://onlinefontconverter.com/ ), 
+and converted it into TTF (yes, same). Then:
 1. Download the result.
 2. Uninstall the original font.
-3. Install your converted font. If you processed a font file with multiple variations - like bold, italic - you will probably have one file per variation; in that case install them all.
+3. Install your converted font. If you processed a font file with multiple variations - like bold, italic - you will probably 
+have one file per variation; in that case install them all.
 4. Check them with `otfinfo`. 
 
 To me this worked.
@@ -550,7 +557,8 @@ brew install mcrypt php70-mcrypt
 ```
 - Then reboot your computer.
 
-OS X 10.8 and newer come with php-fpm pre-installed. You may need to force the system to use the brew version. Ensure that  ``/usr/local/sbin`` is before ``/usr/sbin`` in your PATH:
+OS X 10.8 and newer come with php-fpm pre-installed. You may need to force the system to use the brew version. Ensure that  
+``/usr/local/sbin`` is before ``/usr/sbin`` in your PATH:
 
   PATH="/usr/local/sbin:$PATH"
 
@@ -562,7 +570,8 @@ PHP 7.0.0 (cli) (built: Dec  2 2015 13:05:57) ( NTS )
 Copyright (c) 1997-2015 The PHP Group
 Zend Engine v3.0.0, Copyright (c) 1998-2015 Zend Technologies
 ```
-You still need to connect Apache with the new PHP. If you were using the built-in Apache, this can be confusing because ``--with-httpd`` just installed a second, brew version, whose configuration file is located in ``/usr/local/etc/httpd/httpd.conf``:
+You still need to connect Apache with the new PHP. If you were using the built-in Apache, this can be confusing because 
+``--with-httpd`` just installed a second, brew version, whose configuration file is located in ``/usr/local/etc/httpd/httpd.conf``:
 
 - Configure it to use port 80: 
 
@@ -604,7 +613,8 @@ Now you can add the configuration for your web site in ``extra/http-vhosts.conf`
 
 ## A development version of dokuwiki and a configured web site
 
-To retrieve the development version of dokuwiki you need to have git installed. Then follow instructions in https://www.dokuwiki.org/devel:git
+To retrieve the development version of dokuwiki you need to have git installed. Then follow 
+instructions in https://www.dokuwiki.org/devel:git
 
 - Go to your development folder, checkout the development version and switch to the stable branch.
 
@@ -614,7 +624,8 @@ git checkout stable
 ```
 This should have created a dokuwiki folder with all sources, including a ``_test`` folder with unit tests.
 
-I'm assuming you've got PHP and Apache configured (see above) and you activated the virtual hosts in Apache. Now you need to associate a virtual host to the dokuwiki folder:
+I'm assuming you've got PHP and Apache configured (see above) and you activated the virtual hosts in Apache. Now you need to 
+associate a virtual host to the dokuwiki folder:
 
 ```
 <VirtualHost *:80>
@@ -756,7 +767,8 @@ Loaded Configuration File:         /usr/local/etc/php/5.6/php.ini
 Scan for additional .ini files in: /usr/local/etc/php/5.6/conf.d
 ```
 
-Edit the ``php.ini`` configuration file and add one of the supported time zones (see http://php.net/manual/en/timezones.php) by uncommenting the ``date.timezone`` entry:
+Edit the ``php.ini`` configuration file and add one of the supported time zones (see http://php.net/manual/en/timezones.php) 
+by uncommenting the ``date.timezone`` entry:
 
 ```
 [Date]
