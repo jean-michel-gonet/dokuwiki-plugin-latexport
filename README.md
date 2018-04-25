@@ -207,6 +207,26 @@ In this case the size is not checked.
 {{ :path:to:image1.png |Caption}} {{ :path:to:image2.png |Caption}}
 ```
 
+## External links
+External links are rendered as... external links:
+- In the PDF they will be clickable.
+- When printed, they've a special font.
+
+If you include external links, be careful to explicitly use the external link markup. If they contain local characters, use them
+instead of hex encoding. For example:
+
+- The following link is correctly handled:
+
+```dokuwiki
+Visit this nice web page: [[https://fr.wikipedia.org/wiki/Convertisseur_analogique-numérique]]
+```
+
+- The following link will pose problems:
+
+```dokuwiki
+Visit this nice web page: [[https://fr.wikipedia.org/wiki/Convertisseur_analogique-num%C3%A9rique]]
+```
+
 ## Writing mathematical expressions
 Use the mathjax plugin to write mathematical expressions. They are mapped into the TeX with very little changes:
 - Inline formulas delimited in Dokuwiki with ``$ ... $`` are exported to TeX as ``\( ... \)``.
