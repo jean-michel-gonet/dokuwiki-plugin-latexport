@@ -516,8 +516,9 @@ class decorator extends Doku_Renderer {
      * @param string $text
      */
     function unformatted($text) {
+		error_log("decorator.unformatted <$text>");
 		$this->any_command();
-        $this->unformatted($text);
+        $this->decorator->unformatted($text);
     }
 
     /**
