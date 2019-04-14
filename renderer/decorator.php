@@ -49,6 +49,9 @@ class decorator extends Doku_Renderer {
 		$text = str_replace('%', '\\%', $text);
 		$text = str_replace('#', '\\#', $text);
 		$text = str_replace('_', '\\_', $text);
+		$text = str_replace('&', '\\&', $text);
+		$text = str_replace('$', '\\$', $text);
+		$text = str_replace('^', '\\^', $text);
 		return $text;
 	}
 

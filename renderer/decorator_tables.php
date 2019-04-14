@@ -88,6 +88,21 @@ class DecoratorTables extends Decorator {
 	}
 	
     /**
+     * Verbatim is not supported inside makecell (it should go inside
+	 * a mini page), so best next option is not to output verbatim, 
+	 * and hope for the best.
+     *
+     * @param string $text
+     */
+    function unformatted($text) {
+		if ($this->inTable) {
+			$this->decorator->cdata($text);
+		} else {
+			$this->decorator->unformatted($text);
+		}
+    }
+	
+    /**
      * Start a table
      *
      * @param int $maxcols maximum number of columns
