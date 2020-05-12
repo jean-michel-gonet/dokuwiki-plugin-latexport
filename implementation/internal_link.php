@@ -18,10 +18,10 @@ class InternalLink {
 
 	/** The link title. */
 	private $title;
-	
+
 	/** The heading level in which the link was found. */
 	private $headingLevel;
-	
+
 	/**
 	 * Class constructor.
 	 * @param link The link, as provided by internallink method.
@@ -42,7 +42,7 @@ class InternalLink {
 	function getLink() {
 		return $this->link;
 	}
-	
+
 	/** The link title. */
 	function getTitle() {
 		return $this->title;
@@ -51,7 +51,7 @@ class InternalLink {
 	function getHeadingLevel() {
 		return $this->headingLevel;
 	}
-	
+
 	function toString() {
 		return "$this->title ($this->headingLevel) --- $this->link";
 	}

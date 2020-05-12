@@ -3,37 +3,37 @@
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator.php';
 
 /**
  * Maps the dokuwiki heading structure into a latex document structure
  * The root document:
- * 
+ *
  *     H1: The first H1 opens the main matter. The text of header is ignored.
  *         The second H1 opens the appendix. The text of header is ignored.
  *         The third and next H1 are considered chapters in the appendix. Text of header is title of the chapter.
- *     H2: Opens a part. 
- *         The text of header is placed as title of the part. 
+ *     H2: Opens a part.
+ *         The text of header is placed as title of the part.
  *         Also, H2 following the third or next H1 are considered chapters in the appendix.
- *     H3: Opens a chapter. 
+ *     H3: Opens a chapter.
  *         The text of header is placed as title of the chapter.
- *     H4: Opens a section. 
+ *     H4: Opens a section.
  *         The text of header is placed as title of the section.
- *     H5: Opens a subsection. 
+ *     H5: Opens a subsection.
  *         The text of header is placed as title of the part.
  *
- *     Unordered list item starting with a link includes the destination page, 
+ *     Unordered list item starting with a link includes the destination page,
  *     using the current level of heading as the base level.
- * 
+ *
  * In the destination page:
- * 
- *     - The H1 opens a chapter, section, subsection, etc depending on the level of 
+ *
+ *     - The H1 opens a chapter, section, subsection, etc depending on the level of
  *       heading in the referring page. Text of header is used as title of the heading.
  *     - The H1 never opens a level higher than chapter.
  *     - Lower header levels open a lower level headings.
- *     - Unordered list item starting with a link includes the destination page, 
+ *     - Unordered list item starting with a link includes the destination page,
  *       using the current level of heading as the base level.
- * 
+ *
  * Latexport Plugin: Exports to latex
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
@@ -52,7 +52,7 @@ class DecoratorHeadings extends Decorator {
 	/**
 	 * Class constructor.
 	 * @param decorator The next decorator.
-	 */	
+	 */
 	function __construct($decorator) {
 		parent::__construct($decorator);
 		$this->state = DecoratorHeadings::FRONT_MATTER;
@@ -62,7 +62,7 @@ class DecoratorHeadings extends Decorator {
 	 * Headers are transformed in part, chapter, section, subsection and subsubsection.
 	 */
 	function header($text, $level, $pos) {
-		
+
 		switch($level) {
 			case 1:
 				$this->h1($text, $pos);
@@ -145,13 +145,13 @@ class DecoratorHeadings extends Decorator {
 	private function h3($text, $pos) {
 		$this->decorator->header($text, 3, $pos);
 	}
-	
+
 	private function h4($text, $pos) {
 		$this->decorator->header($text, 4, $pos);
 	}
-	
+
 	private function h5($text, $pos) {
 		$this->decorator->header($text, 5, $pos);
 	}
-		
+
 }

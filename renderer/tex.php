@@ -10,12 +10,12 @@
 if(!defined('DOKU_INC')) die();
 
 require_once DOKU_PLUGIN . 'latexport/helpers/archive_helper_zip.php';
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator_persister.php';
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator_includer.php';
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator_math.php';
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator_tables.php';
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator_headings.php';
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator_images.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator_persister.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator_includer.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator_math.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator_tables.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator_headings.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator_images.php';
 
 /**
  * A façade between doku wiki and the actual tex renderer.
@@ -24,7 +24,7 @@ require_once DOKU_PLUGIN . 'latexport/renderer/decorator_images.php';
 class renderer_plugin_latexport_tex extends Decorator {
 	const GRAPHICSPATH = 'images/';
 
-	/** 
+	/**
 	 * To create a compressed archive with all TeX resources needed
 	 * to download together.
 	 */
@@ -46,19 +46,19 @@ class renderer_plugin_latexport_tex extends Decorator {
 	 * List of includes yet to process.
 	 */
 	private $includes;
-	
+
 	/**
 	 * Current page ID.
 	 */
 	private $currentPageId;
-		
+
 	/**
 	 * Class constructor.
 	 */
 	function __construct() {
 		$this->archive = new ArchiveHelperZip();
 		$this->includes = new SplQueue();
-		$this->recursionLevel = 0;	
+		$this->recursionLevel = 0;
 		$this->headingLevel = 0;
 
 		parent::__construct(
@@ -91,7 +91,7 @@ class renderer_plugin_latexport_tex extends Decorator {
 		global $ID;
 
 		$this->nocache();
-		
+
 		if (!$this->currentPageId) {
 			$this->currentPageId = $ID;
 		}
@@ -111,14 +111,14 @@ class renderer_plugin_latexport_tex extends Decorator {
 
 			// Starts the archive:
 			$this->archive->startArchive();
-			
+
 			// The root page has always the same file name:
 			$fileName = "aaa.tex";
 		}
-		
+
 		// Starts the document:
 		$this->archive->startFile($fileName);
-		$this->decorator->document_start($this->currentPageId, $this->recursionLevel);			
+		$this->decorator->document_start($this->currentPageId, $this->recursionLevel);
 		$this->recursionLevel++;
 	}
 
@@ -129,7 +129,7 @@ class renderer_plugin_latexport_tex extends Decorator {
 	function header($text, $level, $pos) {
 		$this->decorator->header($text, $level + $this->headingLevel, $pos);
 	}
-	
+
 	/**
 	 * Closes the document and processes the gathered includes.
 	 */
@@ -139,13 +139,13 @@ class renderer_plugin_latexport_tex extends Decorator {
 		$this->archive->closeFile();
 
 		$this->processIncludes();
-		
+
 		$this->recursionLevel--;
 		if ($this->recursionLevel == 0) {
 			$this->doc = $this->archive->closeArchive();
 		}
 	}
-	
+
 	function processIncludes() {
 		while (!$this->includes->isEmpty()) {
 			$include = $this->includes->pop();
@@ -154,5 +154,5 @@ class renderer_plugin_latexport_tex extends Decorator {
 			$this->headingLevel = $include->getHeadingLevel();
 			p_cached_output($file, 'latexport_tex');
 		}
-	}	
+	}
 }

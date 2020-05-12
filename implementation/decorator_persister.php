@@ -3,7 +3,7 @@
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator.php';
 
 /**
  * Final tex decorator, takes care of all formatting that does not
@@ -14,18 +14,18 @@ require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
  * @author Jean-Michel Gonet <jmgonet@yahoo.com>
  */
 class DecoratorPersister extends Decorator {
-	
+
 	/** Where to save images. */
 	const GRAPHICSPATH = 'images/';
-	
+
 	/** Content of the document is saved in the ZIP archive. */
 	private $archive;
-	
+
 	/** Counts the number of matters (frontmatter = 0, mainmatter = 1, etc.) */
 	private $matterNumber;
-	
+
 	private $pageId;
-	
+
 	private $firstHeader;
 
 	/**
@@ -52,11 +52,11 @@ class DecoratorPersister extends Decorator {
 	function input($link) {
 		$this->appendCommand("input", $link);
 	}
-	
+
 	/**
 	 * Adds a latex command to the document.
 	 * @param command  The command
-	 * @param scope    The name of the scope, or the mandatory argument, 
+	 * @param scope    The name of the scope, or the mandatory argument,
 	 *                 to be included inside the curly brackets.
 	 * @param argument If specified, to be included in square brackets. Depending
 	 *                 on the command, square brackets are placed before or after
@@ -70,7 +70,7 @@ class DecoratorPersister extends Decorator {
 	/**
 	 * Adds a latex command to the document.
 	 * @param command  The command
-	 * @param scope    The name of the scope, or the mandatory argument, 
+	 * @param scope    The name of the scope, or the mandatory argument,
 	 *                 to be included inside the curly brackets.
 	 * @param argument If specified, to be included in square brackets. Depending
 	 *                 on the command, square brackets are placed before or after
@@ -89,7 +89,7 @@ class DecoratorPersister extends Decorator {
 
 						default:
 							$text = '\\'.$command.'{'.$scope.'}['.$argument.']';
-							break;						
+							break;
 					}
 					break;
 
@@ -98,18 +98,18 @@ class DecoratorPersister extends Decorator {
 					$text = '\\'.$command.'['.$argument.']{'.$scope.'}';
 					break;
 			}
-		} 
+		}
 		// If there is no argument, then there is only one way to express a command...
 		else {
 			if ($scope) {
 				$text = '\\'.$command.'{'.$scope.'}';
-			} 
+			}
 			// ... unless there is no scope:
 			else {
 				$text = '\\'.$command;
 			}
 		}
-		
+
 		// Let's render the command:
 		$this->archive->appendContent("$text");
 	}
@@ -132,7 +132,7 @@ class DecoratorPersister extends Decorator {
 		$this->appendLabelInline($link);
 		$this->appendContent("\r\n");
 	}
-	
+
 	/**
 	 * Renders a label (crossreference) so it can be referenced from elsewhere in the document.
 	 * Does not place a linebreak after the label.
@@ -155,14 +155,14 @@ class DecoratorPersister extends Decorator {
 	//                                                                              //
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Receives mathematic formula from Mathjax plugin.
 	 */
 	function mathjax_content($formula) {
 		// The '%' is a comment in latex, you can't use it in Mathjax:
 		$formula = str_replace('%', '\\%', $formula);
-		
+
    	 	// As Mathjax already uses latex separators, there is no need to reprocess:
 		$this->appendContent("$formula");
 	}
@@ -257,12 +257,12 @@ class DecoratorPersister extends Decorator {
 				$this->appendLabel($text);
 				break;
 		}
-		
+
 		if ($this->firstHeader) {
 			$this->appendLabel();
 			$this->firstHeader = false;
 		}
-		
+
 	}
 
     /**
@@ -300,7 +300,7 @@ class DecoratorPersister extends Decorator {
 	function p_close() {
 		$this->appendContent("\r\n\r\n");
 	}
-	
+
     /**
      * Create a line break
      */
@@ -319,7 +319,7 @@ class DecoratorPersister extends Decorator {
 	 * Start strong (bold) formatting
 	 */
 	function strong_open() {
-		$this->appendContent("\\textbf{");	
+		$this->appendContent("\\textbf{");
 	}
 
 	/**
@@ -328,7 +328,7 @@ class DecoratorPersister extends Decorator {
 	function strong_close() {
 		$this->appendContent("}");
 	}
-	
+
 	/**
 	 * Start emphasis (italics) formatting
 	 */
@@ -345,7 +345,7 @@ class DecoratorPersister extends Decorator {
 
 	/**
 	 * Start underline formatting
-	 */ 
+	 */
 	function underline_open() {
 		$this->appendContent("\\underline{");
 	}
@@ -356,7 +356,7 @@ class DecoratorPersister extends Decorator {
 	function underline_close() {
 		$this->appendContent("}");
 	}
-	
+
     /**
      * Start monospace formatting
      */
@@ -398,7 +398,7 @@ class DecoratorPersister extends Decorator {
     function superscript_close() {
 		$this->appendContent("}");
     }
-	
+
     /**
      * Start deleted (strike-through) formatting
      */
@@ -426,7 +426,7 @@ class DecoratorPersister extends Decorator {
     function footnote_close() {
 		$this->appendContent("}");
     }
-	
+
 	/**
 	 * Open an unordered list
 	 */
@@ -440,7 +440,7 @@ class DecoratorPersister extends Decorator {
 	function listu_close() {
 		$this->appendCommand('end', 'itemize');
 	}
-	
+
     /**
      * Open an ordered list
      */
@@ -478,7 +478,7 @@ class DecoratorPersister extends Decorator {
 	function listcontent_close() {
 		$this->appendContent("\r\n");
 	}
-	
+
     /**
      * Close a list item
      */
@@ -579,7 +579,7 @@ class DecoratorPersister extends Decorator {
 			$this->unformatted("--> $file");
 		}
 		if ($lang) {
-			$this->appendCommand("begin", "lstlisting", "language=$lang, style=$lang-style");			
+			$this->appendCommand("begin", "lstlisting", "language=$lang, style=$lang-style");
 		} else {
 			$this->appendCommand("begin", "lstlisting");
 		}
@@ -784,7 +784,7 @@ class DecoratorPersister extends Decorator {
 	 * @param int    $positionInGroup Position of the media in the group.
 	 * @param int    $totalInGroup Size of the group of media.
 	 */
-	function internalmedia($src, $title = null, $align = null, $width = null, 
+	function internalmedia($src, $title = null, $align = null, $width = null,
 	$height = null, $cache = null, $linking = null, $positionInGroup = 0, $totalInGroup = 1) {
 
 		// Find the image and estimate its real size:
@@ -799,18 +799,18 @@ class DecoratorPersister extends Decorator {
 		if ($positionInGroup == 0) {
 			$this->appendCommand('begin', 'figure', '!htb');
 		}
-		
+
 		// Places the image:
 		$availableSpace = round(1 / $totalInGroup, 1);
 		$sizeInCmAt240ppi = round(2.54 * $width / 240, 1);
 		$angle = 0;
-		
+
 		$this->appendCommand('begin', 'minipage', "$availableSpace\\textwidth");
 		$this->appendCommand('centering');
-		
-		$this->appendCommand('includegraphics', $this->insertImage($filename), 
+
+		$this->appendCommand('includegraphics', $this->insertImage($filename),
 		"width=".$sizeInCmAt240ppi."cm, max width=\\textwidth, angle=$angle");
-		
+
 		$this->appendCommand('caption', $this->texifyText($title));
 		$this->appendCommand('end', 'minipage');
 
@@ -819,7 +819,7 @@ class DecoratorPersister extends Decorator {
 			$this->appendCommand('end', 'figure');
 		} else {
 			$this->appendCommand('hfill');
-		}		
+		}
 	}
 
 	/**
@@ -979,7 +979,7 @@ class DecoratorPersister extends Decorator {
      */
     function tableheader_open($colspan = 1, $align = null, $rowspan = 1) {
 		if ($this->firstCellInRow) {
-			$this->firstCellInRow = false;			
+			$this->firstCellInRow = false;
 		} else {
 			$this->appendContent(" &\r\n");
 		}
@@ -1002,7 +1002,7 @@ class DecoratorPersister extends Decorator {
      */
     function tablecell_open($colspan = 1, $align = null, $rowspan = 1) {
 		if ($this->firstCellInRow) {
-			$this->firstCellInRow = false;			
+			$this->firstCellInRow = false;
 		} else {
 			$this->appendContent(" &\r\n");
 		}
@@ -1026,9 +1026,9 @@ class DecoratorPersister extends Decorator {
     function tablecell_close() {
 		$this->appendContent("}}}");
     }
-	
+
 	function table_cline($start, $end) {
 		$this->appendContent("\\cline{".$start." - ".$end."}");
 	}
-	
+
 }
