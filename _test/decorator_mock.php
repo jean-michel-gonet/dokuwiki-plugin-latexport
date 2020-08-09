@@ -2,15 +2,15 @@
 /**
  * A mock decorator, handy for unit testing.
  */
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator.php';
 require_once DOKU_PLUGIN . 'latexport/_test/command.php';
 
 class DecoratorMock extends Decorator {
-	
+
 	public $listOfCommands;
 
 	public $recursionLevel;
-	
+
 	function __construct() {
 		$this->listOfCommands = new SplQueue();
 	}
@@ -19,10 +19,10 @@ class DecoratorMock extends Decorator {
 		if ($this->noCommands()) {
 			return false;
 		} else {
-			return $this->listOfCommands->dequeue();			
+			return $this->listOfCommands->dequeue();
 		}
 	}
-	
+
 	function noCommands() {
 		return $this->listOfCommands->isEmpty();
 	}
@@ -84,21 +84,21 @@ class DecoratorMock extends Decorator {
 		// Nothing to do?
 	}
 
-	function internalmedia($src, $title = null, $align = null, $width = null, $height = null, 
+	function internalmedia($src, $title = null, $align = null, $width = null, $height = null,
 	                       $cache = null, $linking = null, $positionInGroup = 1, $totalInGroup = 1) {
 
-		$this->listOfCommands->enqueue(new CommandInternalMedia($src, $title, $align, $width, $height, 
+		$this->listOfCommands->enqueue(new CommandInternalMedia($src, $title, $align, $width, $height,
 		                                                        $positionInGroup, $totalInGroup));
 	}
 
 	function footnote_open() {
 		$this->listOfCommands->enqueue(new CommandFootnoteOpen());
 	}
-	
+
 	function footnote_close() {
-		$this->listOfCommands->enqueue(new CommandFootnoteClose());		
+		$this->listOfCommands->enqueue(new CommandFootnoteClose());
 	}
-	
+
     function listo_open() {
 		$this->listOfCommands->enqueue(new CommandListOOpen());
     }
@@ -138,7 +138,7 @@ class DecoratorMock extends Decorator {
 	function document_end($recursionLevel = 0){
 		// Nothing to do?
 	}
-	
+
 	function appendCommand($command, $scope, $argument = '') {
 		$this->listOfCommands->enqueue(new CommandAppendCommand($command, $scope, $argument));
 	}
@@ -198,9 +198,9 @@ class DecoratorMock extends Decorator {
     function tablecell_close() {
 		$this->listOfCommands->enqueue(new CommandTableCellClose());
     }
-	
+
 	function table_cline($start, $end) {
-		$this->listOfCommands->enqueue(new CommandTableCline($start, $end));		
+		$this->listOfCommands->enqueue(new CommandTableCline($start, $end));
 	}
 
 }

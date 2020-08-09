@@ -3,7 +3,7 @@
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator.php';
 require_once DOKU_PLUGIN . 'latexport/helpers/internal_media.php';
 
 /**
@@ -12,11 +12,11 @@ require_once DOKU_PLUGIN . 'latexport/helpers/internal_media.php';
  * @author Jean-Michel Gonet <jmgonet@yahoo.com>
  */
 class DecoratorImages extends Decorator {
-	
+
 	private $internalMediaGroup;
-	
+
 	private $groupHasInternalMedia;
-	
+
 	/**
 	 * Class constructor.
 	 * @param decorator The next decorator.
@@ -38,13 +38,13 @@ class DecoratorImages extends Decorator {
 	 * @param string $cache   cache|recache|nocache
 	 * @param string $linking linkonly|detail|nolink
 	 */
-	function internalmedia($src, $title = null, $align = null, $width = null, 
+	function internalmedia($src, $title = null, $align = null, $width = null,
 	                       $height = null, $cache = null, $linking = null, $positionInGroup = 0, $totalInGroup = 1) {
 
 		// New media are temporarily stored in the list.
 		$this->internalMediaGroup[] = new InternalMedia($src, $title, $align, $width, $height, $cache, $linking);
 		$this->groupHasInternalMedia = TRUE;
-	}	
+	}
 
 	/**
 	 * Any command different than white text closes the group of media.
@@ -63,9 +63,9 @@ class DecoratorImages extends Decorator {
 			// Otherwise, we dump the group.
 			$this->dumpInternalMediaGroup();
 		}
-		
+
 		// In any case, propagate the text:
-		$this->decorator->cdata($text);					
+		$this->decorator->cdata($text);
 	}
 
 	/**
@@ -87,9 +87,9 @@ class DecoratorImages extends Decorator {
 					$internalMedia->getLinking(),
 					$positionInGroup ++,
 					$totalInGroup);
-			}	
+			}
 		}
 		$this->internalMediaGroup = [];
 		$this->groupHasInternalMedia = FALSE;
-	}		
+	}
 }

@@ -3,14 +3,14 @@
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator.php';
 
 class CellSize {
-	
+
 	public $colspan;
-	
+
 	public $rowspan;
-	
+
 	static function makeRow($maxcols) {
 		$row = [];
 		for ($n = 0; $n < $maxcols; $n++) {
@@ -18,26 +18,26 @@ class CellSize {
 		}
 		return $row;
 	}
-	
+
 	public function __construct($colspan = 1, $rowspan = 0) {
 		$this->colspan = $colspan;
 		$this->rowspan = $rowspan;
 	}
-		
+
 	public function setSize($colspan, $rowspan) {
 		$this->colspan = $colspan;
 		$this->rowspan = $rowspan;
 	}
-	
+
 	public function getCols() {
 		return $this->colspan;
 	}
-	
+
 	public function getRows() {
 		return $this->rowspan;
 	}
-	
-	
+
+
 	public function nextCellSize() {
 		if ($this->rowspan > 0) {
 			return new CellSize($this->colspan, $this->rowspan - 1);
@@ -45,7 +45,7 @@ class CellSize {
 			return new CellSize();
 		}
 	}
-	
+
 	public function __toString() {
 		return "<c=$this->colspan,r=$this->rowspan>";
 	}
@@ -86,10 +86,10 @@ class DecoratorTables extends Decorator {
 			$this->decorator->p_close();
 		}
 	}
-	
+
     /**
      * Verbatim is not supported inside makecell (it should go inside
-	 * a mini page), so best next option is not to output verbatim, 
+	 * a mini page), so best next option is not to output verbatim,
 	 * and hope for the best.
      *
      * @param string $text
@@ -101,7 +101,7 @@ class DecoratorTables extends Decorator {
 			$this->decorator->unformatted($text);
 		}
     }
-	
+
     /**
      * Start a table
      *
@@ -110,7 +110,7 @@ class DecoratorTables extends Decorator {
      * @param int $pos     byte position in the original source
      */
     function table_open($maxcols = null, $numrows = null, $pos = null) {
-		$this->row = CellSize::makeRow($maxcols); 
+		$this->row = CellSize::makeRow($maxcols);
 		$this->decorator->table_open($maxcols, $numrows, $pos);
 		$this->inTable = true;
     }
@@ -190,7 +190,7 @@ class DecoratorTables extends Decorator {
 	function computeCLine() {
 		$lineIsPresent = false;
 		$column = 0;
-		
+
 		do {
 			$cell = $this->row[$column];
 
@@ -208,8 +208,8 @@ class DecoratorTables extends Decorator {
 		} while($column < sizeof($this->row));
 
 		if ($lineIsPresent) {
-			$this->decorator->table_cline($starts, $column);		
-		}		
+			$this->decorator->table_cline($starts, $column);
+		}
 	}
 
 	function computeNextLine() {
@@ -223,5 +223,5 @@ class DecoratorTables extends Decorator {
 		$this->row = $row;
 		$this->column = 0;
 	}
-	
+
 }

@@ -3,11 +3,11 @@
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
-require_once DOKU_PLUGIN . 'latexport/renderer/internal_link.php';
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/internal_link.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator.php';
 
 /**
- * Renders internallinks that are alone in an item of unordered lists as 
+ * Renders internallinks that are alone in an item of unordered lists as
  * sub-document inclusions.
  *
  * Latexport Plugin: Exports to latex
@@ -51,13 +51,13 @@ class DecoratorIncluder extends Decorator {
 	private $needToOpenContent;
 	/** If some items have content, it is necessary to render the listu_close. */
 	private $someItemsHaveMixedContent;
-	
-	
+
+
 	/** To keep track of nested lists. */
 	private $listLevel;
 	/** Handy to log errors. */
 	private $pageId;
-	
+
 	/**
 	 * Class constructor.
 	 * @param includes A queue of links to include.
@@ -80,7 +80,7 @@ class DecoratorIncluder extends Decorator {
 	}
 
 	/**
-	 * Unordered list item starting with a link, includes the destination page, 
+	 * Unordered list item starting with a link, includes the destination page,
 	 * using the current level of heading as the base level.
 	 */
 	function header($text, $level, $pos) {
@@ -90,7 +90,7 @@ class DecoratorIncluder extends Decorator {
 
 	/**
 	 * Receives the unordered list open notification.
-	 * If 
+	 * If
 	 */
 	function listu_open() {
 		switch($this->state) {
@@ -109,7 +109,7 @@ class DecoratorIncluder extends Decorator {
 				$this->listLevel++;
 				$this->state = DecoratorIncluder::IN_LIST_NESTED;
 				break;
-				
+
 			default:
 				trigger_error("$this->pageId: listu_open unexpected $this->state");
 		}
@@ -122,7 +122,7 @@ class DecoratorIncluder extends Decorator {
 	 * @param bool $node true when a node; false when a leaf
 	 */
 	function listitem_open($level,$node=false) {
-		
+
 		switch($this->state) {
 			case DecoratorIncluder::NOT_IN_LIST:
 			case DecoratorIncluder::IN_LIST_NESTED:
@@ -171,12 +171,12 @@ class DecoratorIncluder extends Decorator {
 			case DecoratorIncluder::IN_ITEM_MIXED:
 				$this->decorator->listcontent_close();
 				break;
-			
+
 			case DecoratorIncluder::NOT_IN_LIST:
 			case DecoratorIncluder::IN_LIST_NESTED:
 				$this->decorator->listcontent_close();
 				break;
-			
+
 			default:
 				trigger_error("$this->pageId: listcontent_close unexpected - $this->state");
 		}
@@ -189,18 +189,18 @@ class DecoratorIncluder extends Decorator {
 		switch($this->state) {
 			case DecoratorIncluder::NOT_IN_LIST:
 			case DecoratorIncluder::IN_LIST_NESTED:
-				$this->decorator->listitem_close();			
+				$this->decorator->listitem_close();
 				break;
 
 			case DecoratorIncluder::IN_ITEM_MIXED:
-				$this->decorator->listitem_close();			
+				$this->decorator->listitem_close();
 				$this->state = DecoratorIncluder::IN_LIST;
 				break;
 
 			case DecoratorIncluder::IN_ITEM:
 				$this->state = DecoratorIncluder::IN_LIST;
 				break;
-				
+
 			default:
 				trigger_error("$this->pageId: listitem_close unexpected - $this->state");
 		}
@@ -223,22 +223,22 @@ class DecoratorIncluder extends Decorator {
 					$this->decorator->listu_close();
 				}
 				// Not in list any more:
-				$this->state = DecoratorIncluder::NOT_IN_LIST;			
+				$this->state = DecoratorIncluder::NOT_IN_LIST;
 				$this->listLevel = 0;
 				break;
-				
+
 			case DecoratorIncluder::IN_LIST_NESTED:
 				$this->decorator->listu_close();
 				$this->listLevel--;
 				if ($this->listLevel == 0) {
-					$this->state = DecoratorIncluder::NOT_IN_LIST;			
+					$this->state = DecoratorIncluder::NOT_IN_LIST;
 				}
 				break;
 
 			case DecoratorIncluder::NOT_IN_LIST:
 				$this->decorator->listu_close();
 				break;
-			
+
 			default:
 				trigger_error("$this->pageId: listu_close unexpected - $this->state");
 		}
@@ -270,13 +270,13 @@ class DecoratorIncluder extends Decorator {
 				$this->decorator->internallink($link, $title);
 				break;
 		}
-	}	
+	}
 
 	/**
 	 * Renders plain text.
 	 */
 	function cdata($text) {
-		
+
 		// It is very common to place spaces between the unordered list bullet and the content:
 		if ($this->state == DecoratorIncluder::IN_CONTENT) {
 			// We ignore those whites:
@@ -284,10 +284,10 @@ class DecoratorIncluder extends Decorator {
 				return;
 			}
 		}
-		
+
 		// Any other kind of content is propagated:
 		$this->thereIsMixedContentInThisItem();
-		$this->decorator->cdata($text);					
+		$this->decorator->cdata($text);
 	}
 
 	/**
@@ -299,7 +299,7 @@ class DecoratorIncluder extends Decorator {
 
 	private function thereIsMixedContentInThisItem() {
 		$this->someItemsHaveMixedContent = true;
-	
+
 		if ($this->state != DecoratorIncluder::NOT_IN_LIST) {
 			if ($this->needToOpenList) {
 				$this->decorator->listu_open();
@@ -318,5 +318,5 @@ class DecoratorIncluder extends Decorator {
 
 			$this->state = DecoratorIncluder::IN_ITEM_MIXED;
 		}
-	}	
+	}
 }

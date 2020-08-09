@@ -3,7 +3,7 @@
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator.php';
 
 /**
  * Adapts the mathjax expressions to latex.
@@ -16,12 +16,12 @@ require_once DOKU_PLUGIN . 'latexport/renderer/decorator.php';
  * @author Jean-Michel Gonet <jmgonet@yahoo.com>
  */
 class DecoratorMath extends Decorator {
-	
+
 	const NOT_IN_EQUATION    = 1000;
 	const IN_EQUATION        = 1001;
-	
+
 	private $state;
-	
+
 	private $equation;
 
 	/**
@@ -43,7 +43,7 @@ class DecoratorMath extends Decorator {
 			$this->equation = $formula;
 			$this->state = DecoratorMath::IN_EQUATION;
 		} else {
-			$this->equation = $this->equation.$formula;			
+			$this->equation = $this->equation.$formula;
 		}
 	}
 
@@ -57,7 +57,7 @@ class DecoratorMath extends Decorator {
 			$this->state = DecoratorMath::NOT_IN_EQUATION;
 		}
 	}
-	
+
 	/**
 	 * Transforms the equation according to the rendering rules.
 	 * - Formula surrounded (inline) by $ ... $ is transformed to \( ... \)
@@ -75,7 +75,7 @@ class DecoratorMath extends Decorator {
 			return $this->processAmsMathEquation($equation);
 		}
 	}
-	
+
 	private function processDisplayEquation($equation) {
 		$trimmedEquation = substr($equation, 2, strlen($equation) - 4);
 		$trimmedEquation = trim($trimmedEquation);
@@ -91,14 +91,14 @@ class DecoratorMath extends Decorator {
 	private function processAmsMathEquation($equation) {
 		return $equation;
 	}
-	
+
 	/**
 	 * The tag command, although supported in Mathjax, it is not well handled by the 'equation'
-	 * environment. 
+	 * environment.
 	 * @param String $equation The equation.
 	 * @return String The escaped equation.
 	 */
 	private function removeTagCommand($equation) {
 		return preg_replace('/\\\\tag\{[^}]+\}/', '', $equation);
-	}	
+	}
 }

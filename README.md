@@ -1,211 +1,123 @@
 # Latexport - A Latex export plugin
-A latex export renderer plugin to export latex documents from Dokuwiki. 
+A latex export renderer plugin to export latex documents from Dokuwiki.
 
 ## User documentation
 For user documentation, visit the plugin home page:
 - https://www.dokuwiki.org/plugin:latexport
 
-# Troubleshooting
+## Installing a development version
 
-## The fearsome 0 bytes font file in Mac OS X
-(See www.dmertl.com/blog/?p=11 )
-(See https://en.wikipedia.org/wiki/Resource_fork )
-
-If `otfinfo` complains of the file being too small, check from the command line if the file has zero length:
-
-	MacBook-Pro:Fonts me$ otfinfo -i Playbill 
-	otfinfo: Playbill: OTF file corrupted (too small)
-	MacBook-Pro:Fonts me$ ls -la Playbill 
-	-rw-rw-r--@ 1 me       staff  0 Jun 15  2010 Playbill
-
-Zero length is visible only from command line. If you check the size from the Finder 
-you see a non-zero size. Also you can tell that the file is not corrupt because you can open it in the Font Book.
-
-For some reason, lots of font files have their content hidden in metadata attributes. You can check if it's your 
-case with the `xattr`command. There are two versions. The short one:
-
-	MacBook-Pro:Fonts me$ xattr Playbill 	
-	com.apple.FinderInfo
-	com.apple.ResourceFork
-
-And the long one:
-
-	MacBook-Pro:Fonts me$ xattr -l Playbill 
-	com.apple.FinderInfo:
-	00000000  46 46 49 4C 44 4D 4F 56 00 00 04 80 00 01 00 00  |FFILDMOV........|
-	00000010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
-	00000020
-	com.apple.ResourceFork:
-	00000000  00 00 01 00 00 00 B8 2F 00 00 B7 2F 00 00 00 78  |......./.../...x|
-	00000010  .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..
-	00000050              [This is very long]
-	0000B880  .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. 
-	0000B890  0B 03 AE CB 60 08 50 6C 61 79 62 69 6C 6C 08 50  |....`.Playbill.P|
-	0000B8A0  6C 61 79 62 69 6C 6C                             |laybill|
-	0000b8a7
-
-You can see that `com.apple.ResourceFork` attribute contains the whole data. To extract the data as binary in a 
-separated file, use `xattr` in conjunction with `xxd`, as demostrated below. 
-
-	MacBook-Pro:Fonts me$ xattr -px com.apple.ResourceFork Playbill | xxd -r -p > Playbill.ttf	
-
-If everything went right, you should have a second file with non-zero length:
-
-	MacBook-Pro:Fonts me$ ls -la Playbill*
-	-rw-rw-r--@ 1 me       staff      0 Jun 15  2010 Playbill
-	-rw-r--r--+ 1 me       staff  47271 Sep 17 09:36 Playbill.ttf
-
-Alas, although you can open this file in Font Book, if you _Validate Font_ it shows a _System Validation_ error. Also, 
-`otfinfo` returns yet another error:
-
-	MacBook-Pro:Fonts me$ otfinfo -i Playbill.ttf 
-	otfinfo: Playbill.ttf: not an OpenType font (bad magic number)
-
-To overcome this problem, I uploaded the TTF file to a online font converter (for example, https://onlinefontconverter.com/ ), 
-and converted it into TTF (yes, same). Then:
-1. Download the result.
-2. Uninstall the original font.
-3. Install your converted font. If you processed a font file with multiple variations - like bold, italic - you will probably 
-have one file per variation; in that case install them all.
-4. Check them with `otfinfo`. 
-
-To me this worked.
-
-# Extending the dokuwiki-plugin-latexport
 To develop extension to the plugin you need:
 
-- A development environment with PHP5 or later.
+- A development environment with PHP5 or higher.
 - A development version of dokuwiki and a configured web site.
 - PhpUnit installed as a PHAR in the path.
 - Checkout the dokuwiki-plugin-latexport in the corresponding plugin folder of dokuwiki.
 
-## A development environment with PHP5 or later
-As dokuwiki is still compatible with PHP5, I use both PHP7 and PHP5 to ensure that plugin is also compatible with both versions.
+I'm assuming that you've got a working environment with *Apache* and *PHP* on your development machine. If not, you can check the [wiki](wiki).
 
-How to achieve this depends on your own development machine and operative system.
+### Download development version of dokuwiki
 
-### Installing PHP and Apache with HomeBrew on Mac OS X
-
-- Original instructions: https://gist.github.com/davebarnwell/1d413ffbc9660469e9aa685d8387b87f
-- homebrew instructions http://justinhileman.info/article/reinstalling-php-on-mac-os-x/
-- from Justin Hileman https://www.twitter.com/bobthecow
-- https://stackoverflow.com/questions/39456022/php7-installed-by-homebrew-doesnt-work-with-apache-on-macos
-
-By default Mac OS X contains php 5. If you need version 7 you can install with brew:
-- Stop Apache: sudo apachectl stop
-- Then install PHP with http support:
-
-```bash
-brew tap homebrew/core
-brew tap homebrew/homebrew-php
-brew unlink php56
-brew install php70 --with-httpd
-brew install php70-xdebug
-brew install mcrypt php70-mcrypt
-```
-- Then reboot your computer.
-
-OS X 10.8 and newer come with php-fpm pre-installed. You may need to force the system to use the brew version. Ensure that  
-``/usr/local/sbin`` is before ``/usr/sbin`` in your PATH:
-
-  PATH="/usr/local/sbin:$PATH"
-
-Check that PHP is correctly installed in command line:
-
-```bash
-$ php --version
-PHP 7.0.0 (cli) (built: Dec  2 2015 13:05:57) ( NTS )
-Copyright (c) 1997-2015 The PHP Group
-Zend Engine v3.0.0, Copyright (c) 1998-2015 Zend Technologies
-```
-You still need to connect Apache with the new PHP. If you were using the built-in Apache, this can be confusing because 
-``--with-httpd`` just installed a second, brew version, whose configuration file is located in ``/usr/local/etc/httpd/httpd.conf``:
-
-- Configure it to use port 80: 
-
-```Listen 80```
-
-- Usually php7 is already activated by brew:
-
-```LoadModule php7_module        /usr/local/Cellar/php70/7.0.27_19/libexec/apache2/libphp7.so```
-
-- Activate the rewrite module: 
-
-```LoadModule rewrite_module libexec/apache2/mod_rewrite.so```
-
-- Unactivate the server pool management by commenting out:
-
-```#Include /private/etc/apache2/extra/httpd-mpm.conf```
-
-- Activate the virtual servers by uncommenting:
-
-```Include /private/etc/apache2/extra/httpd-vhosts.conf```
-
-Now you can add the configuration for your web site in ``extra/http-vhosts.conf``, adding the ``FilesMatch`` tag like in:
-
-```
-<VirtualHost *:80>
-    # Official address for user web site:
-    ServerName local.whatever.com
-
-    # Email of administrator:
-    ServerAdmin me@myself.com
-
-    # Activate php
-    <FilesMatch .php$>
-        SetHandler application/x-httpd-php
-    </FilesMatch>
-    . . .
-</VirtualHost>
-```
-
-## A development version of dokuwiki and a configured web site
-
-To retrieve the development version of dokuwiki you need to have git installed. Then follow 
+To retrieve the development version of dokuwiki you need to have git installed. Then follow
 instructions in https://www.dokuwiki.org/devel:git
 
 - Go to your development folder, checkout the development version and switch to the stable branch.
 
 ```
-git checkout https://github.com/splitbrain/dokuwiki.git
+git clone https://github.com/splitbrain/dokuwiki.git
 git checkout stable
 ```
+
 This should have created a dokuwiki folder with all sources, including a ``_test`` folder with unit tests.
 
-I'm assuming you've got PHP and Apache configured (see above) and you activated the virtual hosts in Apache. Now you need to 
-associate a virtual host to the dokuwiki folder:
+Complete the installation by visiting the ``install.php``:
+* http://localhost:8080/dokuwiki/install.php
+
+### Download development version of this plugin
+
+Go to the plugin folder, and checkout the source code for this plugin:
 
 ```
-<VirtualHost *:80>
-    # Official address for user web site:
-    ServerName local.microcontroleur.agl-developpement.ch
-
-    # Email of administrator:
-    ServerAdmin info@agl-developpement.ch
-
-    # Activate php
-    <FilesMatch .php$>
-        SetHandler application/x-httpd-php
-    </FilesMatch>
-
-    # Grants access to everybody:
-    DocumentRoot /path/to/your/development/site/dokuwiki
-    <Directory   /path/to/your/development/site/dokuwiki>
-        DirectoryIndex index.php index.html
-
-        # For Apache 2.2
-        Order allow,deny
-        Allow from all
-
-        # For Apache 2.4
-        Require all granted
-
-        # To enable .htaccess
-        AllowOverride all
-    </Directory>
-</VirtualHost>
+cd /path/to/dokuwiki/lib/plugins
+git clone https://github.com/jean-michel-gonet/dokuwiki-plugin-latexport.git latexport
 ```
-Also copy a .htaccess to the root dokuwiki folder (see https://www.dokuwiki.org/rewrite):
+
+Verify that the Latexport plugin is present by visiting
+* http://localhost:8080/dokuwiki/doku.php?do=admin&page=extension
+
+### Unit testing
+As this plugin has a quite complex behaviour, it is extensively tested with a
+PHPUnit test suite included with PHAR.
+
+NB: There are more recent version of those utilities, but they're not compatible
+with the base code of dokuwiki, which is still maintaining compatibility with PHP5.6.
+
+- Install PHPUnit from the PHAR - Visit https://phar.phpunit.de/ to check what
+is the latest version, and use or modify the following commands:
+
+```bash
+wget https://phar.phpunit.de/phpunit-5.7.27.phar
+chmod +x phpunit-5.phar
+mv phpunit-5.phar /usr/local/bin/phpunit
+```
+- Verify the installation:
+
+```bash
+phpunit --version
+PHPUnit 5.7.27 by Sebastian Bergmann and contributors.
+```
+
+- Install PHPAb from the PHAR -  Visit https://github.com/theseer/Autoload/releases to
+check for the latest release version, and use or modify the following commands:
+```bash
+wget https://github.com/theseer/Autoload/releases/download/1.25.9/phpab-1.24.1.phar
+chmod +x phpab-1.24.1.phar
+mv phpab-1.24.1.phar /usr/local/bin/phpab
+```
+- Verify the installation:
+
+```bash
+phpab --version
+phpab 1.25.9 - Copyright (C) 2009 - 2020 by Arne Blankerts and Contributors
+```
+
+Test commands:
+
+```bash
+cd /wherever/is/dokuwiki/_test
+phpunit --group plugin_latexport
+phpunit --group plugin_latexport --testdox
+```
+
+NB: You should be using PHP5.6 for these.
+
+## Adding the timezone configuration
+
+You may be required to add the timezone configuration. For this you need to
+edit the ``php.ini`` file, whose location depends on your distribution, your
+version of PHP, etc. Run the following command to locate it:
+
+```
+php --ini
+Configuration File (php.ini) Path: /usr/local/etc/php/5.6
+Loaded Configuration File:         /usr/local/etc/php/5.6/php.ini
+Scan for additional .ini files in: /usr/local/etc/php/5.6/conf.d
+```
+
+Edit the ``php.ini`` configuration file and add one of the supported time zones (see http://php.net/manual/en/timezones.php)
+by uncommenting the ``date.timezone`` entry:
+
+```
+[Date]
+; Defines the default timezone used by the date functions
+; http://php.net/date.timezone
+date.timezone = Europe/Paris
+```
+
+## The ``.htaccess`` file
+If you want your development version of dokuwiki to behave just as a production
+version, you probably need to add to the root dokuwiki folder the ``.htaccess``
+file that allows redirection (see https://www.dokuwiki.org/rewrite):
 
 ```
 ## Enable this to restrict editing to logged in users only
@@ -255,75 +167,72 @@ RewriteRule ^index.php$               doku.php
 #RewriteRule ^lib/exe/xmlrpc.php$      https://%{SERVER_NAME}%{REQUEST_URI} [L,R=301]
 ```
 
-- Check a info.php, to see if PHP is installed correctly.
-- Create an entry to your local DNS to have a nice URL.
-- Follow the installation procedure: http://local.your.dokuwiki/install.php
-- Copy some content if you have.
-- Clone the latex plugin in
+## Troubleshooting
 
-``` bash
-cd /path/to/dokuwiki/lib/plugins
-git clone https://github.com/jean-michel-gonet/dokuwiki-plugin-latexport.git latexport
-Cloning into 'latexport'...
-```
+### The fearsome 0 bytes font file in Mac OS X
+(See www.dmertl.com/blog/?p=11 )
+(See https://en.wikipedia.org/wiki/Resource_fork )
 
-## Unit testing
-As plugin has a quite complex behavior, it is extensively tested with a PHPUnit test suite included with PHAR
+If `otfinfo` complains of the file being too small, check from the command line if the file has zero length:
 
-- Install PHPUnit from the PHAR:
+	MacBook-Pro:Fonts me$ otfinfo -i Playbill
+	otfinfo: Playbill: OTF file corrupted (too small)
+	MacBook-Pro:Fonts me$ ls -la Playbill
+	-rw-rw-r--@ 1 me       staff  0 Jun 15  2010 Playbill
 
-```bash
-wget https://phar.phpunit.de/phpunit-5.phar
-chmod +x phpunit-5.7.26.phar
-sudo mv phpunit-5.7.26.phar /usr/local/bin/phpunit
-```
-- Verify the installation:
+Zero length is visible only from command line. If you check the size from the Finder
+you see a non-zero size. Also you can tell that the file is not corrupt because you can open it in the Font Book.
 
-```bash
-phpunit --version
-PHPUnit 5.7.26 by Sebastian Bergmann and contributors.
-```
-
-- Install PHPAb from the PHAR:
-```bash
-wget https://github.com/theseer/Autoload/releases/download/1.24.1/phpab-1.24.1.phar
-chmod +x phpunit-5.7.26.phar
-sudo mv phpunit-5.7.26.phar /usr/local/bin/phpab
-```
-- Verify the installation:
-
-```bash
-phpab --version
-phpab 1.24.1 - Copyright (C) 2009 - 2018 by Arne Blankerts and Contributors
-```
-
-Test commands:
-```bash
-cd /wherever/is/dokuwiki/_test
-phpunit --group plugin_latexport
-phpunit --group plugin_latexport --testdox
-```
-
-## Adding the timezone configuration
-
-You may be required to add the timezone configuration.
-
-```bash
-php --ini
-Configuration File (php.ini) Path: /usr/local/etc/php/5.6
-Loaded Configuration File:         /usr/local/etc/php/5.6/php.ini
-Scan for additional .ini files in: /usr/local/etc/php/5.6/conf.d
-```
-
-Edit the ``php.ini`` configuration file and add one of the supported time zones (see http://php.net/manual/en/timezones.php) 
-by uncommenting the ``date.timezone`` entry:
+For some reason, lots of font files have their content hidden in metadata attributes. You can check if it's your
+case with the `xattr`command. There are two versions. The short one:
 
 ```
-[Date]
-; Defines the default timezone used by the date functions
-; http://php.net/date.timezone
-date.timezone = Europe/Paris
+	MacBook-Pro:Fonts me$ xattr Playbill 	
+	com.apple.FinderInfo
+	com.apple.ResourceFork
 ```
 
-## Install PHP 7
+And the long one:
 
+```
+	MacBook-Pro:Fonts me$ xattr -l Playbill
+	com.apple.FinderInfo:
+	00000000  46 46 49 4C 44 4D 4F 56 00 00 04 80 00 01 00 00  |FFILDMOV........|
+	00000010  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  |................|
+	00000020
+	com.apple.ResourceFork:
+	00000000  00 00 01 00 00 00 B8 2F 00 00 B7 2F 00 00 00 78  |......./.../...x|
+	00000010  .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..
+	00000050              [This is very long]
+	0000B880  .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ..
+	0000B890  0B 03 AE CB 60 08 50 6C 61 79 62 69 6C 6C 08 50  |....`.Playbill.P|
+	0000B8A0  6C 61 79 62 69 6C 6C                             |laybill|
+	0000b8a7
+```
+
+You can see that `com.apple.ResourceFork` attribute contains the whole data. To extract the data as binary in a
+separated file, use `xattr` in conjunction with `xxd`, as demostrated below.
+
+	MacBook-Pro:Fonts me$ xattr -px com.apple.ResourceFork Playbill | xxd -r -p > Playbill.ttf
+
+If everything went right, you should have a second file with non-zero length:
+
+	MacBook-Pro:Fonts me$ ls -la Playbill*
+	-rw-rw-r--@ 1 me       staff      0 Jun 15  2010 Playbill
+	-rw-r--r--+ 1 me       staff  47271 Sep 17 09:36 Playbill.ttf
+
+Alas, although you can open this file in Font Book, if you _Validate Font_ it shows a _System Validation_ error. Also,
+`otfinfo` returns yet another error:
+
+	MacBook-Pro:Fonts me$ otfinfo -i Playbill.ttf
+	otfinfo: Playbill.ttf: not an OpenType font (bad magic number)
+
+To overcome this problem, I uploaded the TTF file to a online font converter (for example, https://onlinefontconverter.com/ ),
+and converted it into TTF (yes, same). Then:
+1. Download the result.
+2. Uninstall the original font.
+3. Install your converted font. If you processed a font file with multiple variations - like bold, italic - you will probably
+have one file per variation; in that case install them all.
+4. Check them with `otfinfo`.
+
+To me this worked.

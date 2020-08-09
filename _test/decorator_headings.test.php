@@ -5,16 +5,16 @@
  */
 
 require_once DOKU_PLUGIN . 'latexport/_test/decorator_mock.php';
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator_headings.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator_headings.php';
 
 class DecoratorHeadingsTest extends DokuWikiTest {
- 	
+
     protected $pluginsEnabled = array('latexport', 'mathjax');
 
 	private $decoratorMock;
 
 	private $decoratorHeadings;
-	
+
     public static function setUpBeforeClass(){
         parent::setUpBeforeClass();
 	}
@@ -23,7 +23,7 @@ class DecoratorHeadingsTest extends DokuWikiTest {
 		$this->decoratorMock = new DecoratorMock();
 		$this->decoratorHeadings = new DecoratorHeadings($this->decoratorMock);
     }
-	
+
     public function testFirstAndSecondH1AreH1AndNextAreH3() {
 		$this->decoratorHeadings->header("text1", 1, 10);	// This would open the main matter.
 		$this->decoratorHeadings->header("text2", 1, 20);	// This would open the appendix.
@@ -55,6 +55,6 @@ class DecoratorHeadingsTest extends DokuWikiTest {
     public function testMinimumLevelIsH5() {
 		$this->decoratorHeadings->header("text1", 10, 10);
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandHeader("text1", 5, 10));
-    }	
+    }
 }
 ?>

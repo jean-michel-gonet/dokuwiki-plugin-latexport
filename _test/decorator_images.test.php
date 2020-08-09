@@ -5,16 +5,16 @@
  */
 
 require_once DOKU_PLUGIN . 'latexport/_test/decorator_mock.php';
-require_once DOKU_PLUGIN . 'latexport/renderer/decorator_images.php';
+require_once DOKU_PLUGIN . 'latexport/implementation/decorator_images.php';
 
 class DecoratorImagesTest extends DokuWikiTest {
- 	
+
     protected $pluginsEnabled = array('latexport', 'mathjax');
 
 	private $decoratorMock;
 
 	private $decoratorImages;
-	
+
     public static function setUpBeforeClass(){
         parent::setUpBeforeClass();
 	}
@@ -23,10 +23,10 @@ class DecoratorImagesTest extends DokuWikiTest {
 		$this->decoratorMock = new DecoratorMock();
 		$this->decoratorImages = new DecoratorImages($this->decoratorMock);
     }
-	
+
     public function testCanDisplayASingleImage() {
 		$this->decoratorImages->p_open();
-		$this->decoratorImages->internalmedia("S1", "Title1", "centered", 10, 20); 
+		$this->decoratorImages->internalmedia("S1", "Title1", "centered", 10, 20);
 		$this->decoratorImages->p_close();
 
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandPOpen());
@@ -38,9 +38,9 @@ class DecoratorImagesTest extends DokuWikiTest {
 
     public function testCanDisplayTwoSingleImages() {
 		$this->decoratorImages->p_open();
-		$this->decoratorImages->internalmedia("S1", "Title1", "centered", 10, 20); 
+		$this->decoratorImages->internalmedia("S1", "Title1", "centered", 10, 20);
 		$this->decoratorImages->cdata(" x ");
-		$this->decoratorImages->internalmedia("S2", "Title2", "22", 12, 22); 
+		$this->decoratorImages->internalmedia("S2", "Title2", "22", 12, 22);
 		$this->decoratorImages->p_close();
 
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandPOpen());
@@ -51,12 +51,12 @@ class DecoratorImagesTest extends DokuWikiTest {
 
 		$this->assertTrue($this->decoratorMock->noCommands(), "Should not have more commands");
     }
-	
+
 	public function testCanGroupTwoImagesSeparatedWithASpace() {
 		$this->decoratorImages->p_open();
-		$this->decoratorImages->internalmedia("S1", "Title1", "11", 11, 21); 
+		$this->decoratorImages->internalmedia("S1", "Title1", "11", 11, 21);
 		$this->decoratorImages->cdata(" ");
-		$this->decoratorImages->internalmedia("S2", "Title2", "22", 12, 22); 
+		$this->decoratorImages->internalmedia("S2", "Title2", "22", 12, 22);
 		$this->decoratorImages->p_close();
 
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandPOpen());
