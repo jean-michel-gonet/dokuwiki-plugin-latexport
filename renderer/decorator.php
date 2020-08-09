@@ -29,6 +29,13 @@ class decorator extends Doku_Renderer {
 	}
 
 	/**
+	 * Returns the format provided by this renderer.
+	 */
+	function getFormat() {
+		return 'tex';
+	}
+
+	/**
 	 * Returns a TeX compliant version of the page ID.
 	 * @param pageId the page ID, or page name.
 	 * @param ext The extension. Default value is '.tex'.
@@ -97,7 +104,7 @@ class decorator extends Doku_Renderer {
 		$replacements[ 8] = '-';
 		$replacements[ 9] = ':';
 		$replacements[10] = '_';
-		
+
 		return preg_replace($patterns, $replacements, $reference);
 	}
 
@@ -125,13 +132,13 @@ class decorator extends Doku_Renderer {
 	 */
 	function table_cline($start, $end) {
 		$this->any_command();
-		$this->decorator->table_cline($start, $end);		
+		$this->decorator->table_cline($start, $end);
 	}
 
 	/**
 	 * Adds a latex command to the document.
 	 * @param command  The command
-	 * @param scope    The name of the scope, or the mandatory argument, 
+	 * @param scope    The name of the scope, or the mandatory argument,
 	 *                 to be included inside the curly brackets.
 	 * @param argument If specified, to be included in square brackets. Depending
 	 *                 on the command, square brackets are placed before or after
@@ -145,7 +152,7 @@ class decorator extends Doku_Renderer {
 	/**
 	 * Adds a latex command to the document.
 	 * @param command  The command
-	 * @param scope    The name of the scope, or the mandatory argument, 
+	 * @param scope    The name of the scope, or the mandatory argument,
 	 *                 to be included inside the curly brackets.
 	 * @param argument If specified, to be included in square brackets. Depending
 	 *                 on the command, square brackets are placed before or after
@@ -164,14 +171,14 @@ class decorator extends Doku_Renderer {
 		$this->any_command();
 		$this->decorator->appendContent($c);
 	}
-	
+
 	/**
 	 * Override this if you want to have code for all commands.
 	 */
 	function any_command() {
 		// Do nothing.
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
 	//                                                                              //
@@ -205,7 +212,7 @@ class decorator extends Doku_Renderer {
 	//                                                                              //
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Starts rendering a new page.
 	 * @param string $pageId The identifier of the opening page.
@@ -215,7 +222,7 @@ class decorator extends Doku_Renderer {
 		$this->any_command();
 		$this->decorator->document_start($pageId, $recursionLevel);
 	}
-	
+
 	/**
 	 * Closes the document
 	 */
@@ -352,7 +359,7 @@ class decorator extends Doku_Renderer {
 
 	/**
 	 * Start underline formatting
-	 */ 
+	 */
 	function underline_open() {
 		$this->any_command();
 		$this->decorator->underline_open();
@@ -366,90 +373,90 @@ class decorator extends Doku_Renderer {
 		$this->decorator->underline_close();
 	}
 
-    /**
-     * Start monospace formatting
-     */
-    function monospace_open() {
+  /**
+   * Start monospace formatting
+   */
+  function monospace_open() {
 		$this->any_command();
-		$this->decorator->monospace_open();		
-    }
+		$this->decorator->monospace_open();
+  }
 
-    /**
-     * Stop monospace formatting
-     */
-    function monospace_close() {
+  /**
+   * Stop monospace formatting
+   */
+  function monospace_close() {
 		$this->any_command();
-		$this->decorator->monospace_close();		
-    }
+		$this->decorator->monospace_close();
+  }
 
-    /**
-     * Start a subscript
-     */
-    function subscript_open() {
+  /**
+   * Start a subscript
+   */
+  function subscript_open() {
 		$this->any_command();
-		$this->decorator->subscript_open();		
-    }
+		$this->decorator->subscript_open();
+  }
 
-    /**
-     * Stop a subscript
-     */
-    function subscript_close() {
+  /**
+   * Stop a subscript
+   */
+  function subscript_close() {
 		$this->any_command();
-		$this->decorator->subscript_close();		
-    }
+		$this->decorator->subscript_close();
+  }
 
-    /**
-     * Start a superscript
-     */
-    function superscript_open() {
+  /**
+   * Start a superscript
+   */
+  function superscript_open() {
 		$this->any_command();
-		$this->decorator->superscript_open();		
-    }
+		$this->decorator->superscript_open();
+  }
 
-    /**
-     * Stop a superscript
-     */
-    function superscript_close() {
+  /**
+   * Stop a superscript
+   */
+  function superscript_close() {
 		$this->any_command();
-		$this->decorator->superscript_close();		
-    }
+		$this->decorator->superscript_close();
+  }
 
-    /**
-     * Start deleted (strike-through) formatting
-     */
-    function deleted_open() {
+  /**
+   * Start deleted (strike-through) formatting
+   */
+  function deleted_open() {
 		$this->any_command();
-		$this->decorator->deleted_open();		
-    }
+		$this->decorator->deleted_open();
+  }
 
-    /**
-     * Stop deleted (strike-through) formatting
-     */
-    function deleted_close() {
+  /**
+   * Stop deleted (strike-through) formatting
+   */
+  function deleted_close() {
 		$this->any_command();
-		$this->decorator->deleted_close();		
-    }
+		$this->decorator->deleted_close();
+  }
 
-    /**
-     * Start a footnote
-     */
-    function footnote_open() {
+  /**
+   * Start a footnote
+   */
+  function footnote_open() {
 		$this->any_command();
-		$this->decorator->footnote_open();		
-    }
+		$this->decorator->footnote_open();
+  }
 
-    /**
-     * Stop a footnote
-     */
-    function footnote_close() {
+  /**
+   * Stop a footnote
+   */
+  function footnote_close() {
 		$this->any_command();
-		$this->decorator->footnote_close();		
-    }
+		$this->decorator->footnote_close();
+  }
 
-	/**
-	 * Open an unordered list
-	 */
-	function listu_open() {
+/**
+ * Open an unordered list
+ */
+function listu_open() {
 		$this->any_command();
 		$this->decorator->listu_open();
 	}
@@ -462,21 +469,21 @@ class decorator extends Doku_Renderer {
 		$this->decorator->listu_close();
 	}
 
-    /**
-     * Open an ordered list
-     */
-    function listo_open() {
+  /**
+   * Open an ordered list
+   */
+  function listo_open() {
 		$this->any_command();
 		$this->decorator->listo_open();
-    }
+  }
 
-    /**
-     * Close an ordered list
-     */
-    function listo_close() {
+  /**
+   * Close an ordered list
+   */
+  function listo_close() {
 		$this->any_command();
 		$this->decorator->listo_close();
-    }
+  }
 
 	/**
 	 * Open a list item
@@ -505,231 +512,231 @@ class decorator extends Doku_Renderer {
 		$this->decorator->listcontent_close();
 	}
 
-    /**
-     * Close a list item
-     */
-    function listitem_close() {
+  /**
+   * Close a list item
+   */
+  function listitem_close() {
 		$this->any_command();
 		$this->decorator->listitem_close();
-    }
+  }
 
-    /**
-     * Output unformatted $text
-     *
-     * @param string $text
-     */
-    function unformatted($text) {
+  /**
+   * Output unformatted $text
+   *
+   * @param string $text
+   */
+  function unformatted($text) {
 		error_log("decorator.unformatted <$text>");
 		$this->any_command();
-        $this->decorator->unformatted($text);
-    }
+    $this->decorator->unformatted($text);
+  }
 
-    /**
-     * Output inline PHP code
-     *
-     * @param string $text The PHP code
-     */
-    function php($text) {
+  /**
+   * Output inline PHP code
+   *
+   * @param string $text The PHP code
+   */
+  function php($text) {
 		$this->any_command();
 		$this->decorator->php($text);
-    }
+  }
 
-    /**
-     * Output block level PHP code
-     *
-     * @param string $text The PHP code
-     */
-    function phpblock($text) {
+  /**
+   * Output block level PHP code
+   *
+   * @param string $text The PHP code
+   */
+  function phpblock($text) {
 		$this->any_command();
 		$this->decorator->phpblock($text);
-    }
+  }
 
-    /**
-     * Output raw inline HTML
-     *
-     * If $conf['htmlok'] is true this should add the code as is to $doc
-     *
-     * @param string $text The HTML
-     */
-    function html($text) {
+  /**
+   * Output raw inline HTML
+   *
+   * If $conf['htmlok'] is true this should add the code as is to $doc
+   *
+   * @param string $text The HTML
+   */
+  function html($text) {
 		$this->any_command();
 		$this->decorator->html($text);
-    }
+  }
 
-    /**
-     * Output raw block-level HTML
-     *
-     * If $conf['htmlok'] is true this should add the code as is to $doc
-     *
-     * @param string $text The HTML
-     */
-    function htmlblock($text) {
+  /**
+   * Output raw block-level HTML
+   *
+   * If $conf['htmlok'] is true this should add the code as is to $doc
+   *
+   * @param string $text The HTML
+   */
+  function htmlblock($text) {
 		$this->any_command();
 		$this->decorator->htmlblock($text);
-    }
+  }
 
-    /**
-     * Output preformatted text
-     *
-     * @param string $text
-     */
-    function preformatted($text) {
+  /**
+   * Output preformatted text
+   *
+   * @param string $text
+   */
+  function preformatted($text) {
 		$this->any_command();
 		$this->decorator->preformatted($text);
-    }
+  }
 
-    /**
-     * Start a block quote
-     */
-    function quote_open() {
+  /**
+   * Start a block quote
+   */
+  function quote_open() {
 		$this->any_command();
 		$this->decorator->quote_open();
-    }
+  }
 
-    /**
-     * Stop a block quote
-     */
-    function quote_close() {
+  /**
+   * Stop a block quote
+   */
+  function quote_close() {
 		$this->any_command();
 		$this->decorator->quote_close();
-    }
+  }
 
-    /**
-     * Display text as file content, optionally syntax highlighted
-     *
-     * @param string $text text to show
-     * @param string $lang programming language to use for syntax highlighting
-     * @param string $file file path label
-     */
-    function file($text, $lang = null, $file = null) {
+  /**
+   * Display text as file content, optionally syntax highlighted
+   *
+   * @param string $text text to show
+   * @param string $lang programming language to use for syntax highlighting
+   * @param string $file file path label
+   */
+  function file($text, $lang = null, $file = null) {
 		$this->any_command();
 		$this->decorator->file($text, $lang, $file);
-    }
+  }
 
-    /**
-     * Display text as code content, optionally syntax highlighted
-     *
-     * @param string $text text to show
-     * @param string $lang programming language to use for syntax highlighting
-     * @param string $file file path label
-     */
-    function code($text, $lang = null, $file = null) {
+  /**
+   * Display text as code content, optionally syntax highlighted
+   *
+   * @param string $text text to show
+   * @param string $lang programming language to use for syntax highlighting
+   * @param string $file file path label
+   */
+  function code($text, $lang = null, $file = null) {
 		$this->any_command();
 		$this->decorator->code($text, $lang, $file);
-    }
+  }
 
-    /**
-     * Format an acronym
-     *
-     * Uses $this->acronyms
-     *
-     * @param string $acronym
-     */
-    function acronym($acronym) {
+  /**
+   * Format an acronym
+   *
+   * Uses $this->acronyms
+   *
+   * @param string $acronym
+   */
+  function acronym($acronym) {
 		$this->any_command();
 		$this->decorator->acronym($acronym);
-    }
+  }
 
-    /**
-     * Format a smiley
-     *
-     * Uses $this->smiley
-     *
-     * @param string $smiley
-     */
-    function smiley($smiley) {
+  /**
+   * Format a smiley
+   *
+   * Uses $this->smiley
+   *
+   * @param string $smiley
+   */
+  function smiley($smiley) {
 		$this->any_command();
 		$this->decorator->smiley($smiley);
-    }
+  }
 
-    /**
-     * Format an entity
-     *
-     * Entities are basically small text replacements
-     *
-     * Uses $this->entities
-     *
-     * @param string $entity
-     */
-    function entity($entity) {
+  /**
+   * Format an entity
+   *
+   * Entities are basically small text replacements
+   *
+   * Uses $this->entities
+   *
+   * @param string $entity
+   */
+  function entity($entity) {
 		$this->any_command();
 		$this->decorator->entity($entity);
-    }
+  }
 
-    /**
-     * Typographically format a multiply sign
-     *
-     * Example: ($x=640, $y=480) should result in "640×480"
-     *
-     * @param string|int $x first value
-     * @param string|int $y second value
-     */
-    function multiplyentity($x, $y) {
+  /**
+   * Typographically format a multiply sign
+   *
+   * Example: ($x=640, $y=480) should result in "640×480"
+   *
+   * @param string|int $x first value
+   * @param string|int $y second value
+   */
+  function multiplyentity($x, $y) {
 		$this->any_command();
 		$this->decorator->multiplyentity($x, $y);
-    }
+  }
 
-    /**
-     * Render an opening single quote char (language specific)
-     */
-    function singlequoteopening() {
+  /**
+   * Render an opening single quote char (language specific)
+   */
+  function singlequoteopening() {
 		$this->any_command();
 		$this->decorator->singlequoteopening();
-    }
+  }
 
-    /**
-     * Render a closing single quote char (language specific)
-     */
-    function singlequoteclosing() {
+  /**
+   * Render a closing single quote char (language specific)
+   */
+  function singlequoteclosing() {
 		$this->any_command();
 		$this->decorator->singlequoteclosing();
-    }
+  }
 
-    /**
-     * Render an apostrophe char (language specific)
-     */
-    function apostrophe() {
+  /**
+   * Render an apostrophe char (language specific)
+   */
+  function apostrophe() {
 		$this->any_command();
 		$this->decorator->apostrophe();
-    }
+  }
 
-    /**
-     * Render an opening double quote char (language specific)
-     */
-    function doublequoteopening() {
+  /**
+   * Render an opening double quote char (language specific)
+   */
+  function doublequoteopening() {
 		$this->any_command();
 		$this->decorator->doublequoteopening();
-    }
+  }
 
-    /**
-     * Render an closinging double quote char (language specific)
-     */
-    function doublequoteclosing() {
+  /**
+   * Render an closinging double quote char (language specific)
+   */
+  function doublequoteclosing() {
 		$this->any_command();
 		$this->decorator->doublequoteclosing();
-    }
+  }
 
-    /**
-     * Render a CamelCase link
-     *
-     * @param string $link The link name
-     * @see http://en.wikipedia.org/wiki/CamelCase
-     */
-    function camelcaselink($link) {
+  /**
+   * Render a CamelCase link
+   *
+   * @param string $link The link name
+   * @see http://en.wikipedia.org/wiki/CamelCase
+   */
+  function camelcaselink($link) {
 		$this->any_command();
 		$this->decorator->camelcaselink($link);
-    }
+  }
 
-    /**
-     * Render a page local link
-     *
-     * @param string $hash hash link identifier
-     * @param string $name name for the link
-     */
-    function locallink($hash, $name = null) {
+  /**
+   * Render a page local link
+   *
+   * @param string $hash hash link identifier
+   * @param string $name name for the link
+   */
+  function locallink($hash, $name = null) {
 		$this->any_command();
 		$this->decorator->locallink($hash, $name);
-    }
+  }
 
 	/**
 	 * Render a wiki internal link.
@@ -743,77 +750,77 @@ class decorator extends Doku_Renderer {
 		$this->decorator->internallink($link, $title);
 	}
 
-    /**
-     * Render an external link
-     *
-     * @param string       $link  full URL with scheme
-     * @param string|array $title name for the link, array for media file
-     */
-    function externallink($link, $title = null) {
+  /**
+   * Render an external link
+   *
+   * @param string       $link  full URL with scheme
+   * @param string|array $title name for the link, array for media file
+   */
+  function externallink($link, $title = null) {
 		$this->any_command();
 		$this->decorator->externallink($link, $title);
-    }
+  }
 
-    /**
-     * Render the output of an RSS feed
-     *
-     * @param string $url    URL of the feed
-     * @param array  $params Finetuning of the output
-     */
-    function rss($url, $params) {
+  /**
+   * Render the output of an RSS feed
+   *
+   * @param string $url    URL of the feed
+   * @param array  $params Finetuning of the output
+   */
+  function rss($url, $params) {
 		$this->any_command();
 		$this->decorator->rss($link, $title);
-    }
+  }
 
-    /**
-     * Render an interwiki link
-     *
-     * You may want to use $this->_resolveInterWiki() here
-     *
-     * @param string       $link     original link - probably not much use
-     * @param string|array $title    name for the link, array for media file
-     * @param string       $wikiName indentifier (shortcut) for the remote wiki
-     * @param string       $wikiUri  the fragment parsed from the original link
-     */
-    function interwikilink($link, $title = null, $wikiName, $wikiUri) {
+  /**
+   * Render an interwiki link
+   *
+   * You may want to use $this->_resolveInterWiki() here
+   *
+   * @param string       $link     original link - probably not much use
+   * @param string|array $title    name for the link, array for media file
+   * @param string       $wikiName indentifier (shortcut) for the remote wiki
+   * @param string       $wikiUri  the fragment parsed from the original link
+   */
+  function interwikilink($link, $title = null, $wikiName, $wikiUri) {
 		$this->any_command();
 		$this->decorator->interwikilink($link, $title, $wikiName, $wikiUri);
-    }
+  }
 
-    /**
-     * Link to file on users OS
-     *
-     * @param string       $link  the link
-     * @param string|array $title name for the link, array for media file
-     */
-    function filelink($link, $title = null) {
+  /**
+   * Link to file on users OS
+   *
+   * @param string       $link  the link
+   * @param string|array $title name for the link, array for media file
+   */
+  function filelink($link, $title = null) {
 		$this->any_command();
 		$this->decorator->filelink($link, $title);
-    }
+  }
 
-    /**
-     * Link to windows share
-     *
-     * @param string       $link  the link
-     * @param string|array $title name for the link, array for media file
-     */
-    function windowssharelink($link, $title = null) {
+  /**
+   * Link to windows share
+   *
+   * @param string       $link  the link
+   * @param string|array $title name for the link, array for media file
+   */
+  function windowssharelink($link, $title = null) {
 		$this->any_command();
 		$this->decorator->windowssharelink($link, $title);
-    }
+  }
 
-    /**
-     * Render a linked E-Mail Address
-     *
-     * Should honor $conf['mailguard'] setting
-     *
-     * @param string $address Email-Address
-     * @param string|array $name name for the link, array for media file
-     */
-    function emaillink($address, $name = null) {
+  /**
+   * Render a linked E-Mail Address
+   *
+   * Should honor $conf['mailguard'] setting
+   *
+   * @param string $address Email-Address
+   * @param string|array $name name for the link, array for media file
+   */
+  function emaillink($address, $name = null) {
 		$this->any_command();
 		$this->decorator->emaillink($address, $name);
-    }
+  }
 
 	/**
 	 * Render an internal media file
@@ -828,185 +835,184 @@ class decorator extends Doku_Renderer {
 	 * @param int    $positionInGroup Position of the media in the group.
 	 * @param int    $totalInGroup Size of the group of media.
 	 */
-	function internalmedia($src, $title = null, $align = null, $width = null, 
+	function internalmedia($src, $title = null, $align = null, $width = null,
 	                       $height = null, $cache = null, $linking = null, $positionInGroup = 1, $totalInGroup = 1) {
 		$this->any_command();
 		$this->decorator->internalmedia($src, $title, $align, $width, $height, $cache, $linking, $positionInGroup, $totalInGroup);
 	}
 
-    /**
-     * Render an external media file
-     *
-     * @param string $src     full media URL
-     * @param string $title   descriptive text
-     * @param string $align   left|center|right
-     * @param int    $width   width of media in pixel
-     * @param int    $height  height of media in pixel
-     * @param string $cache   cache|recache|nocache
-     * @param string $linking linkonly|detail|nolink
-     */
-    function externalmedia($src, $title = null, $align = null, $width = null,
-                           $height = null, $cache = null, $linking = null) {
-   		$this->any_command();
-   		$this->decorator->externalmedia($src, $title, $align, $width, $height, $cache, $linking);
-    }
+  /**
+   * Render an external media file
+   *
+   * @param string $src     full media URL
+   * @param string $title   descriptive text
+   * @param string $align   left|center|right
+   * @param int    $width   width of media in pixel
+   * @param int    $height  height of media in pixel
+   * @param string $cache   cache|recache|nocache
+   * @param string $linking linkonly|detail|nolink
+   */
+  function externalmedia($src, $title = null, $align = null, $width = null,
+                         $height = null, $cache = null, $linking = null) {
+		$this->any_command();
+		$this->decorator->externalmedia($src, $title, $align, $width, $height, $cache, $linking);
+  }
 
-    /**
-     * Render a link to an internal media file
-     *
-     * @param string $src     media ID
-     * @param string $title   descriptive text
-     * @param string $align   left|center|right
-     * @param int    $width   width of media in pixel
-     * @param int    $height  height of media in pixel
-     * @param string $cache   cache|recache|nocache
-     */
-    function internalmedialink($src, $title = null, $align = null,
+  /**
+   * Render a link to an internal media file
+   *
+   * @param string $src     media ID
+   * @param string $title   descriptive text
+   * @param string $align   left|center|right
+   * @param int    $width   width of media in pixel
+   * @param int    $height  height of media in pixel
+   * @param string $cache   cache|recache|nocache
+   */
+  function internalmedialink($src, $title = null, $align = null,
                                $width = null, $height = null, $cache = null) {
-  		$this->any_command();
-  		$this->decorator->internalmedialink($src, $title, $align, $width, $height, $cache);
-    }
+		$this->any_command();
+		$this->decorator->internalmedialink($src, $title, $align, $width, $height, $cache);
+  }
 
-    /**
-     * Render a link to an external media file
-     *
-     * @param string $src     media ID
-     * @param string $title   descriptive text
-     * @param string $align   left|center|right
-     * @param int    $width   width of media in pixel
-     * @param int    $height  height of media in pixel
-     * @param string $cache   cache|recache|nocache
-     */
-    function externalmedialink($src, $title = null, $align = null,
-                               $width = null, $height = null, $cache = null) {
+  /**
+   * Render a link to an external media file
+   *
+   * @param string $src     media ID
+   * @param string $title   descriptive text
+   * @param string $align   left|center|right
+   * @param int    $width   width of media in pixel
+   * @param int    $height  height of media in pixel
+   * @param string $cache   cache|recache|nocache
+   */
+  function externalmedialink($src, $title = null, $align = null,
+                             $width = null, $height = null, $cache = null) {
  		$this->any_command();
  		$this->decorator->externalmedialink($src, $title, $align, $width, $height, $cache);
-    }
+  }
 
-    /**
-     * Start a table
-     *
-     * @param int $maxcols maximum number of columns
-     * @param int $numrows NOT IMPLEMENTED
-     * @param int $pos     byte position in the original source
-     */
-    function table_open($maxcols = null, $numrows = null, $pos = null) {
+  /**
+   * Start a table
+   *
+   * @param int $maxcols maximum number of columns
+   * @param int $numrows NOT IMPLEMENTED
+   * @param int $pos     byte position in the original source
+   */
+  function table_open($maxcols = null, $numrows = null, $pos = null) {
 		$this->any_command();
 		$this->decorator->table_open($maxcols, $numrows, $pos);
-    }
+  }
 
-    /**
-     * Close a table
-     *
-     * @param int $pos byte position in the original source
-     */
-    function table_close($pos = null) {
+  /**
+   * Close a table
+   *
+   * @param int $pos byte position in the original source
+   */
+  function table_close($pos = null) {
 		$this->any_command();
 		$this->decorator->table_close($pos);
-    }
+  }
 
-    /**
-     * Open a table header
-     */
-    function tablethead_open() {
+  /**
+   * Open a table header
+   */
+  function tablethead_open() {
 		$this->any_command();
 		$this->decorator->any_command();
-    }
+  }
 
-    /**
-     * Close a table header
-     */
-    function tablethead_close() {
+  /**
+   * Close a table header
+   */
+  function tablethead_close() {
 		$this->any_command();
 		$this->decorator->tablethead_close();
-    }
+  }
 
-    /**
-     * Open a table body
-     */
-    function tabletbody_open() {
+  /**
+   * Open a table body
+   */
+  function tabletbody_open() {
 		$this->any_command();
 		$this->decorator->tabletbody_open();
-    }
+  }
 
-    /**
-     * Close a table body
-     */
-    function tabletbody_close() {
+  /**
+   * Close a table body
+   */
+  function tabletbody_close() {
 		$this->any_command();
 		$this->decorator->tabletbody_close();
-    }
+  }
 
-    /**
-     * Open a table footer
-     */
-    function tabletfoot_open() {
+  /**
+   * Open a table footer
+   */
+  function tabletfoot_open() {
 		$this->any_command();
 		$this->decorator->tabletfoot_open();
-    }
+  }
 
-    /**
-     * Close a table footer
-     */
-    function tabletfoot_close() {
+  /**
+   * Close a table footer
+   */
+  function tabletfoot_close() {
 		$this->any_command();
 		$this->decorator->tabletfoot_close();
-    }
+  }
 
-    /**
-     * Open a table row
-     */
-    function tablerow_open() {
+  /**
+   * Open a table row
+   */
+  function tablerow_open() {
 		$this->any_command();
 		$this->decorator->tablerow_open();
-    }
+  }
 
-    /**
-     * Close a table row
-     */
-    function tablerow_close() {
+  /**
+   * Close a table row
+   */
+  function tablerow_close() {
 		$this->any_command();
 		$this->decorator->tablerow_close();
-    }
+  }
 
-    /**
-     * Open a table header cell
-     *
-     * @param int    $colspan
-     * @param string $align left|center|right
-     * @param int    $rowspan
-     */
-    function tableheader_open($colspan = 1, $align = null, $rowspan = 1) {
+  /**
+   * Open a table header cell
+   *
+   * @param int    $colspan
+   * @param string $align left|center|right
+   * @param int    $rowspan
+   */
+  function tableheader_open($colspan = 1, $align = null, $rowspan = 1) {
 		$this->any_command();
 		$this->decorator->tableheader_open($colspan, $align, $rowspan);
-    }
+  }
 
-    /**
-     * Close a table header cell
-     */
-    function tableheader_close() {
+  /**
+   * Close a table header cell
+   */
+  function tableheader_close() {
 		$this->any_command();
 		$this->decorator->tableheader_close();
-    }
+  }
 
-    /**
-     * Open a table cell
-     *
-     * @param int    $colspan
-     * @param string $align left|center|right
-     * @param int    $rowspan
-     */
-    function tablecell_open($colspan = 1, $align = null, $rowspan = 1) {
+  /**
+   * Open a table cell
+   *
+   * @param int    $colspan
+   * @param string $align left|center|right
+   * @param int    $rowspan
+   */
+  function tablecell_open($colspan = 1, $align = null, $rowspan = 1) {
 		$this->any_command();
 		$this->decorator->tablecell_open($colspan, $align, $rowspan);
-    }
+  }
 
-    /**
-     * Close a table cell
-     */
-    function tablecell_close() {
+  /**
+   * Close a table cell
+   */
+  function tablecell_close() {
 		$this->any_command();
 		$this->decorator->tablecell_close();
-    }
-	
+  }
 }
