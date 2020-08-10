@@ -9,7 +9,7 @@ require_once DOKU_PLUGIN . 'latexport/implementation/decorator_images.php';
 
 class DecoratorImagesTest extends DokuWikiTest {
 
-    protected $pluginsEnabled = array('latexport', 'mathjax');
+  protected $pluginsEnabled = array('latexport', 'mathjax');
 
 	private $decoratorMock;
 
@@ -24,7 +24,7 @@ class DecoratorImagesTest extends DokuWikiTest {
 		$this->decoratorImages = new DecoratorImages($this->decoratorMock);
     }
 
-    public function testCanDisplayASingleImage() {
+  public function testCanDisplayASingleImage() {
 		$this->decoratorImages->p_open();
 		$this->decoratorImages->internalmedia("S1", "Title1", "centered", 10, 20);
 		$this->decoratorImages->p_close();
@@ -34,9 +34,9 @@ class DecoratorImagesTest extends DokuWikiTest {
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandPClose());
 
 		$this->assertTrue($this->decoratorMock->noCommands(), "Should not have more commands");
-    }
+  }
 
-    public function testCanDisplayTwoSingleImages() {
+  public function testCanDisplayTwoSingleImages() {
 		$this->decoratorImages->p_open();
 		$this->decoratorImages->internalmedia("S1", "Title1", "centered", 10, 20);
 		$this->decoratorImages->cdata(" x ");
@@ -50,7 +50,7 @@ class DecoratorImagesTest extends DokuWikiTest {
 		$this->assertEquals($this->decoratorMock->nextCommand(), new CommandPClose());
 
 		$this->assertTrue($this->decoratorMock->noCommands(), "Should not have more commands");
-    }
+  }
 
 	public function testCanGroupTwoImagesSeparatedWithASpace() {
 		$this->decoratorImages->p_open();

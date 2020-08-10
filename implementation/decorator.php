@@ -309,21 +309,21 @@ class decorator extends Doku_Renderer {
 		$this->decorator->p_close();
 	}
 
-    /**
-     * Create a line break
-     */
-    function linebreak() {
+  /**
+   * Create a line break
+   */
+  function linebreak() {
 		$this->any_command();
 		$this->decorator->linebreak();
-    }
+  }
 
-    /**
-     * Create a horizontal line
-     */
-    function hr() {
+  /**
+   * Create a horizontal line
+   */
+  function hr() {
 		$this->any_command();
 		$this->decorator->hr();
-    }
+  }
 
 	/**
 	 * Start strong (bold) formatting

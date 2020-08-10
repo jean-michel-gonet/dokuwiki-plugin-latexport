@@ -48,9 +48,9 @@ class DecoratorMock extends Decorator {
 		$this->listOfCommands->enqueue(new CommandPClose());
 	}
 
-    function linebreak() {
+  function linebreak() {
 		$this->listOfCommands->enqueue(new CommandLinebreak());
-    }
+  }
 
 	function emphasis_open() {
 		// Nothing to do?
@@ -99,13 +99,13 @@ class DecoratorMock extends Decorator {
 		$this->listOfCommands->enqueue(new CommandFootnoteClose());
 	}
 
-    function listo_open() {
+  function listo_open() {
 		$this->listOfCommands->enqueue(new CommandListOOpen());
-    }
+  }
 
-    function listo_close() {
+  function listo_close() {
 		$this->listOfCommands->enqueue(new CommandListOClose());
-    }
+  }
 
 	function listu_open() {
 		$this->listOfCommands->enqueue(new CommandListUOpen());
@@ -127,9 +127,9 @@ class DecoratorMock extends Decorator {
 		$this->listOfCommands->enqueue(new CommandListContentClose());
 	}
 
-    function listitem_close() {
+  function listitem_close() {
 		$this->listOfCommands->enqueue(new CommandListItemClose());
-    }
+  }
 
 	function mathjax_content($formula) {
 		$this->listOfCommands->enqueue(new CommandMathjaxContent($formula));
@@ -143,65 +143,64 @@ class DecoratorMock extends Decorator {
 		$this->listOfCommands->enqueue(new CommandAppendCommand($command, $scope, $argument));
 	}
 
-    function table_open($maxcols = null, $numrows = null, $pos = null) {
+  function table_open($maxcols = null, $numrows = null, $pos = null) {
 		$this->listOfCommands->enqueue(new CommandTableOpen($maxcols, $numrows, $pos));
-    }
+  }
 
-    function table_close($pos = null) {
+  function table_close($pos = null) {
 		$this->listOfCommands->enqueue(new CommandTableClose($pos));
-    }
+  }
 
-    function tablethead_open() {
+  function tablethead_open() {
 		$this->listOfCommands->enqueue(new CommandTableHeadOpen());
-    }
+  }
 
-    function tablethead_close() {
+  function tablethead_close() {
 		$this->listOfCommands->enqueue(new CommandTableHeadClose());
-    }
+  }
 
-    function tabletbody_open() {
+  function tabletbody_open() {
 		$this->listOfCommands->enqueue(new CommandTableBodyOpen());
-    }
+  }
 
-    function tabletbody_close() {
+  function tabletbody_close() {
 		$this->listOfCommands->enqueue(new CommandTableBodyClose());
-    }
+  }
 
-    function tabletfoot_open() {
+  function tabletfoot_open() {
 		$this->listOfCommands->enqueue(new CommandTableFootOpen());
-    }
+  }
 
-    function tabletfoot_close() {
+  function tabletfoot_close() {
 		$this->listOfCommands->enqueue(new CommandTableFootClose());
-    }
+  }
 
-    function tablerow_open() {
+  function tablerow_open() {
 		$this->listOfCommands->enqueue(new CommandTableRowOpen());
-    }
+  }
 
-    function tablerow_close() {
+  function tablerow_close() {
 		$this->listOfCommands->enqueue(new CommandTableRowClose());
-    }
+  }
 
-    function tableheader_open($colspan = 1, $align = null, $rowspan = 1) {
+  function tableheader_open($colspan = 1, $align = null, $rowspan = 1) {
 		$this->listOfCommands->enqueue(new CommandTableHeaderOpen($colspan, $align, $rowspan));
-    }
+  }
 
-    function tableheader_close() {
+  function tableheader_close() {
 		$this->listOfCommands->enqueue(new CommandTableHeaderClose());
-    }
+  }
 
-    function tablecell_open($colspan = 1, $align = null, $rowspan = 1) {
+  function tablecell_open($colspan = 1, $align = null, $rowspan = 1) {
 		$this->listOfCommands->enqueue(new CommandTableCellOpen($colspan, $align, $rowspan));
-    }
+  }
 
-    function tablecell_close() {
+  function tablecell_close() {
 		$this->listOfCommands->enqueue(new CommandTableCellClose());
-    }
+  }
 
 	function table_cline($start, $end) {
 		$this->listOfCommands->enqueue(new CommandTableCline($start, $end));
 	}
-
 }
 ?>
