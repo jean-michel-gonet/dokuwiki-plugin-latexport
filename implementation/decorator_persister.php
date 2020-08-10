@@ -785,12 +785,13 @@ class DecoratorPersister extends Decorator {
 	 * @param int    $totalInGroup Size of the group of media.
 	 */
 	function internalmedia($src, $title = null, $align = null, $width = null,
-	$height = null, $cache = null, $linking = null, $positionInGroup = 0, $totalInGroup = 1) {
+	                       $height = null, $cache = null, $linking = null,
+												 $positionInGroup = 0, $totalInGroup = 1) {
 
 		// Find the image and estimate its real size:
-   		$filename = $this->obtainFilename($src);
-   		if (!$this->isPrintable($filename)) {
-   			$this->cdata($title);
+ 		$filename = $this->obtainFilename($src);
+ 		if (!$this->isPrintable($filename)) {
+ 			$this->cdata($title);
 			return;
 		}
 		list($width, $height) = getimagesize($filename);
@@ -811,7 +812,10 @@ class DecoratorPersister extends Decorator {
 		$this->appendCommand('includegraphics', $this->insertImage($filename),
 		"width=".$sizeInCmAt240ppi."cm, max width=\\textwidth, angle=$angle");
 
-		$this->appendCommand('caption', $this->texifyText($title));
+		if (!empty($title)) {
+			$this->appendCommand('caption', $this->texifyText($title));
+		}
+
 		$this->appendCommand('end', 'minipage');
 
 		// Closes the group of images:
