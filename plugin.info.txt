@@ -1,7 +1,7 @@
 base   latexport
 author Jean-Michel Gonet
 email  jmgonet@yahoo.com
-date   2019-04-14
+date   2020-08-15
 name   Latexport Plugin
 desc   Exports dokuwiki pages to latex format
 url    https://www.dokuwiki.org/plugin:latexport
