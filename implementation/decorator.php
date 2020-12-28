@@ -47,19 +47,27 @@ class decorator extends Doku_Renderer {
 
 	/**
 	 * Escapes Tex reserved chars.
+	 * Substitutions based on PyLaTeX/utils.py
 	 * @param text String The text to escape.
 	 * @return String The escaped text.
 	 */
 	function texifyText($text) {
-		$text = str_replace('}', '\\}', $text);
-		$text = str_replace('{', '\\{', $text);
-		$text = str_replace('%', '\\%', $text);
-		$text = str_replace('#', '\\#', $text);
-		$text = str_replace('_', '\\_', $text);
-		$text = str_replace('&', '\\&', $text);
-		$text = str_replace('$', '\\$', $text);
-		$text = str_replace('^', '\\^', $text);
-		return $text;
+		return strtr($text, array(
+			'\\' => '\textbackslash{}',
+			'}' => '\\}',
+			'{' => '\\{',
+			'[' => '{[}',
+			']' => '{]}',
+			'%' => '\\%',
+			'#' => '\\#',
+			'_' => '\\_',
+			'-' => '{-}',
+			'\xC2\xA0' => '~', // NBSP UTF-8 sequence
+			'&' => '\\&',
+			'$' => '\\$',
+			'^' => '\\^{}',
+			'~' => '\\textasciitilde{}'
+		));
 	}
 
 	/**
